@@ -939,6 +939,22 @@ Zrekrutowano: {unlocked_count}/6
                 self.player.bestiary = {}
             self.player.bestiary[e_name] = self.player.bestiary.get(e_name, 0) + 1
             
+            # Powiadomienia o postępie w aktywnych zadaniach
+            if hasattr(self.player, 'quests'):
+                for q in self.player.quests:
+                    if q.status == 'IN_PROGRESS':
+                        # Śledzenie zabójstw konkretnych potworów
+                        if 'kills' in q.requirements and e_name in q.requirements['kills']:
+                            current = self.player.bestiary[e_name]
+                            target = q.requirements['kills'][e_name]
+                            if current <= target:
+                                self.log_msg(f"📝 Postęp zadania '{q.name}': {e_name} {current}/{target}")
+                        
+                        # Złoto i level śledzimy dyskretniej, ale gdy wpadnie komplet - informujemy o ukończeniu
+                        if q.check_completion(self.player):
+                            self.log_msg(f"✅ ZADANIE GOTOWE: {q.name}! Odbierz nagrodę w Dzienniku Zadań.")
+            
+            
             self.log_msg(f"ZWYCIĘSTWO! Otrzymujesz {exp_gain} EXP i {gold_gain} Złota. (HP: {int(self.player.hp)}/{t_hp})")
             self.player.gold += gold_gain
             
