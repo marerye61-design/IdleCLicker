@@ -184,12 +184,19 @@ class Player:
             if not item: return False
             slot = getattr(item, "slot", None)
             if slot and slot in self.equipment:
+                # Jesli cos juz mamy w slocie, sciagamy to do plecaka
                 if self.equipment[slot] is not None:
                     self.inventory.append(self.equipment[slot])
+                # Zakladamy nowy przedmiot i usuwamy go z plecaka
+                self.equipment[slot] = item_dict
+                self.inventory.remove(item_dict)
+                return True
             else:
                 print("Tego przedmiotu nie można założyć.")
+                return False
         else:
             print("Nie masz tego przedmiotu w ekwipunku.")
+            return False
             
     def click(self):
         atk = self.get_total_atk()

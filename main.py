@@ -19,13 +19,28 @@ from items import ITEMS_DB
 import dungeons
 from flavor_texts import get_random_flavor_text
 
-SAVES_DIR = "saves"
+# Ustawienie bezpiecznej ścieżki do plików zapisu (aby uniknąć ich nadpisania przy aktualizacji plików gry)
+APPDATA_DIR = os.path.join(os.getenv('APPDATA'), 'IdleClicker') if os.name == 'nt' else os.path.join(os.path.expanduser('~'), '.idleclicker')
+SAVES_DIR = os.path.join(APPDATA_DIR, 'saves')
+
+# Próba migracji starych zapisów z lokalnego folderu (jeśli ktoś aktualizuje grę)
+LOCAL_SAVES_DIR = "saves"
+if os.path.exists(LOCAL_SAVES_DIR) and not os.path.exists(SAVES_DIR):
+    import shutil
+    try:
+        shutil.copytree(LOCAL_SAVES_DIR, SAVES_DIR)
+        print(f"Pomyślnie zmigrowano lokalne save'y do {SAVES_DIR}")
+    except Exception as e:
+        print(f"Błąd podczas migracji save'ów: {e}")
 
 def save_game(player, filepath):
     player.last_update_time = time.time()
     if not os.path.exists(SAVES_DIR):
         os.makedirs(SAVES_DIR)
-    with open(filepath, 'wb') as f:
+    
+    # Podmiana katalogu na bezpieczny
+    safe_filepath = os.path.join(SAVES_DIR, os.path.basename(filepath))
+    with open(safe_filepath, 'wb') as f:
         pickle.dump(player, f)
 
 class ScrollableFrame(tk.Frame):
@@ -1182,10 +1197,16 @@ Zrekrutowano: {unlocked_count}/6
             if selected_item_dict is None and self.player.inventory:
                 selected_item_dict = self.player.inventory[0]
 
+        self.equipment_slot_widgets = {}
         for slot_key, slot_label in slot_names.items():
             slot_box = tk.Frame(eq_slots_frame, bg="#2c1a12", bd=2, relief=tk.RAISED, width=85, height=90)
             slot_box.pack(side=tk.LEFT, padx=6, pady=6)
             slot_box.pack_propagate(False)
+            
+            # Rejestracja widgetu slotu do Drag & Drop
+            # Ponieważ puszczenie myszy nad np. labelem też ma działać, będziemy wędrować w górę masterów
+            self.root.update_idletasks() # upewnijmy sie ze id dziala
+            self.equipment_slot_widgets[slot_box] = slot_key
             
             tk.Label(slot_box, text=slot_label, font=("Georgia", 9, "bold"), bg="#2c1a12", fg="#aaa").pack(pady=2)
             
@@ -1212,11 +1233,73 @@ Zrekrutowano: {unlocked_count}/6
                 empty_lbl = tk.Label(slot_box, text="[ Puste ]", font=("Georgia", 9, "italic"), bg="#2c1a12", fg="#666")
                 empty_lbl.pack(expand=True)
 
-        tk.Label(left_panel, text="Plecak (Kliknij przedmiot dla szczegółów)", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#f4d03f").pack(anchor=tk.W, pady=(10, 2))
+        tk.Label(left_panel, text="Plecak (Przeciągnij by założyć)", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#f4d03f").pack(anchor=tk.W, pady=(10, 2))
         
         sf = ScrollableFrame(left_panel, bg_color="#1a100b")
         sf.pack(fill=tk.BOTH, expand=True, pady=5)
         
+        # Funkcje Drag & Drop
+        self.drag_phantom = None
+        self.drag_item_dict = None
+        
+        def on_drag_start(event, item_dict):
+            self.drag_item_dict = item_dict
+            self.show_equipment(item_dict, is_equipped_slot=None) # Aktualizuj prawy panel po kliknięciu
+            
+            if self.drag_phantom:
+                self.drag_phantom.destroy()
+                
+            self.drag_phantom = tk.Toplevel(self.root)
+            self.drag_phantom.overrideredirect(True)
+            self.drag_phantom.attributes("-topmost", True)
+            self.drag_phantom.attributes("-alpha", 0.8) # Lekka przezroczystość (zjawa)
+            
+            item = ITEMS_DB.get(item_dict["id"])
+            if hasattr(self, 'item_icons') and item_dict["id"] in self.item_icons:
+                lbl = tk.Label(self.drag_phantom, image=self.item_icons[item_dict["id"]], bg="#111", bd=2, relief=tk.RAISED)
+            else:
+                lbl = tk.Label(self.drag_phantom, text=item.name[:4], font=("Georgia", 10, "bold"), bg="#111", fg="#f4d03f", bd=2, relief=tk.RAISED)
+            lbl.pack()
+            
+            # Przesunięcie zjawy żeby kursor nadal był aktywny na wierzchu
+            self.drag_phantom.geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+
+        def on_drag_motion(event):
+            if self.drag_phantom:
+                self.drag_phantom.geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+
+        def on_drag_release(event):
+            if self.drag_phantom:
+                self.drag_phantom.destroy()
+                self.drag_phantom = None
+                
+            if not self.drag_item_dict:
+                return
+                
+            target_widget = self.root.winfo_containing(event.x_root, event.y_root)
+            if not target_widget: return
+            
+            # Wspinamy się po drzewie widgetów by sprawdzić czy jesteśmy w slot_box
+            w = target_widget
+            found_slot = None
+            while w:
+                if w in self.equipment_slot_widgets:
+                    found_slot = self.equipment_slot_widgets[w]
+                    break
+                w = w.master
+                
+            if found_slot:
+                item = ITEMS_DB.get(self.drag_item_dict["id"])
+                if item and getattr(item, "slot", None) == found_slot:
+                    if self.player.equip(self.drag_item_dict):
+                        self.log_msg(f"Założono: {item.name}")
+                        self.update_sidebar()
+                        self.show_equipment(self.drag_item_dict, is_equipped_slot=found_slot)
+                else:
+                    self.log_msg("To złe miejsce na ten przedmiot!")
+            
+            self.drag_item_dict = None
+
         if not self.player.inventory:
             tk.Label(sf.scrollable_frame, text="Twój plecak jest pusty.", font=("Georgia", 11, "italic"), bg="#1a100b", fg="gray").pack(pady=30)
         else:
@@ -1256,8 +1339,11 @@ Zrekrutowano: {unlocked_count}/6
                 lbl_n = tk.Label(tile, text=name_short + lvl_str, font=("Georgia", 7, "bold"), bg=bg_highlight, fg=border_col)
                 lbl_n.pack()
                 
+                # Bindowanie zdarzeń do wszystkich elementów płytki plecaka
                 for widget in (tile, icon_canvas, lbl_n):
-                    widget.bind("<Button-1>", lambda e, item_d=inv_item_dict: self.show_equipment(item_d, is_equipped_slot=None))
+                    widget.bind("<ButtonPress-1>", lambda e, item_d=inv_item_dict: on_drag_start(e, item_d))
+                    widget.bind("<B1-Motion>", on_drag_motion)
+                    widget.bind("<ButtonRelease-1>", on_drag_release)
 
         # Prawy panel - Inspektor Szczegółów Przedmiotu
         right_panel = tk.Frame(main_frame, bg="#1a100b", width=310, bd=4, relief=tk.RIDGE)
