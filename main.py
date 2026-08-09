@@ -1243,12 +1243,17 @@ Zrekrutowano: {unlocked_count}/6
         self.drag_item_dict = None
         
         def on_drag_start(event, item_dict):
-            self.drag_item_dict = item_dict
-            self.show_equipment(item_dict, is_equipped_slot=None) # Aktualizuj prawy panel po kliknięciu
-            
-            if self.drag_phantom:
-                self.drag_phantom.destroy()
+            # Zabezpieczenie przed wiszacymi zjawami z poprzednich widoków
+            if hasattr(self, 'drag_phantom') and self.drag_phantom:
+                try:
+                    self.drag_phantom.destroy()
+                except:
+                    pass
                 
+            self.drag_item_dict = item_dict
+            # UWAGA: Usunięto wywoływanie show_equipment() tutaj! Zmieniało to całkowicie okno, kasowało stare kafelki 
+            # i urywało eventy myszy powodując zatrzymanie się zjaw na ekranie na stałe.
+            
             self.drag_phantom = tk.Toplevel(self.root)
             self.drag_phantom.overrideredirect(True)
             self.drag_phantom.attributes("-topmost", True)
@@ -1261,23 +1266,29 @@ Zrekrutowano: {unlocked_count}/6
                 lbl = tk.Label(self.drag_phantom, text=item.name[:4], font=("Georgia", 10, "bold"), bg="#111", fg="#f4d03f", bd=2, relief=tk.RAISED)
             lbl.pack()
             
-            # Przesunięcie zjawy żeby kursor nadal był aktywny na wierzchu
-            self.drag_phantom.geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+            self.drag_phantom.geometry(f"+{event.x_root + 15}+{event.y_root + 15}")
+            
+            # Jesli kursor wjedzie na zjawe, niech zjawa przesyla puszczenie przycisku i ruch dalej!
+            self.drag_phantom.bind("<B1-Motion>", on_drag_motion)
+            self.drag_phantom.bind("<ButtonRelease-1>", on_drag_release)
 
         def on_drag_motion(event):
-            if self.drag_phantom:
-                self.drag_phantom.geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+            if hasattr(self, 'drag_phantom') and self.drag_phantom:
+                self.drag_phantom.geometry(f"+{event.x_root + 15}+{event.y_root + 15}")
 
         def on_drag_release(event):
-            if self.drag_phantom:
-                self.drag_phantom.destroy()
+            # Zniszcz najpierw zjawę, aby nie zasłaniała interfejsu przy pytaniu "co jest pod myszką"
+            if hasattr(self, 'drag_phantom') and self.drag_phantom:
+                try:
+                    self.drag_phantom.destroy()
+                except:
+                    pass
                 self.drag_phantom = None
                 
-            if not self.drag_item_dict:
+            if not getattr(self, 'drag_item_dict', None):
                 return
                 
             target_widget = self.root.winfo_containing(event.x_root, event.y_root)
-            if not target_widget: return
             
             # Wspinamy się po drzewie widgetów by sprawdzić czy jesteśmy w slot_box
             w = target_widget
@@ -1286,7 +1297,7 @@ Zrekrutowano: {unlocked_count}/6
                 if w in self.equipment_slot_widgets:
                     found_slot = self.equipment_slot_widgets[w]
                     break
-                w = w.master
+                w = getattr(w, 'master', None)
                 
             if found_slot:
                 item = ITEMS_DB.get(self.drag_item_dict["id"])
@@ -1295,10 +1306,15 @@ Zrekrutowano: {unlocked_count}/6
                         self.log_msg(f"Założono: {item.name}")
                         self.update_sidebar()
                         self.show_equipment(self.drag_item_dict, is_equipped_slot=found_slot)
+                        self.drag_item_dict = None
+                        return
                 else:
                     self.log_msg("To złe miejsce na ten przedmiot!")
             
+            # Jeśli nie upuszczono na slot - traktuj to jak normalne kliknięcie by otworzyć menu przedmiotu po prawej!
+            item_to_show = self.drag_item_dict
             self.drag_item_dict = None
+            self.show_equipment(item_to_show, is_equipped_slot=None)
 
         if not self.player.inventory:
             tk.Label(sf.scrollable_frame, text="Twój plecak jest pusty.", font=("Georgia", 11, "italic"), bg="#1a100b", fg="gray").pack(pady=30)
