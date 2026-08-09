@@ -1,4 +1,4 @@
-﻿import tkinter as tk
+import tkinter as tk
 from tkinter import ttk, messagebox
 import urllib.request
 import json
@@ -12,7 +12,7 @@ import webbrowser
 
 REPO_OWNER = "marerye61-design"
 REPO_NAME = "IdleCLicker"
-API_URL = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/latest"
+API_URL = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases"
 REPO_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/releases"
 VERSION_FILE = "version.txt"
 MAIN_EXECUTABLE = "IdleClicker.exe"
@@ -88,21 +88,25 @@ class LauncherApp:
             with urllib.request.urlopen(req, timeout=5) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
-                    latest_version = data.get("tag_name", "0.0.0").replace("v", "")
-                    local_version = self.get_local_version().replace("v", "")
-                    
-                    if latest_version != local_version and latest_version != "0.0.0":
-                        assets = data.get("assets", [])
-                        zip_url = assets[0].get("browser_download_url") if assets else None
-                        if zip_url:
-                            self.root.after(0, lambda: self.show_update_available(latest_version, zip_url))
-                            return
+                    if data and isinstance(data, list):
+                        latest_release = data[0]
+                        latest_version = latest_release.get("tag_name", "0.0.0").replace("v", "")
+                        local_version = self.get_local_version().replace("v", "")
+                        
+                        if latest_version != local_version and latest_version != "0.0.0":
+                            assets = latest_release.get("assets", [])
+                            zip_url = assets[0].get("browser_download_url") if assets else None
+                            if zip_url:
+                                self.root.after(0, lambda: self.show_update_available(latest_version, zip_url))
+                                return
+                            else:
+                                self.root.after(0, lambda: self.show_update_available(latest_version, None))
+                                return
                         else:
-                            self.root.after(0, lambda: self.show_update_available(latest_version, None))
+                            self.root.after(0, lambda: self.show_up_to_date(local_version))
                             return
                     else:
-                        self.root.after(0, lambda: self.show_up_to_date(local_version))
-                        return
+                        self.root.after(0, lambda: self.show_up_to_date(self.get_local_version()))
                 else:
                     self.root.after(0, lambda: self.show_up_to_date(self.get_local_version()))
         except Exception as e:
