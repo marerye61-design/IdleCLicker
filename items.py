@@ -40,6 +40,8 @@ ITEMS_DB = {
     # Tier 1.5 (Poziom 5)
     "wep_iron_sword": Equipment("wep_iron_sword", "Żelazny Miecz", "Wytrzymały miecz ze stali.", 400, "weapon", {"atk": 8}, level_req=5, rarity="Zwykły"),
     "arm_iron_plate": Equipment("arm_iron_plate", "Żelazna Płytówka", "Solidna zbroja rycerska.", 600, "armor", {"def": 10, "hp_max": 20}, level_req=5, rarity="Zwykły"),
+    "helm_iron": Equipment("helm_iron", "Żelazny Szyszak", "Gruby hełm chroniący przed ciosami w głowę.", 350, "helmet", {"def": 6, "hp_max": 10}, level_req=5, rarity="Zwykły"),
+    "acc_iron_ring": Equipment("acc_iron_ring", "Żelazny Sygnet", "Ciężki i solidny pierścień.", 500, "accessory", {"atk": 4, "def": 4, "hp_max": 15}, level_req=5, rarity="Zwykły"),
 
     # Tier 2 (Poziom 15)
     "wep_steel_sword": Equipment("wep_steel_sword", "Stalowy Miecz Długi", "Ostra, wyważona broń.", 2500, "weapon", {"atk": 25}, level_req=15, rarity="Zwykły"),
