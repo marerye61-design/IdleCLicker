@@ -42,22 +42,22 @@ NPC_DB = {
         }
     },
     "eczme": {
-        "name": "Eczme, Siatkarka Lochów",
+        "name": "Eczme, Siatkarz Lochów",
         "img": "eczme",
         "greeting": "Odbicie, wystawa, i... ŚCINA! Hej, uważaj z tą zbroją, żebyś nie przebił mi piłki!",
         "options": {
-            "Witaj, kim jesteś?": "Nazywam się Eczme! Jestem kapitanką i zarazem jedyną ocalałą członkinią drużyny 'Mroczne Kolce'. Wszyscy myślą, że w lochach trzeba machać mieczem. Bzdura! Wystarczy odpowiednio mocno zaserwować skórzaną piłką prosto w twarz nekromanty. Złote medale? Ja wolę zdobywać skrzynie ze złotem!",
-            "Opowiedz mi swoją historię.": "Pochodzę ze starożytnego Zakonu Szybkiej Piłki. Trenowaliśmy latami, odbijając pociski z katapult, żeby wyrobić sobie refleks. Kiedy nasz klasztor najechały trolle, mój serw z wyskoku uratował całą bibliotekę. Zrozumiałam wtedy, że mój talent marnuje się na dziedzińcu. Zeszłam do lochów! Tutejsze gobliny grają bardzo nieczysto, często gryzą w kostki przy bloku, ale hej, sport to zdrowie! Karczmarz pozwala mi tu mieszkać w zamian za to, że organizuję awanturnikom mecze siatkówki po godzinach.",
+            "Witaj, kim jesteś?": "Nazywam się Eczme! Jestem kapitanem i zarazem jedynym ocalałym członkiem drużyny 'Mroczne Kolce'. Wszyscy myślą, że w lochach trzeba machać mieczem. Bzdura! Wystarczy odpowiednio mocno zaserwować skórzaną piłką prosto w twarz nekromanty. Złote medale? Ja wolę zdobywać skrzynie ze złotem!",
+            "Opowiedz mi swoją historię.": "Pochodzę ze starożytnego Zakonu Szybkiej Piłki. Trenowaliśmy latami, odbijając pociski z katapult, żeby wyrobić sobie refleks. Kiedy nasz klasztor najechały trolle, mój serw z wyskoku uratował całą bibliotekę. Zrozumiałem wtedy, że mój talent marnuje się na dziedzińcu. Zszedłem do lochów! Tutejsze gobliny grają bardzo nieczysto, często gryzą w kostki przy bloku, ale hej, sport to zdrowie! Karczmarz pozwala mi tu mieszkać w zamian za to, że organizuję awanturnikom mecze siatkówki po godzinach.",
             "Ta piłka?": "To Skórzana Kula Przeznaczenia. Waży 5 kilo, jest wypchana trocinami i runami ochronnymi. Jak dostaniesz nią z plaska, to odechciewa ci się rzucać uroków. Idealna broń dystansowa na każdego bossa."
         }
     },
     "domcia": {
-        "name": "Domcia, Szamanka Ziołolecznictwa",
+        "name": "Domcia, Szaman Ziołolecznictwa",
         "img": "domcia",
         "greeting": "Wooo, stary... Ale masz aurę. Złocista, jak poranny wschód. Usiądź, zapal z nami i poczuj wibracje lasu.",
         "options": {
-            "Witaj, kim jesteś?": "Zowią mnie Domcia. Jestem... niezależną badaczką świadomości. I botaniczką. Kiedy inni wojownicy machają żelastwem i krzyczą na potwory, ja szukam z nimi porozumienia na wyższym poziomie egzystencji. Głównie dzięki moim wyjątkowym grzybkom i specjalnym mieszankom ziół. Chcesz spróbować 'Fioletowego Horyzontu'? Rozluźnia napięte mięśnie i otwiera trzecie oko. Albo i czwarte, zależy ile spalisz.",
-            "Opowiedz mi swoją historię.": "Stary, to była długa podróż. Kiedyś mieszkałam w stolicy. Hałas, pośpiech, strażnicy czepiający się o zbieranie dziwnego mchu... Koszmar, negatywne wibracje. Pewnego dnia wzięłam swój kociołek i po prostu poszłam przed siebie do puszczy. Trafiłam na magiczną polanę pełną Amanity. Usiadłam, zaczęłam suszyć, testować i mieszać. Zrozumiałam wtedy, że drogie mikstury od tych nadętych alchemików z gildii to straszna ściema. Moje organiczne ekstrakty nie tylko leczą punkty życia, ale pokazują ci, gdzie to życie tak naprawdę ma swoje źródło we wszechświecie. Wprowadziłam się do tej tawerny, założyłam w kącie swój gabinet 'Wital-Punkt' i puszczam dymka.",
+            "Witaj, kim jesteś?": "Zowią mnie Domcia. Jestem... niezależnym badaczem świadomości. I botanikiem. Kiedy inni wojownicy machają żelastwem i krzyczą na potwory, ja szukam z nimi porozumienia na wyższym poziomie egzystencji. Głównie dzięki moim wyjątkowym grzybkom i specjalnym mieszankom ziół. Chcesz spróbować 'Fioletowego Horyzontu'? Rozluźnia napięte mięśnie i otwiera trzecie oko. Albo i czwarte, zależy ile spalisz.",
+            "Opowiedz mi swoją historię.": "Stary, to była długa podróż. Kiedyś mieszkałem w stolicy. Hałas, pośpiech, strażnicy czepiający się o zbieranie dziwnego mchu... Koszmar, negatywne wibracje. Pewnego dnia wziąłem swój kociołek i po prostu poszedłem przed siebie do puszczy. Trafiłem na magiczną polanę pełną Amanity. Usiadłem, zacząłem suszyć, testować i mieszać. Zrozumiałem wtedy, że drogie mikstury od tych nadętych alchemików z gildii to straszna ściema. Moje organiczne ekstrakty nie tylko leczą punkty życia, ale pokazują ci, gdzie to życie tak naprawdę ma swoje źródło we wszechświecie. Wprowadziłem się do tej tawerny, założyłem w kącie swój gabinet 'Wital-Punkt' i puszczam dymka.",
             "Co robisz w tawernie?": "Rozjaśniam umysły, stary. Przesiaduję tu, puszczam kółka z dymu i obserwuję przepływ energii awanturników. Jak ktoś wróci z lochu cały w siniakach, to daję mu ciepły wywar z muchomora i ziół. Po pięciu minutach przestaje czuć ból w nogach, a za to zaczyna słyszeć kolory. Najlepsze naturalne lekarstwo, wierz mi."
         }
     }
