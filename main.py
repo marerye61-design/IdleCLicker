@@ -954,9 +954,15 @@ Zrekrutowano: {unlocked_count}/6
             if hasattr(self.player, 'quests'):
                 for q in self.player.quests:
                     if q.status == 'IN_PROGRESS':
+                        if not hasattr(q, 'progress'):
+                            q.progress = {'kills': {}}
+                        if 'kills' not in q.progress:
+                            q.progress['kills'] = {}
+                            
                         # Śledzenie zabójstw konkretnych potworów
                         if 'kills' in q.requirements and e_name in q.requirements['kills']:
-                            current = self.player.bestiary[e_name]
+                            q.progress['kills'][e_name] = q.progress['kills'].get(e_name, 0) + 1
+                            current = q.progress['kills'][e_name]
                             target = q.requirements['kills'][e_name]
                             if current <= target:
                                 self.log_msg(f"📝 Postęp zadania '{q.name}': {e_name} {current}/{target}")

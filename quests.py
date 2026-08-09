@@ -17,12 +17,15 @@ class Quest:
     def accept(self):
         if self.status == 'AVAILABLE':
             self.status = 'IN_PROGRESS'
+            self.progress = {'kills': {}}
             return True
         return False
 
     def check_completion(self, player):
         if self.status != 'IN_PROGRESS':
             return False
+        
+        prog = getattr(self, 'progress', {'kills': {}})
         
         for req, value in self.requirements.items():
             if req == 'clicks' and player.stats.get('total_clicks', 0) < value:
@@ -33,7 +36,7 @@ class Quest:
                 return False
             if req == 'kills':
                 for monster_name, count in value.items():
-                    if getattr(player, 'bestiary', {}).get(monster_name, 0) < count:
+                    if prog.get('kills', {}).get(monster_name, 0) < count:
                         return False
                 
         self.status = 'COMPLETED'
