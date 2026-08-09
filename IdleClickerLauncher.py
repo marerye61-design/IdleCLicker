@@ -1,6 +1,7 @@
 ﻿import tkinter as tk
 from tkinter import ttk, messagebox
-import requests
+import urllib.request
+import json
 import os
 import sys
 import subprocess
@@ -24,7 +25,6 @@ class LauncherApp:
         self.root.resizable(False, False)
         self.root.configure(bg="#2c1a12")
         
-        # Środkowanie okna
         self.root.eval('tk::PlaceWindow . center')
         
         self.status_lbl = tk.Label(root, text="Sprawdzanie aktualizacji...", font=("Georgia", 12), bg="#2c1a12", fg="#f4d03f")
@@ -40,7 +40,6 @@ class LauncherApp:
         self.btn_frame = tk.Frame(root, bg="#2c1a12")
         self.btn_frame.pack(pady=10)
         
-        # Uruchom w tle by nie blokować GUI
         threading.Thread(target=self.check_for_updates, daemon=True).start()
         
     def get_local_version(self):
@@ -70,7 +69,7 @@ class LauncherApp:
         self.link_lbl.config(text="")
         btn = ttk.Button(self.btn_frame, text="Graj", command=self.launch_game)
         btn.pack(side=tk.LEFT, padx=10)
-        self.root.after(3000, self.launch_game) # Auto start po 3 sek.
+        self.root.after(3000, self.launch_game)
 
     def show_update_available(self, latest_version, zip_url):
         self.status_lbl.config(text=f"Dostępna nowa wersja: v{latest_version}!", fg="#e74c3c")
@@ -85,28 +84,27 @@ class LauncherApp:
 
     def check_for_updates(self):
         try:
-            resp = requests.get(API_URL, timeout=5)
-            if resp.status_code == 200:
-                data = resp.json()
-                latest_version = data.get("tag_name", "0.0.0").replace("v", "")
-                local_version = self.get_local_version().replace("v", "")
-                
-                if latest_version != local_version and latest_version != "0.0.0":
-                    assets = data.get("assets", [])
-                    zip_url = assets[0].get("browser_download_url") if assets else None
-                    if zip_url:
-                        self.root.after(0, lambda: self.show_update_available(latest_version, zip_url))
-                        return
+            req = urllib.request.Request(API_URL, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode('utf-8'))
+                    latest_version = data.get("tag_name", "0.0.0").replace("v", "")
+                    local_version = self.get_local_version().replace("v", "")
+                    
+                    if latest_version != local_version and latest_version != "0.0.0":
+                        assets = data.get("assets", [])
+                        zip_url = assets[0].get("browser_download_url") if assets else None
+                        if zip_url:
+                            self.root.after(0, lambda: self.show_update_available(latest_version, zip_url))
+                            return
+                        else:
+                            self.root.after(0, lambda: self.show_update_available(latest_version, None))
+                            return
                     else:
-                        # Brak assetów, pokaż tylko że jest nowsza wersja i link
-                        self.root.after(0, lambda: self.show_update_available(latest_version, None))
+                        self.root.after(0, lambda: self.show_up_to_date(local_version))
                         return
                 else:
-                    self.root.after(0, lambda: self.show_up_to_date(local_version))
-                    return
-            else:
-                # Błąd API, pokaż aktualną
-                self.root.after(0, lambda: self.show_up_to_date(self.get_local_version()))
+                    self.root.after(0, lambda: self.show_up_to_date(self.get_local_version()))
         except Exception as e:
             print(f"Błąd sprawdzania aktualizacji: {e}")
             self.root.after(0, lambda: self.show_up_to_date(self.get_local_version()))
@@ -118,20 +116,24 @@ class LauncherApp:
                 widget.destroy()
             self.root.after(0, lambda: self.status_lbl.config(text="Pobieranie aktualizacji...", fg="#f1c40f"))
             
-            response = requests.get(url, stream=True)
-            total_size = int(response.headers.get('content-length', 0))
-            
-            block_size = 8192
-            downloaded = 0
-            
-            zip_buffer = io.BytesIO()
-            for data in response.iter_content(block_size):
-                zip_buffer.write(data)
-                downloaded += len(data)
-                if total_size > 0:
-                    percent = int((downloaded / total_size) * 100)
-                    self.root.after(0, lambda p=percent: self.progress.config(value=p))
-            
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req) as response:
+                total_size = int(response.headers.get('content-length', 0))
+                
+                block_size = 8192
+                downloaded = 0
+                
+                zip_buffer = io.BytesIO()
+                while True:
+                    data = response.read(block_size)
+                    if not data:
+                        break
+                    zip_buffer.write(data)
+                    downloaded += len(data)
+                    if total_size > 0:
+                        percent = int((downloaded / total_size) * 100)
+                        self.root.after(0, lambda p=percent: self.progress.config(value=p))
+                
             self.root.after(0, lambda: self.status_lbl.config(text="Rozpakowywanie..."))
             
             with zipfile.ZipFile(zip_buffer) as zip_ref:
