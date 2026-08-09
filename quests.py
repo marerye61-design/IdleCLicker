@@ -31,6 +31,10 @@ class Quest:
                 return False
             if req == 'level' and getattr(player, 'level', 1) < value:
                 return False
+            if req == 'kills':
+                for monster_name, count in value.items():
+                    if getattr(player, 'bestiary', {}).get(monster_name, 0) < count:
+                        return False
                 
         self.status = 'COMPLETED'
         return True
@@ -72,9 +76,9 @@ class Quest:
 QUESTS_DB = [
     Quest(
         "q_party_maslak", 
-        "Słodki Zastrzyk Maślaka", 
-        "Maślak chce sprawdzić twoją energię przed wyruszeniem w drogę. Kliknij na ekranie walki 30 razy.", 
-        {"clicks": 30}, 
+        "Polowanie z Maślakiem", 
+        "Maślak szuka kogoś doświadczonego w walce. Udowodnij swoją wartość i zabij 10 Leśnych Wilków.", 
+        {"kills": {"Leśny Wilk": 10}}, 
         {"gold": 200, "item": "wep_maslak", "party": "maslak"},
         unlock_level=1
     ),

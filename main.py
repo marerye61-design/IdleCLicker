@@ -1651,7 +1651,7 @@ Zrekrutowano: {unlocked_count}/6
                 color = "#f4d03f" if q.status == 'COMPLETED' else "white"
                 tk.Label(info, text=q.name, font=("Georgia", 14, "bold"), bg="#3e2723", fg=color).pack(anchor=tk.W)
                 tk.Label(info, text=q.description, font=("Georgia", 10), bg="#3e2723", fg="#cccccc", wraplength=450, justify=tk.LEFT).pack(anchor=tk.W)
-                tk.Label(info, text=f"🎁 Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#3e2723", fg="#f4d03f").pack(anchor=tk.W, pady=(3, 1))
+                tk.Label(info, text=f"🎁 Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#3e2723", fg="#f4d03f", wraplength=450, justify=tk.LEFT).pack(anchor=tk.W, pady=(3, 1))
                 
                 # Stan tekstowy zadania
                 status_texts = {
