@@ -273,38 +273,30 @@ class IdleRPGApp:
         btn_frame = tk.Frame(win, bg="#1a100b")
         btn_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
         
-        # Opcje rekrutacji i wyboru towarzysza w walce
-        if npc_id in self.player.party:
-            is_active = (getattr(self.player, 'active_companion', None) == npc_id)
-            party_btn_txt = f"✅ AKTYWNY TOWARZYSZ W WALCE" if is_active else f"👥 WYBIERZ {npc['name'].split(',')[0].upper()} DO DRUŻYNY"
-            party_btn_bg = "#2ecc71" if is_active else "#f4d03f"
-            party_btn_fg = "white" if is_active else "#1a100b"
-            
-            def set_active():
-                self.player.select_active_companion(npc_id)
-                self.update_sidebar()
-                self.log_msg(f"Ustawiono: {npc['name'].split(',')[0]} walczy jako twój aktywny towarzysz!")
-                win.destroy()
-                self.open_npc_dialog(npc_id)
-                
-            btn_p = tk.Button(
-                btn_frame, 
-                text=party_btn_txt, 
-                font=("Georgia", 11, "bold"), 
-                bg=party_btn_bg, 
-                fg=party_btn_fg, 
-                bd=3, 
-                state=tk.DISABLED if is_active else tk.NORMAL,
-                command=set_active
-            )
-            btn_p.pack(fill=tk.X, padx=30, pady=4)
-        else:
-            tk.Label(btn_frame, text="🔒 Towarzysz Niezrekrutowany (Ukończ jego zadanie w Dzienniku Zadań)", font=("Georgia", 9, "italic"), bg="#1a100b", fg="#aaa").pack(pady=3)
-
         for option, response in npc["options"].items():
             btn = tk.Button(btn_frame, text=option, font=("Georgia", 11, "bold"), bg="#3e2723", fg="#f4d03f", activebackground="#5d4037", activeforeground="#f7dc6f", bd=3, relief=tk.RAISED, command=lambda r=response: say(r))
             btn.pack(fill=tk.X, padx=30, pady=3)
             
+        # Opcje rekrutacji i wyboru towarzysza w walce (jako opcja dialogowa)
+        if npc_id in self.player.party:
+            is_active = (getattr(self.player, 'active_companion', None) == npc_id)
+            if not is_active:
+                def recruit_action():
+                    say("Z przyjemnością! Pakuję sprzęt i ruszamy.")
+                    self.player.select_active_companion(npc_id)
+                    self.update_sidebar()
+                    self.log_msg(f"Ustawiono: {npc['name'].split(',')[0]} walczy jako twój aktywny towarzysz!")
+                    win.destroy()
+                    self.open_npc_dialog(npc_id)
+                    
+                btn_p = tk.Button(btn_frame, text="[Wyrusz ze mną do lochu!]", font=("Georgia", 11, "bold"), bg="#27ae60", fg="white", activebackground="#2ecc71", activeforeground="white", bd=3, relief=tk.RAISED, command=recruit_action)
+                btn_p.pack(fill=tk.X, padx=30, pady=3)
+            else:
+                btn_p = tk.Button(btn_frame, text="✅ Towarzyszy ci w walce", font=("Georgia", 11, "bold"), bg="#1a100b", fg="#2ecc71", bd=1, state=tk.DISABLED)
+                btn_p.pack(fill=tk.X, padx=30, pady=3)
+        else:
+            tk.Label(btn_frame, text="🔒 [Zwerbuj] (Ukończ zadanie postaci w Dzienniku Zadań)", font=("Georgia", 9, "italic"), bg="#1a100b", fg="#aaa").pack(pady=3)
+
         btn_close = tk.Button(btn_frame, text="(Odejdź)", font=("Georgia", 11, "italic"), bg="#2a1610", fg="#aaa", bd=2, command=win.destroy)
         btn_close.pack(fill=tk.X, padx=30, pady=4)
 
