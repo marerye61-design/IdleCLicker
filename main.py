@@ -67,12 +67,20 @@ class ScrollableFrame(tk.Frame):
         
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         
-        self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
-        
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.bind("<Enter>", self._bind_mousewheel)
+        self.canvas.bind("<Leave>", self._unbind_mousewheel)
+
+    def _bind_mousewheel(self, event):
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
+    def _unbind_mousewheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>")
+
     def _on_mousewheel(self, event):
+        # Sprawdzamy czy okno rzeczywiście potrzebuje scrolla
+        if self.canvas.yview() == (0.0, 1.0): return
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         
     def destroy(self):
