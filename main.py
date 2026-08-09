@@ -930,8 +930,11 @@ Zrekrutowano: {unlocked_count}/6
             else:
                 self.show_expedition()
         else:
-            exp_gain = self.enemy.exp_reward
-            gold_gain = self.enemy.gold_reward
+            bonus_pct = getattr(self.player, 'stats', {}).get('bonus_loot_pct', 0)
+            mult = 1.0 + (bonus_pct / 100.0) if bonus_pct > 0 else 1.0
+            
+            exp_gain = int(self.enemy.exp_reward * mult)
+            gold_gain = int(self.enemy.gold_reward * mult)
             
             # Krok 2 (Bestiariusz) - Zliczanie zabójstw
             e_name = self.enemy.name.replace("[BOSS] ", "")
@@ -963,10 +966,17 @@ Zrekrutowano: {unlocked_count}/6
             
             if getattr(self, 'is_dungeon_boss', False):
                 d = self.current_dungeon
+                d_exp = d.exp_reward
+                d_gold = d.gold_reward
+                
+                if bonus_pct > 0:
+                    d_exp = int(d_exp * mult)
+                    d_gold = int(d_gold * mult)
+                    
                 self.log_msg(f"--- UKOŃCZONO LOCH: {d.name} ---")
-                self.log_msg(f"Nagroda Dodatkowa: {d.exp_reward} EXP oraz {d.gold_reward} Złota.")
-                self.player.gold += d.gold_reward
-                self.player.add_exp(d.exp_reward)
+                self.log_msg(f"Nagroda Dodatkowa: {d_exp} EXP oraz {d_gold} Złota.")
+                self.player.gold += d_gold
+                self.player.add_exp(d_exp)
                 
                 if random.random() < 0.25 and d.drop_pool:
                     drop_id = random.choice(d.drop_pool)
@@ -1179,14 +1189,20 @@ Zrekrutowano: {unlocked_count}/6
         
         def add_stat(stat_name):
             if self.player.stat_points > 0:
-                self.player.stats[stat_name] += 1
+                if stat_name == 'bonus_loot_pct':
+                    current = self.player.stats.get('bonus_loot_pct', 0)
+                    if current >= 50:
+                        messagebox.showinfo("Limit Osiągnięty", "Maksymalny bonus do zdobyczy z walki wynosi 50%!")
+                        return
+                        
+                self.player.stats[stat_name] = self.player.stats.get(stat_name, 0) + 1
                 self.player.stat_points -= 1
                 lbl_pts.config(text=f"Punkty do rozdania: {self.player.stat_points}")
                 self.update_sidebar()
                 
         ttk.Button(frame, text="+1 Baza ATK", style="Fantasy.TButton", command=lambda: add_stat('base_atk')).pack(fill=tk.X, padx=80, pady=10)
         ttk.Button(frame, text="+1 Baza DEF", style="Fantasy.TButton", command=lambda: add_stat('base_def')).pack(fill=tk.X, padx=80, pady=10)
-        ttk.Button(frame, text="+1 Baza Złota / klik", style="Fantasy.TButton", command=lambda: add_stat('gold_per_click')).pack(fill=tk.X, padx=80, pady=10)
+        ttk.Button(frame, text="+1% Zdobyczy z Walki (Max 50%)", style="Fantasy.TButton", command=lambda: add_stat('bonus_loot_pct')).pack(fill=tk.X, padx=80, pady=10)
 
     def show_equipment(self, selected_item_dict=None, is_equipped_slot=None):
         if self.is_busy(): return

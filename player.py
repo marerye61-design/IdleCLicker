@@ -25,7 +25,8 @@ class Player:
             "base_def": 4,
             "gold_per_click": 1,
             "gold_per_sec": 0,
-            "mana_regen": 1
+            "mana_regen": 1,
+            "bonus_loot_pct": 0
         }
         
         self.version = "1.1" # Wersja dla kompatybilności zapisów
