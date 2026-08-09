@@ -295,7 +295,8 @@ class IdleRPGApp:
                 btn_p = tk.Button(btn_frame, text="✅ Towarzyszy ci w walce", font=("Georgia", 11, "bold"), bg="#1a100b", fg="#2ecc71", bd=1, state=tk.DISABLED)
                 btn_p.pack(fill=tk.X, padx=30, pady=3)
         else:
-            tk.Label(btn_frame, text="🔒 [Zwerbuj] (Ukończ zadanie postaci w Dzienniku Zadań)", font=("Georgia", 9, "italic"), bg="#1a100b", fg="#aaa").pack(pady=3)
+            btn_locked = tk.Button(btn_frame, text="🔒 [Zwerbuj] (Ukończ zadanie postaci)", font=("Georgia", 11, "italic"), bg="#2a1610", fg="#888", bd=3, relief=tk.RAISED, state=tk.DISABLED)
+            btn_locked.pack(fill=tk.X, padx=30, pady=3)
 
         btn_close = tk.Button(btn_frame, text="(Odejdź)", font=("Georgia", 11, "italic"), bg="#2a1610", fg="#aaa", bd=2, command=win.destroy)
         btn_close.pack(fill=tk.X, padx=30, pady=4)
