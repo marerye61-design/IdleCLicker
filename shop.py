@@ -18,7 +18,7 @@ class FantasyShop:
                 "name": "Zestaw Żelazny",
                 "label": "Poz. 5 - 15",
                 "req_level": 5,
-                "items": ["wep_iron_sword", "arm_iron_plate"]
+                "items": ["wep_iron_sword", "arm_iron_plate", "helm_iron", "acc_iron_ring"]
             },
             3: {
                 "name": "Zestaw Stalowy",
