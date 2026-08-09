@@ -7,8 +7,8 @@ class Player:
         self.gold = 0
         self.mana = 100
         self.max_mana = 100
-        self.hp = 50
-        self.max_hp = 50
+        self.hp = 100
+        self.max_hp = 100
         
         # Na start 5 mikstur życia
         self.inventory = [{"id": "pot_hp", "lvl": 0} for _ in range(5)]
@@ -21,8 +21,8 @@ class Player:
         
         self.stats = {
             "total_clicks": 0,
-            "base_atk": 3,
-            "base_def": 1,
+            "base_atk": 8,
+            "base_def": 4,
             "gold_per_click": 1,
             "gold_per_sec": 0,
             "mana_regen": 1
@@ -137,8 +137,8 @@ class Player:
         return {"atk": bonus_atk, "def": bonus_def, "hp": bonus_hp}
 
     def get_total_atk(self):
-        # Pasywny przyrost bez broni wynosi +0.2 ATK / poziom
-        atk = self.stats["base_atk"] + int((self.level - 1) * 0.2)
+        # Pasywny przyrost bez broni wynosi +1.0 ATK / poziom
+        atk = self.stats["base_atk"] + int((self.level - 1) * 1.0)
         for item_dict in self.equipment.values():
             if item_dict:
                 item = get_item(item_dict["id"])
@@ -152,8 +152,8 @@ class Player:
         return int(atk * atk_multiplier)
 
     def get_total_def(self):
-        # Pasywny przyrost bez pancerza wynosi +0.1 DEF / poziom
-        df = self.stats["base_def"] + int((self.level - 1) * 0.1)
+        # Pasywny przyrost bez pancerza wynosi +0.5 DEF / poziom
+        df = self.stats["base_def"] + int((self.level - 1) * 0.5)
         for item_dict in self.equipment.values():
             if item_dict:
                 item = get_item(item_dict["id"])
@@ -164,8 +164,8 @@ class Player:
         return df
 
     def get_max_hp(self):
-        # Pasywny przyrost HP wynosi +2 HP / poziom
-        hp = self.max_hp + (self.level - 1) * 2
+        # Pasywny przyrost HP wynosi +10 HP / poziom
+        hp = self.max_hp + (self.level - 1) * 10
         for item_dict in self.equipment.values():
             if item_dict:
                 item = get_item(item_dict["id"])

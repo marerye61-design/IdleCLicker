@@ -83,9 +83,9 @@ def get_expedition_choices(player_level, count=3):
     for _ in range(count):
         template = random.choice(available)
         
-        # Skalowanie w dół i w górę (+/- 5 poziomów od gracza)
+        # Skalowanie w dół i w górę (+2 poziomy maksymalnie dla rozsądnego balansu)
         min_lvl = max(1, player_level - 5)
-        max_lvl = player_level + 5
+        max_lvl = player_level + 2
         lvl = random.randint(min_lvl, max_lvl)
         
         choices.append(template.generate(lvl))
