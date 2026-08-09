@@ -1442,9 +1442,14 @@ Zrekrutowano: {unlocked_count}/6
             req_lvl = getattr(item, 'level_req', 1)
             tk.Label(right_panel, text=f"Typ: {slot_name} | Wymaga poz. {req_lvl}", font=("Georgia", 10, "italic"), fg="#ccc", bg="#1a100b").pack()
             
-            stat_str = ", ".join([f"{k.upper()}: +{int(v * (1.0 + 0.15 * lvl))}" for k, v in item.stats.items()])
             sell_price = max(1, int(item.value * 0.10) + (lvl * 50))
-            tk.Label(right_panel, text=f"Statystyki: {stat_str}", font=("Georgia", 11, "bold"), fg="#a8ff9e", bg="#1a100b").pack(pady=4)
+            if hasattr(item, 'stats'):
+                stat_str = ", ".join([f"{k.upper()}: +{int(v * (1.0 + 0.15 * lvl))}" for k, v in item.stats.items()])
+                tk.Label(right_panel, text=f"Statystyki: {stat_str}", font=("Georgia", 11, "bold"), fg="#a8ff9e", bg="#1a100b").pack(pady=4)
+            elif hasattr(item, 'effect'):
+                eff_str = ", ".join([f"{k.upper()}: {v}" for k, v in item.effect.items()])
+                tk.Label(right_panel, text=f"Efekt: {eff_str}", font=("Georgia", 11, "bold"), fg="#3498db", bg="#1a100b").pack(pady=4)
+                
             tk.Label(right_panel, text=f"Wartość: {item.value}g | Sprzedaż: {sell_price}g", font=("Georgia", 10, "bold"), fg="#f4d03f", bg="#1a100b").pack()
             
             # Opis / Historia
@@ -1453,7 +1458,7 @@ Zrekrutowano: {unlocked_count}/6
             desc_box.insert(tk.END, item.description)
             desc_box.config(state=tk.DISABLED)
             
-            # Przyciski akcji (Załóż / Zdejmij / Sprzedaj)
+            # Przyciski akcji (Załóż / Zdejmij / Sprzedaj / Użyj)
             btn_box = tk.Frame(right_panel, bg="#1a100b")
             btn_box.pack(fill=tk.X, pady=6, padx=5)
             
@@ -1473,6 +1478,18 @@ Zrekrutowano: {unlocked_count}/6
                         self.log_msg(f"Założono przedmiot: {item.name}")
                         self.update_sidebar()
                         self.show_equipment(selected_item_dict, is_equipped_slot=getattr(item, 'slot', None))
+                        
+                def use_action():
+                    if selected_item_dict in self.player.inventory:
+                        if hasattr(item, 'effect') and 'heal' in item.effect:
+                            heal_amt = item.effect['heal']
+                            old_hp = self.player.hp
+                            t_hp = self.player.get_max_hp()
+                            self.player.hp = min(self.player.hp + heal_amt, t_hp)
+                            self.log_msg(f"Wypito {item.name}! Odzyskano {int(self.player.hp - old_hp)} HP.")
+                        self.player.inventory.remove(selected_item_dict)
+                        self.update_sidebar()
+                        self.show_equipment()
                     
                 def sell_action():
                     if selected_item_dict in self.player.inventory:
@@ -1482,7 +1499,11 @@ Zrekrutowano: {unlocked_count}/6
                         self.update_sidebar()
                         self.show_equipment()
                         
-                ttk.Button(btn_box, text="Załóż Przedmiot", style="Fantasy.TButton", command=equip_action).pack(fill=tk.X, pady=2)
+                if hasattr(item, 'slot'):
+                    ttk.Button(btn_box, text="Załóż Przedmiot", style="Fantasy.TButton", command=equip_action).pack(fill=tk.X, pady=2)
+                elif hasattr(item, 'effect'):
+                    ttk.Button(btn_box, text="Użyj Przedmiotu", style="Fantasy.TButton", command=use_action).pack(fill=tk.X, pady=2)
+                    
                 ttk.Button(btn_box, text=f"💰 Sprzedaj ({sell_price}g)", style="Danger.TButton", command=sell_action).pack(fill=tk.X, pady=2)
         else:
             tk.Label(right_panel, text="Brak Wyboru", font=("Georgia", 14, "bold"), fg="#aaa", bg="#1a100b").pack(pady=40)
