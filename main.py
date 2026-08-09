@@ -966,6 +966,11 @@ Zrekrutowano: {unlocked_count}/6
                         )
                 self.is_dungeon_boss = False
                 self.current_dungeon = None
+            else:
+                # Zwykłe potwory - szansa 5% na drop mikstury życia
+                if random.random() < 0.05:
+                    self.player.add_to_inventory("pot_hp")
+                    self.log_msg("*** DROP Z POTWORA! Znalazłeś: Mikstura Życia ***")
                 
             if self.player.level > old_lvl:
                 self.log_msg(f"*** AWANS NA {self.player.level} POZIOM! Otrzymujesz pasywnie bonusy do statystyk! ***")
