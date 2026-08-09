@@ -1,0 +1,10 @@
+# Repozytorium - pliki wykluczone
+__pycache__/
+*.pyc
+saves/
+build/
+dist/
+*.spec
+.vscode/
+*.zip
+IdleClicker_Build/
