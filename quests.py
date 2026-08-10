@@ -98,7 +98,7 @@ QUESTS_DB = [
         "Trening Siatkówki Eczme",
         "Eczme szuka kogoś o silnym uderzeniu i szybkim refleksie. Osiągnij 5 poziom doświadczenia.",
         {"level": 5},
-        {"gold": 1000, "party": "eczme"},
+        {"gold": 1000, "item": "acc_eczme", "party": "eczme"},
         unlock_level=5
     ),
     Quest(

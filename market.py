@@ -1,5 +1,5 @@
 class Building:
-    def __init__(self, b_id, name, description, base_cost, gold_per_sec, cost_multiplier=1.15):
+    def __init__(self, b_id, name, description, base_cost, gold_per_sec, cost_multiplier=1.25):
         self.b_id = b_id
         self.name = name
         self.description = description
@@ -12,11 +12,11 @@ class Building:
 
 BUILDINGS_DB = {
     "b1": Building("b1", "Cukiernia Maślaka", "Produkuje lukrowane pączki i dowozi je do klasztorów. Słodki zysk!", 50, 1),
-    "b2": Building("b2", "Strażnica Damiana", "Damian pobiera 'dobrowolne' myto od wędrowców w zamian za ochronę.", 500, 10),
-    "b3": Building("b3", "Plantacja Ziół Domci", "Domcia hoduje rzadkie 'magiczne' grzybki i zioła na eksport.", 3000, 50),
-    "b4": Building("b4", "Boisko Siatkarskie Eczme", "Eczme organizuje turnieje w lochach. Wpisowe jest wysokie, a przeżywalność niska.", 15000, 200),
-    "b5": Building("b5", "Siłownia Pianka", "Pianek pobiera opłaty za patrzenie, jak podnosi ciężary i krzyczy.", 50000, 1000),
-    "b6": Building("b6", "Warsztat 'BeeMWe' Yomena", "Yomen łata pęknięte uszczelki wywarem z czaszek. Zyski z napraw są ogromne!", 250000, 5000)
+    "b2": Building("b2", "Strażnica Damiana", "Damian pobiera 'dobrowolne' myto od wędrowców w zamian za ochronę.", 500, 7),
+    "b3": Building("b3", "Plantacja Ziół Domci", "Domcia hoduje rzadkie 'magiczne' grzybki i zioła na eksport.", 3000, 35),
+    "b4": Building("b4", "Boisko Siatkarskie Eczme", "Eczme organizuje turnieje w lochach. Wpisowe jest wysokie, a przeżywalność niska.", 15000, 140),
+    "b5": Building("b5", "Siłownia Pianka", "Pianek pobiera opłaty za patrzenie, jak podnosi ciężary i krzyczy.", 50000, 700),
+    "b6": Building("b6", "Warsztat 'BeeMWe' Yomena", "Yomen łata pęknięte uszczelki wywarem z czaszek. Zyski z napraw są ogromne!", 250000, 3500)
 }
 
 class Market:

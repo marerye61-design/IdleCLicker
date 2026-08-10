@@ -12,9 +12,32 @@ class Equipment(Item):
     def __init__(self, item_id, name, description, value, slot, stats, level_req=1, rarity="Zwykły"):
         super().__init__(item_id, name, description, value)
         self.slot = slot  # 'weapon', 'armor', 'helmet', 'accessory'
-        self.stats = stats  # dict e.g., {'atk': 10, 'def': 5}
         self.level_req = level_req
         self.rarity = rarity # 'Zwykły', 'Legendarny'
+        
+        # === KOMPLETNY REBALANS (Skalowanie do 500 poziomu) ===
+        mult = 1.0
+        if rarity == "Zwykły": mult = 1.0
+        elif rarity == "Rzadki": mult = 1.5
+        elif rarity == "Legendarny": mult = 2.5
+        elif rarity == "Mityczny": mult = 4.0
+        
+        L = float(max(1, self.level_req))
+        new_stats = {}
+        if slot == "weapon":
+            new_stats["atk"] = int((5 + L ** 1.5) * mult)
+        elif slot == "armor":
+            new_stats["def"] = int((5 + L ** 1.45) * mult)
+            new_stats["hp_max"] = int((20 + L ** 1.65) * mult)
+        elif slot == "helmet":
+            new_stats["def"] = int((3 + L ** 1.35) * mult)
+            new_stats["hp_max"] = int((10 + L ** 1.55) * mult)
+        elif slot == "accessory":
+            new_stats["atk"] = int((2 + L ** 1.4) * mult)
+            new_stats["def"] = int((3 + L ** 1.35) * mult)
+            new_stats["hp_max"] = int((10 + L ** 1.55) * mult)
+            
+        self.stats = new_stats  # Nadpisujemy ręczne statystyki tymi ze wzorów
 
     def __str__(self):
         stat_str = ", ".join([f"{k.upper()}: +{v}" for k, v in self.stats.items()])
@@ -89,9 +112,16 @@ ITEMS_DB = {
     "acc_domcia": Equipment(
         "acc_domcia", 
         "Mistyczny Naszyjnik Domci", 
-        "HISTORIA: Zapleciony z rzadkich grzybów i świecących kryształów. Domcia twierdzi, że noszenie go pozwala widzieć ruchy wroga w zwolnionym tempie.", 
-        7500, "accessory", {"atk": 12, "def": 12, "hp_max": 50}, level_req=18, rarity="Legendarny"
+        "HISTORIA: Naszyjnik wypleciony z najrzadszych ziół. Podobno w środku ukryty jest skruszony magiczny kamień.", 
+        12000, "accessory", {"atk": 15, "def": 15, "hp_max": 200}, level_req=20, rarity="Legendarny"
     ),
+    "acc_eczme": Equipment(
+        "acc_eczme",
+        "Owijki 'PowerKeeper'",
+        "HISTORIA: Kłębek magicznej taśmy izolacyjnej, używanej przez Eczmego na każdym treningu. Skumulowana w niej potęga wzmacnia każde uderzenie.",
+        5000, "accessory", {"atk": 25, "def": 5, "hp_max": 50}, level_req=5, rarity="Legendarny"
+    ),
+
     "wep_yomen": Equipment(
         "wep_yomen", 
         "Klucz Czternastka Yomena", 
@@ -152,5 +182,43 @@ ITEMS_DB = {
     )
 }
 
-def get_item(item_id):
-    return ITEMS_DB.get(item_id)
+from modifiers import MODIFIERS_DB
+import copy
+
+def get_item(item_data):
+    if not item_data:
+        return None
+        
+    if isinstance(item_data, str):
+        item_id = item_data
+        modifier_id = None
+    elif isinstance(item_data, dict):
+        item_id = item_data.get("id")
+        modifier_id = item_data.get("modifier")
+    else:
+        return None
+        
+    base_item = ITEMS_DB.get(item_id)
+    if not base_item or not isinstance(base_item, Equipment) or not modifier_id:
+        return base_item
+        
+    mod = MODIFIERS_DB.get(modifier_id)
+    if not mod or base_item.slot not in mod.allowed_slots:
+        return base_item
+        
+    modified_item = copy.deepcopy(base_item)
+    
+    # Zmiana statystyk
+    for stat, mult in mod.stat_mults.items():
+        if stat in modified_item.stats:
+            modified_item.stats[stat] = int(modified_item.stats[stat] * mult)
+            
+    for stat, flat in mod.stat_flats.items():
+        modified_item.stats[stat] = modified_item.stats.get(stat, 0) + flat
+        
+    # Zmiana nazwy, wartości i opisu
+    modified_item.name = f"{mod.prefix} {base_item.name}"
+    modified_item.description = f"{base_item.description} {mod.generate_description()}"
+    modified_item.value = int(modified_item.value * 1.5)
+    
+    return modified_item

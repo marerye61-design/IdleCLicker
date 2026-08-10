@@ -28,16 +28,19 @@ class EnemyTemplate:
         self.min_level = min_level
 
     def generate(self, level):
-        # Mnożnik endgame - potwory po 30 poziomie zyskują dodatkową moc, by wymusić Ulepszanie Przedmiotów
-        scale_factor = 1.0 if level < 30 else 1.0 + (level - 30) * 0.03
+        # Mnożnik za bycie bossem / szczególnym wrogiem
+        boss_mult = 1.0
+        if "boss" in self.e_id or self.base_hp > 500:
+            boss_mult = 3.0
+            
+        L = float(level)
+        hp = int((20 + (L ** 1.55) * 30) * boss_mult)
+        atk = int((5 + (L ** 1.45) * 6) * boss_mult)
+        defence = int((2 + (L ** 1.4) * 5) * boss_mult)
         
-        hp = int((self.base_hp + self.hp_per_lvl * (level - 1)) * scale_factor)
-        atk = int((self.base_atk + self.atk_per_lvl * (level - 1)) * scale_factor)
-        defence = int((self.base_def + self.def_per_lvl * (level - 1)) * scale_factor)
-        
-        # Nagrody skalują się z poziomem potwora i jego "trudnością" (statystykami)
-        exp = int(level * 5 * random.uniform(0.9, 1.1) + hp * 0.2 + atk * 1)
-        gold = int(level * 3 * random.uniform(0.9, 1.1) + defence * 1 + atk * 0.5)
+        # Nagrody skalują się z potęgą przeciwnika
+        exp = int((hp * 0.2 + atk * 0.5) * (10.0 if boss_mult > 1.0 else 1.0))
+        gold = int((hp * 0.1 + atk * 0.2) * (10.0 if boss_mult > 1.0 else 1.0))
         
         # Bezpieczniki dla najsłabszych potworów by nagroda była chociaż odrobinę sensowna
         exp = max(1, exp)

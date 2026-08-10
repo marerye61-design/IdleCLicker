@@ -7,8 +7,8 @@ class Player:
         self.gold = 0
         self.mana = 100
         self.max_mana = 100
-        self.hp = 100
-        self.max_hp = 100
+        self.hp = 120
+        self.max_hp = 120
         
         # Na start 5 mikstur życia
         self.inventory = [{"id": "pot_hp", "lvl": 0} for _ in range(5)]
@@ -21,8 +21,8 @@ class Player:
         
         self.stats = {
             "total_clicks": 0,
-            "base_atk": 8,
-            "base_def": 4,
+            "base_atk": 12,
+            "base_def": 10,
             "gold_per_click": 1,
             "gold_per_sec": 0,
             "mana_regen": 1,
@@ -54,6 +54,22 @@ class Player:
         if not hasattr(self, 'bestiary'):
             self.bestiary = {}
             
+        # Aktualizacja starych statystyk bazowych do nowego balansu (łatwiejszy początek)
+        if getattr(self, 'stats', {}).get("base_atk", 0) < 12:
+            self.stats["base_atk"] = 12
+        if getattr(self, 'stats', {}).get("base_def", 0) < 10:
+            self.stats["base_def"] = 10
+        if getattr(self, 'max_hp', 0) < 120:
+            self.max_hp = 120
+            self.hp = 120
+            
+        # Aktualizacja pasywnego złota po nerfie budynków (30% mniej, nowy mnożnik)
+        from market import BUILDINGS_DB
+        self.stats["gold_per_sec"] = 0
+        for b_id, count in getattr(self, 'buildings', {}).items():
+            if b_id in BUILDINGS_DB:
+                self.stats["gold_per_sec"] += BUILDINGS_DB[b_id].gold_per_sec * count
+            
         # Migracja przedmiotów (Krok 3 - Kowalstwo) - zamiana stringów na słowniki z poziomem
         new_inv = []
         for item in getattr(self, 'inventory', []):
@@ -83,7 +99,8 @@ class Player:
         return min(1.0, bonus)
 
     def get_exp_required(self):
-        return int(100 * (1.5 ** (self.level - 1)))
+        # Nowy, łagodniejszy wzór (polinomialny) pozwalający na wbicie wysokich poziomów (np. do poziomu 500)
+        return int(100 * (self.level ** 2.1))
 
     def add_exp(self, amount):
         self.exp += amount
@@ -91,7 +108,7 @@ class Player:
             self.exp -= self.get_exp_required()
             self.level += 1
             self.stat_points += 3
-            print(f"\n*** AWANS NA {self.level} POZIOM! Otrzymujesz pasywnie +1 ATK, +1 DEF, +5 Max HP. ***\n")
+            print(f"\n*** AWANS NA {self.level} POZIOM! Otrzymujesz pasywnie +2 ATK, +1 DEF, +10 Max HP. ***\n")
             # Heal player on level up
             self.hp = self.get_max_hp()
             
@@ -138,8 +155,8 @@ class Player:
         return {"atk": bonus_atk, "def": bonus_def, "hp": bonus_hp}
 
     def get_total_atk(self):
-        # Pasywny przyrost bez broni wynosi +1.0 ATK / poziom
-        atk = self.stats["base_atk"] + int((self.level - 1) * 1.0)
+        # Pasywny przyrost bez broni wynosi +2.0 ATK / poziom
+        atk = self.stats["base_atk"] + int((self.level - 1) * 2.0)
         for item_dict in self.equipment.values():
             if item_dict:
                 item = get_item(item_dict["id"])
@@ -153,8 +170,8 @@ class Player:
         return int(atk * atk_multiplier)
 
     def get_total_def(self):
-        # Pasywny przyrost bez pancerza wynosi +0.5 DEF / poziom
-        df = self.stats["base_def"] + int((self.level - 1) * 0.5)
+        # Pasywny przyrost bez pancerza wynosi +1.0 DEF / poziom
+        df = self.stats["base_def"] + int((self.level - 1) * 1.0)
         for item_dict in self.equipment.values():
             if item_dict:
                 item = get_item(item_dict["id"])
@@ -176,12 +193,12 @@ class Player:
         hp += self.get_party_bonus()["hp"]
         return hp
         
-    def add_to_inventory(self, item_id):
-        self.inventory.append({"id": item_id, "lvl": 0})
+    def add_to_inventory(self, item_id, modifier=None):
+        self.inventory.append({"id": item_id, "lvl": 0, "modifier": modifier})
         
     def equip(self, item_dict):
         if item_dict in self.inventory:
-            item = get_item(item_dict["id"])
+            item = get_item(item_dict)
             if not item: return False
             slot = getattr(item, "slot", None)
             if slot and slot in self.equipment:
