@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IdleRPG - Zdominuj świat klikając</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <meta name="description" content="Epicka gra typu Idle RPG. Zbieraj łupy, walcz w lochach i zarządzaj swoim ekwipunkiem." />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Navbar -->
+      <nav class="navbar glass">
+        <div class="logo">IdleRPG</div>
+        <ul class="nav-links">
+          <li><a href="#features">Cechy Gry</a></li>
+          <li><a href="#showcase">Galeria</a></li>
+          <li><a href="#play" class="btn-primary-small">Zagraj Teraz</a></li>
+        </ul>
+      </nav>
+
+      <!-- Hero Section -->
+      <section class="hero" id="home">
+        <div class="hero-content">
+          <h1 class="hero-title">Zanurz się w świecie <span class="text-gradient">IdleRPG</span></h1>
+          <p class="hero-subtitle">Eksploruj lochy, handluj na rynku i walcz o przetrwanie, nawet gdy nie klikasz. Twój bohater nigdy nie śpi.</p>
+          <div class="hero-actions">
+            <a href="#play" class="btn-primary pulse">Rozpocznij Przygodę</a>
+            <a href="#features" class="btn-secondary">Dowiedz się więcej</a>
+          </div>
+        </div>
+        <div class="hero-overlay"></div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features" id="features">
+        <h2 class="section-title">Odkryj mechaniki</h2>
+        <div class="feature-grid">
+          <div class="feature-card glass-card hover-lift">
+            <div class="icon">⚔️</div>
+            <h3>Dynamiczna Walka</h3>
+            <p>Zautomatyzowany system walki z setkami wrogów. Optymalizuj statystyki, by niszczyć bossów.</p>
+          </div>
+          <div class="feature-card glass-card hover-lift">
+            <div class="icon">🏰</div>
+            <h3>Eksploracja Lochów</h3>
+            <p>Zapuszczaj się w głąb mrocznych instancji pełnych pułapek i legendarnych artefaktów.</p>
+          </div>
+          <div class="feature-card glass-card hover-lift">
+            <div class="icon">💰</div>
+            <h3>Giełda i Rynek</h3>
+            <p>Handluj z NPC i graczami. Zbij fortunę na rzadkich surowcach i przedmiotach.</p>
+          </div>
+          <div class="feature-card glass-card hover-lift">
+            <div class="icon">📜</div>
+            <h3>Rozbudowane Zadania</h3>
+            <p>Zanurz się w bogatej historii i zadaniach, poznaj tajemnice NPC Lore.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Showcase Section -->
+      <section class="showcase" id="showcase">
+        <h2 class="section-title">Zobacz grę w akcji</h2>
+        <div class="showcase-container">
+          <div class="showcase-image glass-card hover-glow">
+            <img src="/showcase_ui.jpg" alt="Interfejs IdleRPG" />
+            <div class="showcase-info">
+              <h3>Zaawansowany ekwipunek i statystyki</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer glass">
+        <div class="footer-content">
+          <h2>IdleRPG</h2>
+          <p>Projekt z uniwersum IdleClicker</p>
+          <div class="socials">
+            <a href="#" class="social-icon">Discord</a>
+            <a href="#" class="social-icon">Steam</a>
+            <a href="#" class="social-icon">GitHub</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2026 IdleClicker Team. Wszelkie prawa zastrzeżone.
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

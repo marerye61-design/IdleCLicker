@@ -24,25 +24,24 @@ ctk.CTkButton.destroy = safe_destroy
 
 from datetime import datetime
 
-def global_exception_handler(exc_type, exc_value, exc_traceback):
+def global_excepthook(exc_type, exc_value, exc_tb):
     if issubclass(exc_type, KeyboardInterrupt):
-        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        sys.__excepthook__(exc_type, exc_value, exc_tb)
         return
     
-    error_msg = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
-    
-    try:
-        with open("error_log.txt", "a", encoding="utf-8") as f:
-            f.write(f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] KRYTYCZNY BŁĄD:\n")
-            f.write(error_msg)
-            f.write("-" * 50 + "\n")
-    except:
-        pass
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    with open("error_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"\n[{timestamp}] KRYTYCZNY BŁĄD:\n")
+        traceback.print_exception(exc_type, exc_value, exc_tb, file=f)
+        f.write("-" * 50 + "\n")
         
     print("Wystąpił błąd krytyczny. Zapisano do error_log.txt", file=sys.stderr)
-    print(error_msg, file=sys.stderr)
 
-sys.excepthook = global_exception_handler
+sys.excepthook = global_excepthook
+
+def tk_excepthook(exc, val, tb):
+    global_excepthook(exc, val, tb)
+
 import combat
 from player import Player
 from quests import get_all_quests
@@ -128,7 +127,7 @@ class IdleRPGApp:
         self.root.configure(bg="#000000")
         
         # Podpięcie przechwytywania błędów interfejsu (Tkinter) do naszego loggera
-        self.root.report_callback_exception = global_exception_handler
+        self.root.report_callback_exception = tk_excepthook
         
         self.root.geometry("1024x768")
         try:
@@ -221,7 +220,7 @@ class IdleRPGApp:
 
     def passive_gold_timer(self):
         if self.player:
-            self.player.update_offline_progress()
+            self.player.update_offline_progress(is_offline=False)
             self.update_sidebar()
             # Quest checker w tle
             for q in self.player.quests:
@@ -238,28 +237,53 @@ class IdleRPGApp:
         self.clear_view()
         self.current_view = "tavern"
         
-        # Nowe wygenerowane mroczne tło tawerny
         self.set_background(self.view_panel, "tavern")
         
-        self.tavern_canvas = tk.Canvas(self.view_panel, width=1200, height=800, bg="#111", highlightthickness=0)
-        self.tavern_canvas.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        # Pełnowymiarowy canvas tawerny pokrywający cały panel widoku
+        self.tavern_canvas = tk.Canvas(self.view_panel, highlightthickness=0, bg="#111")
+        self.tavern_canvas.place(x=0, y=0, relwidth=1, relheight=1)
         
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        
+        # Pobieramy rzeczywistą szerokość i wysokość view_panel
+        self.view_panel.update_idletasks()
+        vp_w = self.view_panel.winfo_width()
+        vp_h = self.view_panel.winfo_height()
+        if vp_w < 500 or vp_h < 500:
+            vp_w = sw - 260
+            vp_h = sh
+        
+        # Wyśrodkowanie tła tawerny dokładnie tak samo jak w tk.Label (brak przesunięć)
         if "tavern" in self.bg_images:
-            self.tavern_canvas.create_image(600, 400, image=self.bg_images["tavern"], anchor=tk.CENTER)
+            self.tavern_canvas.create_image(vp_w / 2, vp_h / 2, image=self.bg_images["tavern"], anchor=tk.CENTER)
             
-        # Półprzezroczyste zaciemnienie tła tawerny dla lepszej widoczności
-        self.tavern_canvas.create_rectangle(0, 0, 1200, 800, fill="#000000", stipple="gray50", tags="bg_dim")
+        # Idealnie wycentrowany układ 6 kart towarzyszy (2 rzędy po 3 kolumny)
+        card_w = 240
+        card_h = 240
+        gap_x = 60
+        gap_y = 50
+        total_cards_w = card_w * 3 + gap_x * 2  # 840px
+        total_cards_h = card_h * 2 + gap_y      # 530px
         
-        title = self.tavern_canvas.create_text(600, 60, text="Tawerna 'Pod Skrzydłem Upadłego Anioła'", font=("Georgia", 28, "bold"), fill="#f4d03f")
-        self.tavern_canvas.create_text(600, 100, text="Kliknij na postać, aby z nią porozmawiać.", font=("Georgia", 16, "italic"), fill="#ccc")
+        start_x = int((vp_w - total_cards_w) / 2)
+        start_y = int((vp_h - total_cards_h) / 2)
+        
+        # Półprzezroczyste zaciemnienie tła dokładnie pod wycentrowanymi kartami i tytułem
+        self.tavern_canvas.create_rectangle(start_x - 35, start_y - 110, start_x + total_cards_w + 35, start_y + total_cards_h + 30, fill="#000000", stipple="gray50", tags="bg_dim")
+        
+        title_x = int(vp_w / 2)
+        title_y = max(40, start_y - 75)
+        self.tavern_canvas.create_text(title_x, title_y, text="Tawerna 'Pod Skrzydłem Upadłego Anioła'", font=("Georgia", 26, "bold"), fill="#f4d03f")
+        self.tavern_canvas.create_text(title_x, title_y + 35, text="Kliknij na postać, aby z nią porozmawiać.", font=("Georgia", 15, "italic"), fill="#ccc")
         
         positions = {
-            "maslak": (150, 150),
-            "damian": (480, 150),
-            "pianek": (810, 150),
-            "yomen": (150, 450),
-            "eczme": (480, 450),
-            "domcia": (810, 450)
+            "maslak": (start_x, start_y),
+            "damian": (start_x + (card_w + gap_x), start_y),
+            "pianek": (start_x + (card_w + gap_x) * 2, start_y),
+            "yomen": (start_x, start_y + (card_h + gap_y)),
+            "eczme": (start_x + (card_w + gap_x), start_y + (card_h + gap_y)),
+            "domcia": (start_x + (card_w + gap_x) * 2, start_y + (card_h + gap_y))
         }
         
         for npc_id, npc_data in npc_lore.NPC_DB.items():
@@ -279,9 +303,161 @@ class IdleRPGApp:
                 # Nazwa, domyślnie ukryta
                 self.tavern_canvas.create_text(x+120, y-20, text=npc_data["name"].split(',')[0], fill="#f4d03f", font=("Georgia", 18, "bold"), tags=f"name_{npc_id}", state=tk.HIDDEN)
                 
+                # Złoty wykrzyknik jeśli postać ma ważne zadanie do przekazania lub nagrodę
+                has_quest = False
+                for q in self.player.quests:
+                    if q.quest_id.endswith(f"_{npc_id}"):
+                        q.update_status(self.player.level)
+                        if q.status in ['AVAILABLE', 'COMPLETED']:
+                            has_quest = True
+                            break
+                            
+                if has_quest:
+                    self.tavern_canvas.create_text(x+222, y+32, text="!", fill="#000000", font=("Georgia", 58, "bold"), tags=tag)
+                    self.tavern_canvas.create_text(x+220, y+30, text="!", fill="#f1c40f", font=("Georgia", 58, "bold"), tags=tag)
+                
                 self.tavern_canvas.tag_bind(tag, "<Enter>", lambda e, n_id=npc_id: self.on_npc_hover(n_id))
                 self.tavern_canvas.tag_bind(tag, "<Leave>", lambda e, n_id=npc_id: self.on_npc_leave(n_id))
                 self.tavern_canvas.tag_bind(tag, "<Button-1>", lambda e, n_id=npc_id: self.open_npc_dialog(n_id))
+
+        # --- KARCZMARZ BARNABA (Całkowicie po prawej stronie za ladą) ---
+        # Precyzyjny wielokąt aury Karczmarza Barnaby (wyekstrahowany bezpośrednio z edytowanej grafiki)
+        rel_pts = [
+            (0.8145, 0.4553),
+            (0.8184, 0.4273),
+            (0.8252, 0.4238),
+            (0.8564, 0.4361),
+            (0.8604, 0.4291),
+            (0.8633, 0.4221),
+            (0.8643, 0.4028),
+            (0.8662, 0.3608),
+            (0.8760, 0.3503),
+            (0.8857, 0.3503),
+            (0.8906, 0.3520),
+            (0.8984, 0.3608),
+            (0.9023, 0.3818),
+            (0.9082, 0.3958),
+            (0.9150, 0.4221),
+            (0.9229, 0.4326),
+            (0.9277, 0.4483),
+            (0.9297, 0.4658),
+            (0.9307, 0.4851),
+            (0.9297, 0.4904),
+            (0.9248, 0.5026),
+            (0.9170, 0.5254),
+            (0.9121, 0.5324),
+            (0.8955, 0.5464),
+            (0.8945, 0.5464),
+            (0.8838, 0.5534),
+            (0.8760, 0.5534),
+            (0.8672, 0.5464),
+            (0.8613, 0.5271),
+            (0.8545, 0.5026),
+            (0.8467, 0.5009),
+            (0.8408, 0.4956),
+            (0.8281, 0.4886),
+            (0.8184, 0.4851),
+            (0.8145, 0.4588),
+        ]
+        poly_pts = []
+        for rx, ry in rel_pts:
+            px = rx * sw - (sw - vp_w) / 2
+            py = ry * sh - (sh - vp_h) / 2
+            poly_pts.extend([int(px), int(py)])
+
+        # 1. Czysta, elegancka biała poświata spoczynkowa (brak zaciemniania postaci w środku)
+        self.tavern_canvas.create_polygon(
+            poly_pts, 
+            fill="", 
+            outline="#ffffff", 
+            width=2, 
+            smooth=True, 
+            tags=("innkeeper_body", "npc_innkeeper")
+        )
+        
+        # 2. Mocne złote podświetlenie (aktywne po najechaniu myszką)
+        self.tavern_canvas.create_polygon(
+            poly_pts, 
+            fill="", 
+            outline="#f4d03f", 
+            width=4, 
+            smooth=True, 
+            tags=("innkeeper_hover_glow", "npc_innkeeper"), 
+            state=tk.HIDDEN
+        )
+        
+        # 3. Dodatkowa poświata zewnętrzna
+        self.tavern_canvas.create_polygon(
+            poly_pts, 
+            fill="", 
+            outline="#fff8dc", 
+            width=6, 
+            smooth=True, 
+            tags=("innkeeper_outer_aura", "npc_innkeeper"), 
+            state=tk.HIDDEN
+        )
+        
+        # 4. Etykieta nad głową Karczmarza
+        head_x = int(0.8857 * sw - (sw - vp_w) / 2)
+        head_y = max(30, int(0.30 * sh - (sh - vp_h) / 2))
+        self.tavern_canvas.create_text(
+            head_x, head_y, 
+            text="✨ Karczmarz Barnaba (Kliknij)", 
+            fill="#f4d03f", 
+            font=("Georgia", 15, "bold"), 
+            tags=("innkeeper_name", "npc_innkeeper"), 
+            state=tk.HIDDEN
+        )
+        
+        # 5. Precyzyjna detekcja kursora w całym wnętrzu sylwetki (Point-in-Polygon)
+        def is_inside_innkeeper(mx, my):
+            n = len(poly_pts) // 2
+            inside = False
+            p1x, p1y = poly_pts[0], poly_pts[1]
+            for i in range(1, n + 1):
+                p2x, p2y = poly_pts[(i % n) * 2], poly_pts[(i % n) * 2 + 1]
+                if my > min(p1y, p2y) and my <= max(p1y, p2y) and mx <= max(p1x, p2x):
+                    if p1y != p2y:
+                        xinters = (my - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                    if p1x == p2x or mx <= xinters:
+                        inside = not inside
+                p1x, p1y = p2x, p2y
+            return inside
+
+        self._innkeeper_hovered = False
+        def on_tavern_canvas_motion(event):
+            if is_inside_innkeeper(event.x, event.y):
+                if not self._innkeeper_hovered:
+                    self._innkeeper_hovered = True
+                    self.on_innkeeper_hover()
+            else:
+                if self._innkeeper_hovered:
+                    self._innkeeper_hovered = False
+                    self.on_innkeeper_leave()
+
+        def on_tavern_canvas_click(event):
+            if is_inside_innkeeper(event.x, event.y):
+                self.open_npc_dialog("innkeeper")
+
+        self.tavern_canvas.bind("<Motion>", on_tavern_canvas_motion, add="+")
+        self.tavern_canvas.bind("<Button-1>", on_tavern_canvas_click, add="+")
+        self.tavern_canvas.tag_bind("npc_innkeeper", "<Enter>", self.on_innkeeper_hover)
+        self.tavern_canvas.tag_bind("npc_innkeeper", "<Leave>", self.on_innkeeper_leave)
+        self.tavern_canvas.tag_bind("npc_innkeeper", "<Button-1>", lambda e: self.open_npc_dialog("innkeeper"))
+
+    def on_innkeeper_hover(self, event=None):
+        if hasattr(self, 'tavern_canvas'):
+            self.tavern_canvas.itemconfigure("innkeeper_hover_glow", state=tk.NORMAL)
+            self.tavern_canvas.itemconfigure("innkeeper_outer_aura", state=tk.NORMAL)
+            self.tavern_canvas.itemconfigure("innkeeper_name", state=tk.NORMAL)
+            self.tavern_canvas.configure(cursor="hand2")
+
+    def on_innkeeper_leave(self, event=None):
+        if hasattr(self, 'tavern_canvas'):
+            self.tavern_canvas.itemconfigure("innkeeper_hover_glow", state=tk.HIDDEN)
+            self.tavern_canvas.itemconfigure("innkeeper_outer_aura", state=tk.HIDDEN)
+            self.tavern_canvas.itemconfigure("innkeeper_name", state=tk.HIDDEN)
+            self.tavern_canvas.configure(cursor="")
 
     def on_npc_hover(self, npc_id):
         if hasattr(self, 'tavern_canvas'):
@@ -316,6 +492,13 @@ class IdleRPGApp:
         if npc["img"] in self.portraits:
             lbl_img = tk.Label(top_frame, image=self.portraits[npc["img"]], bg="#1a100b", bd=3, relief=tk.RIDGE)
             lbl_img.pack(side=tk.LEFT, padx=25)
+        else:
+            # Fallback dla Karczmarza i postaci w tle
+            avatar_frame = tk.Frame(top_frame, bg="#2c1a12", bd=3, relief=tk.RIDGE, width=120, height=120)
+            avatar_frame.pack(side=tk.LEFT, padx=25)
+            avatar_frame.pack_propagate(False)
+            icon_char = "🍺" if npc_id == "innkeeper" else "👤"
+            tk.Label(avatar_frame, text=icon_char, font=("Georgia", 44), bg="#2c1a12", fg="#f4d03f").pack(expand=True)
             
         info_frame = tk.Frame(top_frame, bg="#1a100b")
         info_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10)
@@ -340,6 +523,45 @@ class IdleRPGApp:
             btn = ctk.CTkButton(btn_frame, text=option, font=("Georgia", 11, "bold"), fg_color="#3e2723", text_color="#f4d03f", command=lambda r=response: say(r))
             btn.pack(fill=tk.X, padx=30, pady=3)
             
+        # ----- SEKCJA ZADAŃ (QUESTS) -----
+        for q in self.player.quests:
+            if q.quest_id.endswith(f"_{npc_id}"):
+                q.update_status(self.player.level)
+                
+                if q.status == 'AVAILABLE':
+                    def open_offer(quest=q):
+                        self.open_quest_offer_dialog(quest, parent_win=win, on_accepted=lambda: (self.show_tavern(), self.open_npc_dialog(npc_id)))
+                        
+                    btn_q = ctk.CTkButton(btn_frame, text=f"📜 [NOWE ZADANIE] Porozmawiaj: {q.name}", font=("Georgia", 11, "bold"), fg_color="#f1c40f", text_color="black", hover_color="#f39c12", command=open_offer)
+                    btn_q.pack(fill=tk.X, padx=30, pady=5)
+                    
+                elif q.status == 'IN_PROGRESS':
+                    q.check_completion(self.player)
+                    if q.status == 'COMPLETED':
+                        win.destroy()
+                        self.show_tavern()
+                        self.open_npc_dialog(npc_id)
+                        return
+                        
+                    def remind_q(quest=q):
+                        say(f"Pamiętaj o naszej umowie: {quest.description}\nPostęp: {quest.get_progress_str()}")
+                        
+                    btn_q = ctk.CTkButton(btn_frame, text=f"⏳ [W TRAKCIE] {q.name} ({q.get_progress_str()})", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#f4d03f", hover_color="#3e2723", command=remind_q)
+                    btn_q.pack(fill=tk.X, padx=30, pady=5)
+                    
+                elif q.status == 'COMPLETED':
+                    def claim_q(quest=q):
+                        if quest.claim_reward(self.player):
+                            self.log_msg(f"Ukończono zadanie: {quest.name}! Odebrano nagrodę.")
+                            self.update_sidebar()
+                            win.destroy()
+                            self.show_tavern()
+                            self.open_npc_dialog(npc_id)
+                            
+                    btn_q = ctk.CTkButton(btn_frame, text=f"🎁 [ZADANIE UKOŃCZONE] Odbierz Nagrodę: {q.name}", font=("Georgia", 11, "bold"), fg_color="#2ecc71", text_color="white", hover_color="#27ae60", command=claim_q)
+                    btn_q.pack(fill=tk.X, padx=30, pady=5)
+        # ---------------------------------
+        
         # Opcje rekrutacji i wyboru towarzysza w walce (jako opcja dialogowa)
         if npc_id in self.player.party:
             is_active = (getattr(self.player, 'active_companion', None) == npc_id)
@@ -569,33 +791,36 @@ class IdleRPGApp:
             listbox.insert(tk.END, s.replace('.pkl', ''))
             
         def del_selected():
+            if not listbox.winfo_exists(): return
             sel = listbox.curselection()
             if sel:
                 idx = sel[0]
-                filepath = os.path.join(SAVES_DIR, current_saves[idx])
+                save_name = current_saves[idx]
+                filepath = os.path.join(SAVES_DIR, save_name)
                 if os.path.exists(filepath):
                     os.remove(filepath)
-                messagebox.showinfo("Sukces", f"Usunięto {current_saves[idx]}")
                 
                 del current_saves[idx]
-                listbox.delete(idx)
+                if listbox.winfo_exists():
+                    listbox.delete(idx)
                 
                 self.show_start_menu()
+                messagebox.showinfo("Sukces", f"Usunięto {save_name}")
                 
-                if not current_saves:
+                if not current_saves and win.winfo_exists():
                     win.destroy()
                 
         def del_all():
             if messagebox.askyesno("Potwierdzenie", "Czy na pewno chcesz usunąć WSZYSTKIE zapisy gry? Ta operacja jest nieodwracalna!"):
-                for s in current_saves:
+                for s in list(current_saves):
                     filepath = os.path.join(SAVES_DIR, s)
                     if os.path.exists(filepath):
                         os.remove(filepath)
-                messagebox.showinfo("Sukces", "Wyczyszczono wszystkie zapisy gry.")
                 current_saves.clear()
-                listbox.delete(0, tk.END)
                 self.show_start_menu()
-                win.destroy()
+                if win.winfo_exists():
+                    win.destroy()
+                messagebox.showinfo("Sukces", "Wyczyszczono wszystkie zapisy gry.")
                 
         ctk.CTkButton(win, text="Usuń Wybrany", command=del_selected).pack(pady=5)
         ctk.CTkButton(win, text="Wyczyść Wszystko", command=del_all).pack(pady=5)
@@ -621,11 +846,10 @@ class IdleRPGApp:
         ctk.CTkButton(nav_frame, text="Ekwipunek", command=self.show_equipment).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Sklep Fantasy", command=self.show_fantasy_shop).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Budowle (Pasywne)", command=self.show_buildings_shop).pack(fill=tk.X, padx=10, pady=3)
-        ctk.CTkButton(nav_frame, text="Dziennik Zadań", command=self.show_quests).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Bestiariusz", command=self.show_bestiary).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Kowal (Ulepszenia)", command=self.show_blacksmith).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Miasto (Tawerna)", command=self.show_tavern).pack(fill=tk.X, padx=10, pady=3)
-        ctk.CTkButton(nav_frame, text="🛠 DEBUG KONSOLA", command=self.open_debug_console).pack(fill=tk.X, padx=10, pady=3)
+        ctk.CTkButton(nav_frame, text="🛠 DEBUG KONSOLA", fg_color="#c0392b", hover_color="#e74c3c", text_color="white", command=self.open_debug_console).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Zapisz i Wyjdź", command=self.save_and_quit).pack(fill=tk.X, padx=10, pady=15)
         
         main_area = tk.Frame(self.container, bg="#000000")
@@ -649,10 +873,12 @@ class IdleRPGApp:
         if not self.player: return
         t_atk = self.player.get_total_atk()
         t_def = self.player.get_total_def()
+        t_crit = self.player.get_total_crit()
         t_hp = self.player.get_max_hp()
         
         active_c = getattr(self.player, 'active_companion', None)
-        active_name = npc_lore.NPC_DB.get(active_c, {}).get('name', active_c).split(',')[0] if active_c else "Brak"
+        from npc_lore import NPC_DB
+        active_name = NPC_DB.get(active_c, {}).get('name', active_c).split(',')[0] if active_c else "Brak"
         unlocked_count = len(self.player.party)
         
         stats = f"""
@@ -670,6 +896,7 @@ Mana: {int(self.player.mana)} / {self.player.max_mana}
 ✦ WALKA ✦
 ATK: {t_atk}
 DEF: {t_def}
+CRIT: {t_crit}%
 Stat-PKT: {self.player.stat_points}
 
 ✦ DRUŻYNA (Limit 1) ✦
@@ -759,7 +986,11 @@ Zrekrutowano: {unlocked_count}/6
         self.combat_canvas.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
         
         if bg_key in self.bg_images:
-            self.combat_canvas.create_image(600, 350, image=self.bg_images[bg_key], anchor=tk.CENTER)
+            # Ponieważ combat_canvas jest przesunięty wyżej (rely=0.45 zamiast 0.5), musimy przesunąć
+            # tło wewnątrz canvasa lekko w dół, aby połączyło się bezszwowo z głównym tłem aplikacji.
+            self.root.update_idletasks()
+            offset_y = self.view_panel.winfo_height() * 0.05
+            self.combat_canvas.create_image(600, 350 + offset_y, image=self.bg_images[bg_key], anchor=tk.CENTER)
 
         frame = tk.Frame(self.view_panel, bg="#2c1a12", bd=5, relief=tk.RIDGE)
         frame.place(relx=0.5, rely=0.88, anchor=tk.CENTER, width=650)
@@ -777,18 +1008,24 @@ Zrekrutowano: {unlocked_count}/6
 
     def drink_potion(self):
         if not self.combat_active: return
+        if getattr(self, 'potions_used_this_battle', 0) >= 3:
+            self.log_msg("Osiągnąłeś limit 3 mikstur w tej walce!")
+            return
+            
         potions = [i for i in self.player.inventory if i["id"] == "pot_hp"]
         if not potions: return
         
         self.player.inventory.remove(potions[0])
         self.player.hp = self.player.get_max_hp()
+        self.potions_used_this_battle = getattr(self, 'potions_used_this_battle', 0) + 1
+        
         self.log_msg("Wypiłeś Miksturę Pełnego Zdrowia! Odzyskano 100% HP.")
         self.float_text(150, 100, "LECZYSZ SIĘ!", "#2ecc71")
         self.draw_health_bars()
         
         remaining = len(potions) - 1
-        if remaining > 0:
-            self.btn_potion.configure(text=f"Wypij Miksturę ({remaining})")
+        if remaining > 0 and self.potions_used_this_battle < 3:
+            self.btn_potion.configure(text=f"Wypij Miksturę ({remaining}) [Użyto: {self.potions_used_this_battle}/3]")
         else:
             self.btn_potion.pack_forget()
 
@@ -801,8 +1038,10 @@ Zrekrutowano: {unlocked_count}/6
         if getattr(self, 'is_dungeon_boss', False):
             self.is_dungeon_boss = False
             self.current_dungeon = None
+            self.loop_combat = False
             self.show_dungeons()
         else:
+            self.loop_combat = False
             self.show_expedition()
 
     def draw_health_bars(self):
@@ -814,18 +1053,52 @@ Zrekrutowano: {unlocked_count}/6
         
         if not hasattr(self, 'enemy_cur_hp'):
             self.enemy_cur_hp = e_max
+
+        # Import narzędzia pomiaru czcionki dla idealnego dopasowania szerokości
+        try:
+            from tkinter import font as tkfont
+            ui_font = tkfont.Font(family="Georgia", size=11, weight="bold")
+        except Exception:
+            ui_font = None
             
-        # Gracz Bar
-        self.combat_canvas.create_rectangle(150, 70, 390, 100, fill="red", tags="ui")
-        p_width = max(0, 240 * (p_cur / p_max))
-        self.combat_canvas.create_rectangle(150, 70, 150+p_width, 100, fill="green", tags="ui")
-        self.combat_canvas.create_text(270, 85, text=f"{self.player.name} HP: {int(p_cur)}/{p_max}", fill="white", font=("Georgia", 14, "bold"), tags="ui")
+        # --- PASEK ZDROWIA GRACZA ---
+        p_text = f"{self.player.name} HP: {int(p_cur)}/{p_max}"
+        p_text_w = ui_font.measure(p_text) if ui_font else len(p_text) * 9
+        p_bar_w = max(240, p_text_w + 36)
+        p_center_x = 270
+        p_x1 = int(p_center_x - p_bar_w / 2)
+        p_x2 = int(p_center_x + p_bar_w / 2)
         
-        # Wróg Bar
-        self.combat_canvas.create_rectangle(800, 70, 1040, 100, fill="red", tags="ui")
-        e_width = max(0, 240 * (self.enemy_cur_hp / e_max))
-        self.combat_canvas.create_rectangle(800, 70, 800+e_width, 100, fill="green", tags="ui")
-        self.combat_canvas.create_text(920, 85, text=f"{self.enemy.name} HP: {int(self.enemy_cur_hp)}/{e_max}", fill="white", font=("Georgia", 14, "bold"), tags="ui")
+        # Ramka i tło gracza
+        self.combat_canvas.create_rectangle(p_x1 - 2, 68, p_x2 + 2, 102, fill="#1a100b", outline="#8b5a2b", width=2, tags="ui")
+        self.combat_canvas.create_rectangle(p_x1, 70, p_x2, 100, fill="#7f1d1d", tags="ui")
+        
+        p_ratio = max(0.0, min(1.0, p_cur / p_max))
+        p_fill_w = int(p_bar_w * p_ratio)
+        if p_fill_w > 0:
+            self.combat_canvas.create_rectangle(p_x1, 70, p_x1 + p_fill_w, 100, fill="#22c55e", tags="ui")
+        self.combat_canvas.create_text(p_center_x, 85, text=p_text, fill="white", font=("Georgia", 11, "bold"), tags="ui")
+        
+        # --- PASEK ZDROWIA WROGA / BOSSA ---
+        e_text = f"{self.enemy.name} HP: {int(self.enemy_cur_hp)}/{e_max}"
+        e_text_w = ui_font.measure(e_text) if ui_font else len(e_text) * 9
+        e_bar_w = max(240, e_text_w + 36)
+        
+        is_boss = getattr(self.enemy, 'is_boss', False) or "boss" in getattr(self, 'enemy', None).__class__.__name__.lower() or "[BOSS]" in self.enemy.name
+        e_center_x = 980 if is_boss else 920
+        e_x1 = int(e_center_x - e_bar_w / 2)
+        e_x2 = int(e_center_x + e_bar_w / 2)
+        
+        # Ramka i tło wroga
+        border_col = "#cd853f" if is_boss else "#8b5a2b"
+        self.combat_canvas.create_rectangle(e_x1 - 2, 68, e_x2 + 2, 102, fill="#1a100b", outline=border_col, width=2, tags="ui")
+        self.combat_canvas.create_rectangle(e_x1, 70, e_x2, 100, fill="#7f1d1d", tags="ui")
+        
+        e_ratio = max(0.0, min(1.0, self.enemy_cur_hp / e_max))
+        e_fill_w = int(e_bar_w * e_ratio)
+        if e_fill_w > 0:
+            self.combat_canvas.create_rectangle(e_x1, 70, e_x1 + e_fill_w, 100, fill="#22c55e", tags="ui")
+        self.combat_canvas.create_text(e_center_x, 85, text=e_text, fill="white", font=("Georgia", 11, "bold"), tags="ui")
 
     def float_text(self, x, y, text, color):
         tag = f"float_{random.randint(1000,99999)}"
@@ -848,11 +1121,13 @@ Zrekrutowano: {unlocked_count}/6
         if self.combat_active:
             return
             
+        self.potions_used_this_battle = 0
         self.btn_attack.configure(text="UCIEKNIJ Z WALKI", fg_color="#7a3333", text_color="white", command=self.flee_combat, state=tk.NORMAL)
+        self.loop_combat = True
         
         potions = len([i for i in self.player.inventory if i["id"] == "pot_hp"])
         if potions > 0:
-            self.btn_potion.configure(text=f"Wypij Miksturę ({potions})")
+            self.btn_potion.configure(text=f"Wypij Miksturę ({potions}) [Użyto: 0/3]")
             self.btn_potion.pack(side=tk.LEFT, padx=10, ipadx=20, ipady=10)
         else:
             self.btn_potion.pack_forget()
@@ -881,9 +1156,35 @@ Zrekrutowano: {unlocked_count}/6
                 self.combat_canvas.create_text(450, 405, text=f"👥 {ac_name}", fill="#f4d03f", font=("Georgia", 11, "bold"), tags=("portrait", "player_p", "companion_p"))
 
             e_id = self.enemy.e_id
-            if e_id in self.portraits:
-                self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill="#f4d03f", tags=("portrait", "enemy_p"))
-                self.combat_canvas.create_image(800, 120, image=self.portraits[e_id], anchor=tk.NW, tags=("portrait", "enemy_p"))
+            
+            # Wczytaj większy portret dla bossa jeśli to możliwe
+            is_boss = getattr(self.enemy, 'is_boss', False) or "boss" in getattr(self, 'enemy', None).__class__.__name__.lower() or "[BOSS]" in self.enemy.name
+            
+            if is_boss:
+                e_img_key = f"{self.enemy.img_key}_combat"
+                if e_img_key not in self.portraits:
+                    try:
+                        from PIL import Image, ImageTk
+                        img = Image.open(f"assets/{self.enemy.img_key}.jpg")
+                        self.portraits[e_img_key] = ImageTk.PhotoImage(img.resize((360, 360), Image.NEAREST))
+                    except Exception as e:
+                        pass
+                
+                if e_img_key in self.portraits:
+                    # Rysowanie dużej ramki bossa
+                    cx = 800 + 180
+                    cy = 140 + 180
+                    self.combat_canvas.create_rectangle(cx - 184, cy - 184, cx + 184, cy + 184, outline="#2c1a12", width=8, tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_rectangle(cx - 180, cy - 180, cx + 180, cy + 180, outline="#8b5a2b", width=4, tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_rectangle(cx - 178, cy - 178, cx + 178, cy + 178, outline="#cd853f", width=2, tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_image(800, 140, image=self.portraits[e_img_key], anchor=tk.NW, tags=("portrait", "enemy_p"))
+                elif e_id in self.portraits:
+                    self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill="#f4d03f", tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_image(800, 120, image=self.portraits[e_id], anchor=tk.NW, tags=("portrait", "enemy_p"))
+            else:
+                if e_id in self.portraits:
+                    self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill="#f4d03f", tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_image(800, 120, image=self.portraits[e_id], anchor=tk.NW, tags=("portrait", "enemy_p"))
                 
         self.draw_health_bars()
         self.log_msg(f"--- ROZPOCZYNASZ WALKĘ Z: {self.enemy.name} ---")
@@ -984,9 +1285,13 @@ Zrekrutowano: {unlocked_count}/6
         if not self.combat_active:
             return
             
-        dmg = combat.calculate_player_dmg(self.player, self.enemy)
+        dmg, is_crit = combat.calculate_player_dmg(self.player, self.enemy)
         self.enemy_cur_hp -= dmg
-        self.float_text(920, 190, f"-{dmg}", "orange")
+        
+        if is_crit:
+            self.float_text(920, 190, f"-{dmg} KRYT!", "#ff3333")
+        else:
+            self.float_text(920, 190, f"-{dmg}", "orange")
         
         if self.enemy_cur_hp <= 0:
             self.enemy_cur_hp = 0
@@ -1135,6 +1440,7 @@ Zrekrutowano: {unlocked_count}/6
                         )
                 self.is_dungeon_boss = False
                 self.current_dungeon = None
+                self.loop_combat = False
             else:
                 # Zwykłe potwory - szansa 5% na drop mikstury życia
                 if random.random() < 0.05:
@@ -1150,8 +1456,18 @@ Zrekrutowano: {unlocked_count}/6
             
             self.player.stats["total_clicks"] += 1
             
-            # Wróć do ekranu wyboru po krótkiej pauzie by gracz mógł przeczytać log
-            self.root.after(2000, self.show_dungeons if self.current_view == "dungeon" else self.show_expedition)
+            if getattr(self, 'loop_combat', False) and not getattr(self, 'is_dungeon_boss', False):
+                # Generujemy tego samego potwora ponownie
+                from combat import Enemy
+                import copy
+                
+                # Odtwarzamy potwora z pełnym HP
+                self.enemy.hp = self.enemy.max_hp
+                
+                self.root.after(1500, self.start_combat)
+            else:
+                # Wróć do ekranu wyboru po krótkiej pauzie by gracz mógł przeczytać log
+                self.root.after(2000, self.show_dungeons if self.current_view == "dungeon" else self.show_expedition)
 
     def show_dungeons(self):
         if self.combat_active:
@@ -1179,7 +1495,7 @@ Zrekrutowano: {unlocked_count}/6
             # Kolorystyka klimatyczna dopasowana do konkretnego lochu
             theme_colors = {
                 "d1": "#2ecc71", # Złowrogi Las (Szmaragdowy/Zielony)
-                "d2": "#e67e22", # Opuszczona Kopalnia (Ciepła Miedź/Złoto)
+                "d2": "#e67e22", # Górska Przełęcz (Górski Brąz / Miedź)
                 "d3": "#b833ff", # Twierdza Cieni (Mroczny Fiolet)
                 "d4": "#e74c3c", # Wulkaniczne Czeluście (Czerwono-Ognisty)
                 "d5": "#1abc9c", # Kryształowe Jaskinie (Turkus)
@@ -1298,20 +1614,181 @@ Zrekrutowano: {unlocked_count}/6
         self.is_dungeon_boss = True
         
         import combat
-        boss_choices = combat.get_expedition_choices(self.player.level + 5, 1)
-        boss = boss_choices[0]
-        boss.name = f"[BOSS] {boss.name}"
-        boss.hp = int(boss.hp * 1.5)
-        boss.max_hp = boss.hp
-        boss.atk = int(boss.atk * 1.2)
-        boss.exp_reward = int(boss.exp_reward * 2.5)
-        boss.gold_reward = int(boss.gold_reward * 2.5)
         
-        self.enemy = boss
-        self.log_msg(f"--- CZAS MINĄŁ! DROGĘ ZAGRADZA CI {boss.name.upper()}! ---")
-        
+        # Sprawdzanie czy loch posiada unikalnego, z góry ustalonego bossa
+        if hasattr(d, 'hardcoded_boss') and d.hardcoded_boss:
+            boss = combat.get_hardcoded_boss(d.hardcoded_boss, self.player.level)
+            self.enemy = boss
+            
+            # Weryfikacja czy gracz już widział kinematyk dla tego bossa
+            if not self.player.seen_cinematics.get(boss.e_id, False):
+                self.play_boss_cinematic(boss, lambda: self.start_combat())
+                return # Zatrzymujemy tutaj - walka odpali się po animacji
+            else:
+                self.log_msg(f"--- CZAS MINĄŁ! DROGĘ ZAGRADZA CI {boss.name.upper()}! ---")
+                
+        else:
+            # Stara logika (losowy przeciwnik skalowany jako boss)
+            boss_choices = combat.get_expedition_choices(self.player.level + 5, 1)
+            boss = boss_choices[0]
+            boss.name = f"[BOSS] {boss.name}"
+            boss.hp = int(boss.hp * 1.5)
+            boss.max_hp = boss.hp
+            boss.atk = int(boss.atk * 1.2)
+            boss.exp_reward = int(boss.exp_reward * 2.5)
+            boss.gold_reward = int(boss.gold_reward * 2.5)
+            self.enemy = boss
+            self.log_msg(f"--- CZAS MINĄŁ! DROGĘ ZAGRADZA CI {boss.name.upper()}! ---")
+            
         self.setup_combat_ui()
         self.start_combat()
+
+    def play_boss_cinematic(self, boss, on_complete):
+        """Silnik do odtwarzania kinowego intra bossa przed walką."""
+        self.clear_view()
+        self.current_view = "cinematic"
+        
+        # Całkowicie czarne tło
+        cinematic_canvas = tk.Canvas(self.view_panel, bg="black", highlightthickness=0)
+        cinematic_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Oczekujemy na wyrenderowanie, by pobrać prawdziwe wymiary
+        self.root.update_idletasks()
+        canvas_width = cinematic_canvas.winfo_width()
+        if canvas_width <= 1: canvas_width = 800
+        canvas_height = cinematic_canvas.winfo_height()
+        if canvas_height <= 1: canvas_height = 600
+        
+        # Teksty narracyjne i unikalne cytaty specyficzne dla każdego bossa
+        cinematics_data = {
+            "boss_ptys": {
+                "narrative": "Zanurzasz się w gęsty, mroczny las...\nWśród starych dębów dostrzegasz opuszczony fort.\nW jego ruinach, na tronie z czaszek, czeka na Ciebie potężny kształt...",
+                "quote": "Czekałem na Ciebie, słabeuszu. Podejdź no tu...",
+                "quote_color": "#e74c3c"
+            },
+            "boss_kollman": {
+                "narrative": "Wspinasz się po stromych turniach Górskiej Przełęczy...\nWichura świszczy między iglicami, a w powietrzu czuć zapach ozonu i rozgrzanej skóry rękawic.\nNa wąskiej skalnej półce czeka wojowniczy mag, zaciskając bandaże na dłoniach...",
+                "quote": "Trzymaj szczelną gardę, bo zaraz dostaniesz lewy prosty z pioruna i sprowadzenie do parteru! Zatańczymy w oktagonie, leszczu!",
+                "quote_color": "#f1c40f"
+            }
+        }
+        
+        c_info = cinematics_data.get(boss.e_id, {
+            "narrative": f"Przemierzasz niezbadane ostępy podziemi...\nW powietrzu unosi się złowrogi chłód.\nNagle z mroku wyłania się potężny przeciwnik: {boss.name}!",
+            "quote": "Twoja wędrówka dobiegła końca!",
+            "quote_color": "#e74c3c"
+        })
+        narrative_text = c_info["narrative"]
+        boss_quote = c_info["quote"]
+        quote_color = c_info["quote_color"]
+        
+        text_id = cinematic_canvas.create_text(
+            canvas_width // 2, canvas_height // 2 - 30,
+            text="", fill="white", font=("Georgia", 17, "italic"),
+            justify=tk.CENTER, width=680, anchor=tk.CENTER
+        )
+        
+        prompt_id = cinematic_canvas.create_text(
+            canvas_width // 2, canvas_height - 60,
+            text="[ Kliknij w dowolnym miejscu, aby pominąć pisanie / przejść dalej ▶ ]",
+            fill="#888888", font=("Georgia", 11, "italic"),
+            justify=tk.CENTER, anchor=tk.CENTER
+        )
+
+        state = {"stage": "typing", "typing_done": False, "after_id": None}
+
+        # Powolne "pisanie" liter na ekranie
+        def type_text(index=0):
+            if self.current_view != "cinematic": return
+            if index <= len(narrative_text):
+                cinematic_canvas.itemconfig(text_id, text=narrative_text[:index])
+                state["after_id"] = self.root.after(30, lambda: type_text(index + 1))
+            else:
+                state["typing_done"] = True
+                cinematic_canvas.itemconfig(prompt_id, text="[ Kliknij w dowolnym miejscu, aby kontynuować ▶ ]", fill="#f4d03f")
+                
+        def show_boss():
+            if self.current_view != "cinematic": return
+            state["stage"] = "boss_revealed"
+            if state["after_id"]:
+                self.root.after_cancel(state["after_id"])
+                state["after_id"] = None
+                
+            cinematic_canvas.delete(text_id)
+            cinematic_canvas.delete(prompt_id)
+            
+            # Wczytywanie portretu bossa, staramy się go wycentrować
+            img_key = boss.img_key
+            img_cache_key = f"{img_key}_cinematic"
+            if img_cache_key not in self.portraits:
+                try:
+                    from PIL import Image, ImageTk
+                    img = Image.open(f"assets/{img_key}.jpg")
+                    self.portraits[img_cache_key] = ImageTk.PhotoImage(img.resize((380, 380), Image.NEAREST))
+                except Exception as e:
+                    print("Błąd ładowania obrazu bossa:", e)
+                
+            cx = canvas_width // 2
+            cy = canvas_height // 2 - 50
+            
+            if img_cache_key in self.portraits:
+                img = self.portraits[img_cache_key]
+                # Rysowanie potrójnej klimatycznej ramki wokół obrazu
+                cinematic_canvas.create_rectangle(cx - 194, cy - 194, cx + 194, cy + 194, outline="#2c1a12", width=8)
+                cinematic_canvas.create_rectangle(cx - 190, cy - 190, cx + 190, cy + 190, outline="#8b5a2b", width=4)
+                cinematic_canvas.create_rectangle(cx - 188, cy - 188, cx + 188, cy + 188, outline="#cd853f", width=2)
+                cinematic_canvas.create_image(cx, cy, anchor=tk.CENTER, image=img)
+                
+            # Dymek z tekstem od bossa (lekko pod obrazkiem)
+            cinematic_canvas.create_text(
+                canvas_width // 2, cy + 225,
+                text=f'"{boss_quote}"', fill=quote_color, font=("Georgia", 16, "bold"), justify=tk.CENTER, width=750, anchor=tk.CENTER
+            )
+            
+            # Monit przejścia do walki po kliknięciu
+            cinematic_canvas.create_text(
+                canvas_width // 2, canvas_height - 50,
+                text="⚔️ [ KLIKNIJ W DOWOLNYM MIEJSCU, ABY ROZPOCZĄĆ POJEDYNEK ] ⚔️",
+                fill="#2ecc71", font=("Georgia", 13, "bold"), justify=tk.CENTER, anchor=tk.CENTER
+            )
+            
+        def end_cinematic():
+            if self.current_view != "cinematic": return
+            if state["after_id"]:
+                self.root.after_cancel(state["after_id"])
+                state["after_id"] = None
+                
+            # Oznaczamy jako obejrzane
+            self.player.seen_cinematics[boss.e_id] = True
+            
+            # Wracamy do widoku walki
+            self.current_view = "dungeon"
+            self.setup_combat_ui()
+            on_complete()
+
+        def on_cinematic_click(event=None):
+            if state["stage"] == "typing":
+                if not state["typing_done"]:
+                    # Natychmiastowe dokończenie tekstu narracji
+                    if state["after_id"]:
+                        self.root.after_cancel(state["after_id"])
+                        state["after_id"] = None
+                    cinematic_canvas.itemconfig(text_id, text=narrative_text)
+                    cinematic_canvas.itemconfig(prompt_id, text="[ Kliknij w dowolnym miejscu, aby kontynuować ▶ ]", fill="#f4d03f")
+                    state["typing_done"] = True
+                else:
+                    # Przejście do ujawnienia bossa
+                    show_boss()
+            elif state["stage"] == "boss_revealed":
+                # Przejście do walki
+                end_cinematic()
+
+        cinematic_canvas.bind("<Button-1>", on_cinematic_click)
+        self.root.bind("<space>", on_cinematic_click)
+        self.root.bind("<Return>", on_cinematic_click)
+
+        # Rozpoczynamy animację
+        type_text(0)
 
     def cancel_dungeon(self):
         self.dungeon_active = False
@@ -1338,6 +1815,12 @@ Zrekrutowano: {unlocked_count}/6
                     if current >= 50:
                         messagebox.showinfo("Limit Osiągnięty", "Maksymalny bonus do zdobyczy z walki wynosi 50%!")
                         return
+                
+                if stat_name == 'crit_chance':
+                    current = self.player.stats.get('crit_chance', 0)
+                    if current >= 30:
+                        messagebox.showinfo("Limit Osiągnięty", "Maksymalnie możesz zainwestować 30% bazowej szansy na krytyk!")
+                        return
                         
                 self.player.stats[stat_name] = self.player.stats.get(stat_name, 0) + 1
                 self.player.stat_points -= 1
@@ -1346,6 +1829,7 @@ Zrekrutowano: {unlocked_count}/6
                 
         ctk.CTkButton(frame, text="+1 Baza ATK", command=lambda: add_stat('base_atk')).pack(fill=tk.X, padx=80, pady=10)
         ctk.CTkButton(frame, text="+1 Baza DEF", command=lambda: add_stat('base_def')).pack(fill=tk.X, padx=80, pady=10)
+        ctk.CTkButton(frame, text="+1% Szansy na Kryt (Max 30%)", command=lambda: add_stat('crit_chance')).pack(fill=tk.X, padx=80, pady=10)
         ctk.CTkButton(frame, text="+1% Zdobyczy z Walki (Max 50%)", command=lambda: add_stat('bonus_loot_pct')).pack(fill=tk.X, padx=80, pady=10)
 
     def show_equipment(self, selected_item_dict=None, is_equipped_slot=None):
@@ -1610,10 +2094,14 @@ Zrekrutowano: {unlocked_count}/6
             sell_price = max(1, int(item.value * 0.10) + (lvl * 50))
             if hasattr(item, 'stats'):
                 stat_str = ", ".join([f"{k.upper()}: +{int(v * (1.0 + 0.15 * lvl))}" for k, v in item.stats.items()])
-                tk.Label(right_panel, text=f"Statystyki: {stat_str}", font=("Georgia", 11, "bold"), fg="#a8ff9e", bg="#1a100b").pack(pady=4)
+                lbl_stat = tk.Label(right_panel, text=f"Statystyki: {stat_str}", font=("Georgia", 11, "bold"), fg="#a8ff9e", bg="#1a100b")
+                lbl_stat.pack(pady=4, fill=tk.X)
+                lbl_stat.bind('<Configure>', lambda e: e.widget.config(wraplength=e.width - 20))
             elif hasattr(item, 'effect'):
                 eff_str = ", ".join([f"{k.upper()}: {v}" for k, v in item.effect.items()])
-                tk.Label(right_panel, text=f"Efekt: {eff_str}", font=("Georgia", 11, "bold"), fg="#3498db", bg="#1a100b").pack(pady=4)
+                lbl_eff = tk.Label(right_panel, text=f"Efekt: {eff_str}", font=("Georgia", 11, "bold"), fg="#3498db", bg="#1a100b")
+                lbl_eff.pack(pady=4, fill=tk.X)
+                lbl_eff.bind('<Configure>', lambda e: e.widget.config(wraplength=e.width - 20))
                 
             tk.Label(right_panel, text=f"Wartość: {item.value}g | Sprzedaż: {sell_price}g", font=("Georgia", 10, "bold"), fg="#f4d03f", bg="#1a100b").pack()
             
@@ -1772,10 +2260,10 @@ Zrekrutowano: {unlocked_count}/6
             
             if hasattr(item, 'stats'):
                 stat_str = ", ".join([f"{k.upper()}: +{v}" for k, v in item.stats.items()])
-                tk.Label(info, text=f"Statystyki: {stat_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#a8ff9e").pack(anchor=tk.W)
+                self.make_wrapping_label(info, f"Statystyki: {stat_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#a8ff9e")
             elif hasattr(item, 'effect'):
                 eff_str = ", ".join([f"{k.upper()}: {v}" for k, v in item.effect.items()])
-                tk.Label(info, text=f"Efekt: {eff_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#3498db").pack(anchor=tk.W)
+                self.make_wrapping_label(info, f"Efekt: {eff_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#3498db")
                 
             self.make_wrapping_label(info, item.description, font=("Georgia", 9, "italic"), bg="#2c1a12", fg="#aaaaaa")
             
@@ -1865,11 +2353,29 @@ Zrekrutowano: {unlocked_count}/6
             q.update_status(self.player.level)
             
         for q in self.player.quests:
-            row = tk.Frame(sf.scrollable_frame, bg="#3e2723", bd=1, relief=tk.SOLID)
-            row.pack(fill=tk.X, padx=5, pady=5)
+            row = tk.Frame(sf.scrollable_frame, bg="#2c1a12", bd=2, relief=tk.RIDGE)
+            row.pack(fill=tk.X, padx=8, pady=8)
             
-            info = tk.Frame(row, bg="#3e2723")
-            info.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+            npc_id = getattr(q, 'npc_id', 'innkeeper')
+            npc_data = npc_lore.NPC_DB.get(npc_id, {})
+            npc_name = npc_data.get('name', 'Zleceniodawca').split(',')[0]
+            
+            # Miniaturka NPC zlecającego zadanie
+            npc_frame = tk.Frame(row, bg="#2c1a12", width=110)
+            npc_frame.pack(side=tk.LEFT, padx=10, pady=10)
+            
+            if hasattr(self, 'companion_portraits') and npc_id in self.companion_portraits:
+                tk.Label(npc_frame, image=self.companion_portraits[npc_id], bg="#2c1a12", bd=2, relief=tk.SOLID).pack()
+            elif npc_id in self.portraits:
+                tk.Label(npc_frame, image=self.portraits[npc_id], bg="#2c1a12", bd=2, relief=tk.SOLID).pack()
+            else:
+                icon_char = "🍺" if npc_id == "innkeeper" else "📜"
+                tk.Label(npc_frame, text=icon_char, font=("Georgia", 36), bg="#3e2723", fg="#f4d03f", width=3, height=2, bd=2, relief=tk.SOLID).pack()
+                
+            tk.Label(npc_frame, text=npc_name, font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=4)
+            
+            info = tk.Frame(row, bg="#2c1a12")
+            info.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=8)
             
             # Formatowanie czytelnego opisu nagród
             reward_parts = []
@@ -1882,45 +2388,210 @@ Zrekrutowano: {unlocked_count}/6
                     icon = "🌟 " if is_leg else "🛡️ "
                     reward_parts.append(f"{icon}Przedmiot: {item.name}")
             if 'party' in q.rewards:
-                npc_id = q.rewards['party']
-                npc_name = npc_lore.NPC_DB.get(npc_id, {}).get('name', npc_id).split(',')[0]
-                reward_parts.append(f"👥 Towarzysz: Dołącza {npc_name}")
+                member_id = q.rewards['party']
+                member_name = npc_lore.NPC_DB.get(member_id, {}).get('name', member_id).split(',')[0]
+                reward_parts.append(f"👥 Towarzysz: Dołącza {member_name}")
             reward_str = " | ".join(reward_parts) if reward_parts else "Brak"
             
             if q.status == 'LOCKED':
-                self.make_wrapping_label(info, f"🔒 {q.name} (Zablokowane Zadanie)", font=("Georgia", 13, "bold"), bg="#3e2723", fg="#888888")
-                self.make_wrapping_label(info, f"Wymagany {q.unlock_level} poziom bohatera | Nagroda: {reward_str}", font=("Georgia", 9, "italic"), bg="#3e2723", fg="#aaaaaa")
+                self.make_wrapping_label(info, f"🔒 [Wymaga Poz. {q.unlock_level}] {q.name}", font=("Georgia", 13, "bold"), bg="#2c1a12", fg="#888888")
+                self.make_wrapping_label(info, f"Zadanie zablokowane do osiągnięcia {q.unlock_level} poziomu bohatera.", font=("Georgia", 9, "italic"), bg="#2c1a12", fg="#777777")
+                self.make_wrapping_label(info, f"🎁 Nagroda: {reward_str}", font=("Georgia", 9), bg="#2c1a12", fg="#888888")
             else:
-                color = "#f4d03f" if q.status == 'COMPLETED' else "white"
-                self.make_wrapping_label(info, q.name, font=("Georgia", 14, "bold"), bg="#3e2723", fg=color)
-                self.make_wrapping_label(info, q.description, font=("Georgia", 10), bg="#3e2723", fg="#cccccc")
-                self.make_wrapping_label(info, f"🎁 Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#3e2723", fg="#f4d03f")
+                title_color = "#2ecc71" if q.status == 'COMPLETED' else ("#f4d03f" if q.status == 'IN_PROGRESS' else "white")
+                self.make_wrapping_label(info, f"📜 [Poz. {q.unlock_level}] {q.name}", font=("Georgia", 14, "bold"), bg="#2c1a12", fg=title_color)
                 
-                # Stan tekstowy zadania
-                status_texts = {
-                    'AVAILABLE': "Status: Oczekujące (Zlecenie dostępne do przyjęcia)",
-                    'IN_PROGRESS': "Status: W trakcie wykonywania...",
-                    'COMPLETED': "Status: Zakończone sukcesem! (Odbierz nagrodę)",
-                    'CLAIMED': "Status: Odebrano (Zadanie ukończone)"
-                }
-                self.make_wrapping_label(info, status_texts[q.status], font=("Georgia", 9, "italic"), bg="#3e2723", fg="#aaaaaa")
+                # Dialog / cytat fabularny od NPC
+                if getattr(q, 'dialog_offer', ''):
+                    quote_text = q.dialog_offer[:150] + ("..." if len(q.dialog_offer) > 150 else "")
+                    self.make_wrapping_label(info, f'💬 {npc_name}: "{quote_text}"', font=("Georgia", 10, "italic"), bg="#2c1a12", fg="#f9e79f")
+                    
+                self.make_wrapping_label(info, q.description, font=("Georgia", 10), bg="#2c1a12", fg="#cccccc")
+                
+                # Licznik postępu
+                prog_color = "#2ecc71" if q.status == 'COMPLETED' else "#f1c40f"
+                self.make_wrapping_label(info, f"🎯 Postęp: {q.get_progress_str()}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg=prog_color)
+                self.make_wrapping_label(info, f"🎁 Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#f4d03f")
+                
+                btn_frame = tk.Frame(row, bg="#2c1a12")
+                btn_frame.pack(side=tk.RIGHT, padx=15, pady=10)
                 
                 if q.status == 'AVAILABLE':
-                    ctk.CTkButton(row, text="Przyjmij", command=lambda q=q: self.accept_quest(q)).pack(side=tk.RIGHT, padx=10, pady=10)
+                    ctk.CTkButton(btn_frame, text="Przyjmij Zadanie", font=("Georgia", 12, "bold"), fg_color="#3e2723", text_color="#f4d03f", hover_color="#5d4037", command=lambda quest=q: self.accept_quest(quest)).pack(pady=5)
+                elif q.status == 'IN_PROGRESS':
+                    ctk.CTkButton(btn_frame, text="W trakcie...", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#888888", state=tk.DISABLED).pack(pady=5)
                 elif q.status == 'COMPLETED':
-                    ctk.CTkButton(row, text="Odbierz", command=lambda q=q: self.claim_quest(q)).pack(side=tk.RIGHT, padx=10, pady=10)
+                    ctk.CTkButton(btn_frame, text="🎁 ODBIERZ NAGRODĘ", font=("Georgia", 12, "bold"), fg_color="#27ae60", hover_color="#2ecc71", text_color="white", command=lambda quest=q: self.claim_quest(quest)).pack(pady=5)
                 elif q.status == 'CLAIMED':
-                    tk.Label(row, text="✔", font=("Georgia", 24), bg="#3e2723", fg="green").pack(side=tk.RIGHT, padx=15, pady=10)
+                    tk.Label(btn_frame, text="✔ UKOŃCZONE", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#2ecc71").pack(pady=5)
+
+    def open_quest_offer_dialog(self, quest, parent_win=None, on_accepted=None):
+        npc_id = getattr(quest, 'npc_id', 'innkeeper')
+        npc = npc_lore.NPC_DB.get(npc_id, {
+            "name": "Tajemniczy Zleceniodawca",
+            "img": "maslak",
+            "greeting": "Witaj, wędrowcze."
+        })
+        
+        dialog_win = tk.Toplevel(self.root)
+        dialog_win.title(f"📜 Zlecenie: {quest.name}")
+        dialog_win.geometry("900x780")
+        dialog_win.configure(bg="#1a100b")
+        dialog_win.transient(self.root)
+        dialog_win.grab_set()
+        
+        dialog_win.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() - 900) // 2
+        y = self.root.winfo_y() + (self.root.winfo_height() - 780) // 2
+        dialog_win.geometry(f"+{x}+{y}")
+        
+        # Nagłówek okna (Portret, imię NPC i tytuł zadania)
+        header = tk.Frame(dialog_win, bg="#1a100b", bd=2, relief=tk.RIDGE)
+        header.pack(fill=tk.X, padx=15, pady=10)
+        
+        img_key = npc.get("img", "")
+        if img_key in self.portraits:
+            lbl_img = tk.Label(header, image=self.portraits[img_key], bg="#1a100b", bd=3, relief=tk.RIDGE)
+            lbl_img.pack(side=tk.LEFT, padx=15, pady=10)
+        else:
+            avatar_frame = tk.Frame(header, bg="#2c1a12", bd=3, relief=tk.RIDGE, width=100, height=100)
+            avatar_frame.pack(side=tk.LEFT, padx=15, pady=10)
+            avatar_frame.pack_propagate(False)
+            icon_char = "🍺" if npc_id == "innkeeper" else "👤"
+            tk.Label(avatar_frame, text=icon_char, font=("Georgia", 40), bg="#2c1a12", fg="#f4d03f").pack(expand=True)
+            
+        header_text = tk.Frame(header, bg="#1a100b")
+        header_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        tk.Label(header_text, text=npc["name"], font=("Georgia", 16, "bold"), fg="#f4d03f", bg="#1a100b").pack(anchor="w")
+        tk.Label(header_text, text=f"📜 Zadanie: {quest.name} [Wymagany Poz. {quest.unlock_level}]", font=("Georgia", 13, "bold"), fg="#2ecc71", bg="#1a100b").pack(anchor="w", pady=(2, 4))
+        tk.Label(header_text, text=quest.description, font=("Georgia", 10, "italic"), fg="#cccccc", bg="#1a100b", wraplength=580, justify=tk.LEFT).pack(anchor="w")
+        
+        # Główny obszar narracji i monologu NPC
+        body_frame = tk.Frame(dialog_win, bg="#1a100b")
+        body_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=5)
+        
+        tk.Label(body_frame, text="💬 Rozmowa z postacią:", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#1a100b").pack(anchor="w", padx=5, pady=(0, 4))
+        
+        dialog_box = scrolledtext.ScrolledText(body_frame, bg="#24140e", fg="#f5e6cb", font=("Georgia", 11), wrap=tk.WORD, height=10, bd=3, relief=tk.SUNKEN)
+        dialog_box.pack(fill=tk.BOTH, expand=True, padx=5, pady=2)
+        
+        offer_text = getattr(quest, 'dialog_offer', '') or quest.description
+        dialog_box.insert(tk.END, f"{offer_text}\n")
+        dialog_box.configure(state=tk.DISABLED)
+        
+        # Ramka ze szczegółami celów i nagród
+        details_frame = tk.Frame(dialog_win, bg="#2c1a12", bd=2, relief=tk.GROOVE)
+        details_frame.pack(fill=tk.X, padx=15, pady=10)
+        
+        # Kolumna Lewa: Cele
+        req_frame = tk.Frame(details_frame, bg="#2c1a12")
+        req_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=15, pady=8)
+        tk.Label(req_frame, text="🎯 Cele do wykonania:", font=("Georgia", 11, "bold"), fg="#e67e22", bg="#2c1a12").pack(anchor="w")
+        
+        if 'kills' in quest.requirements:
+            for mon_name, count in quest.requirements['kills'].items():
+                tk.Label(req_frame, text=f"  • Pokonaj: {mon_name} ({count}x)", font=("Georgia", 10, "bold"), fg="#ffffff", bg="#2c1a12").pack(anchor="w")
+        else:
+            tk.Label(req_frame, text="  • Wykonaj polecenia z opisu zadania", font=("Georgia", 10), fg="#ffffff", bg="#2c1a12").pack(anchor="w")
+            
+        # Kolumna Prawa: Nagrody
+        rew_frame = tk.Frame(details_frame, bg="#2c1a12")
+        rew_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=15, pady=8)
+        tk.Label(rew_frame, text="🎁 Nagroda za ukończenie:", font=("Georgia", 11, "bold"), fg="#f4d03f", bg="#2c1a12").pack(anchor="w")
+        
+        if 'gold' in quest.rewards:
+            tk.Label(rew_frame, text=f"  • 💰 Złoto: +{quest.rewards['gold']}g", font=("Georgia", 10, "bold"), fg="#f1c40f", bg="#2c1a12").pack(anchor="w")
+        if 'item' in quest.rewards:
+            item = get_item(quest.rewards['item'])
+            if item:
+                rarity = getattr(item, 'rarity', 'Zwykły')
+                rarity_prefix = "🌟 [LEGENDARNY] " if rarity == "Legendarny" else "🛡️ "
+                tk.Label(rew_frame, text=f"  • {rarity_prefix}{item.name}", font=("Georgia", 10, "bold"), fg="#2ecc71", bg="#2c1a12").pack(anchor="w")
+        if 'party' in quest.rewards:
+            p_name = npc_lore.NPC_DB.get(quest.rewards['party'], {}).get('name', 'Towarzysz').split(',')[0]
+            tk.Label(rew_frame, text=f"  • 👥 Nowy Kompan: {p_name} dołącza do drużyny!", font=("Georgia", 10, "bold"), fg="#3498db", bg="#2c1a12").pack(anchor="w")
+            
+        # Stopka z interaktywnymi przyciskami gracza
+        action_frame = tk.Frame(dialog_win, bg="#1a100b")
+        action_frame.pack(fill=tk.X, padx=15, pady=12)
+        
+        def confirm_accept():
+            if quest.accept():
+                self.log_msg(f"📜 Przyjęto zadanie od {npc['name'].split(',')[0]}: '{quest.name}'!")
+                
+                # Wyświetlenie reakcji postaci w oknie dialogowym
+                reaction = getattr(quest, 'dialog_accept_reaction', '') or "*Kiwając głową z uznaniem życzy ci powodzenia w walce.*"
+                dialog_box.configure(state=tk.NORMAL)
+                dialog_box.insert(tk.END, f"\n--- PRZYJĘTO ZLECENIE ---\n\n{reaction}\n", "accept_tag")
+                dialog_box.tag_config("accept_tag", foreground="#f1c40f", font=("Georgia", 11, "bold"))
+                dialog_box.see(tk.END)
+                dialog_box.configure(state=tk.DISABLED)
+                
+                # Zmiana przycisków
+                for child in action_frame.winfo_children():
+                    child.destroy()
+                    
+                def close_and_refresh():
+                    dialog_win.destroy()
+                    if parent_win and parent_win.winfo_exists():
+                        parent_win.destroy()
+                    if on_accepted:
+                        on_accepted()
+                    else:
+                        self.show_quests()
+                        
+                ctk.CTkButton(
+                    action_frame, 
+                    text="🚀 [RUSZAJMY DO WALKI!]", 
+                    font=("Georgia", 13, "bold"), 
+                    fg_color="#27ae60", 
+                    hover_color="#2ecc71", 
+                    height=42, 
+                    command=close_and_refresh
+                ).pack(fill=tk.X, padx=20, pady=5)
+                
+        btn_accept = ctk.CTkButton(
+            action_frame, 
+            text=f"⚔️ PRZYJMUJĘ ZLECENIE: {quest.name.upper()}!", 
+            font=("Georgia", 13, "bold"), 
+            fg_color="#f1c40f", 
+            hover_color="#f39c12", 
+            text_color="black", 
+            height=40, 
+            command=confirm_accept
+        )
+        btn_accept.pack(fill=tk.X, padx=20, pady=4)
+        
+        btn_decline = ctk.CTkButton(
+            action_frame, 
+            text="⏳ Muszę się jeszcze przygotować (Odejdź)", 
+            font=("Georgia", 11, "italic"), 
+            fg_color="#2a1610", 
+            hover_color="#3e2723", 
+            text_color="#aaaaaa", 
+            height=32, 
+            command=dialog_win.destroy
+        )
+        btn_decline.pack(fill=tk.X, padx=20, pady=2)
 
     def accept_quest(self, quest):
-        if quest.accept():
-            self.log_msg(f"Przyjęto zadanie: {quest.name}")
-            self.show_quests()
+        self.open_quest_offer_dialog(quest, on_accepted=self.show_quests)
 
     def claim_quest(self, quest):
         if quest.claim_reward(self.player):
-            self.log_msg(f"Odebrano nagrodę za: {quest.name}!")
+            npc_id = getattr(quest, 'npc_id', 'innkeeper')
+            npc_name = npc_lore.NPC_DB.get(npc_id, {}).get('name', 'Zleceniodawca').split(',')[0]
+            dialog_complete = getattr(quest, 'dialog_complete', 'Wspaniała robota! Zasłużyłeś na tę nagrodę.')
+            
+            self.log_msg(f"✅ Ukończono zadanie: '{quest.name}'! Odebrano nagrodę.")
+            self.update_sidebar()
             self.show_quests()
+            
+            messagebox.showinfo(
+                f"🌟 ZADANIE UKOŃCZONE: {quest.name} 🌟",
+                f"Wspaniały sukces!\n\n💬 {npc_name}:\n\"{dialog_complete}\"\n\nOtrzymano nagrody za ukończenie zlecenia!"
+            )
 
     def show_bestiary(self):
         if self.is_busy(): return
@@ -1992,8 +2663,10 @@ Zrekrutowano: {unlocked_count}/6
             row.pack(fill=tk.X, padx=10, pady=5)
             
             lvl = inv_item_dict.get('lvl', 0)
-            # Koszt rośnie bazując na wartości i poziomie, mityczne przedmioty będą cholernie drogie
-            cost = int(item.value * (1.5 ** lvl) * 2.5)
+            
+            # Nowy system: koszt oparty na mocy przedmiotu, a nie cenie sklepowej
+            base_stats = item.stats.get("atk", 0) + item.stats.get("def", 0) + (item.stats.get("hp_max", 0) / 10.0)
+            cost = int(base_stats * 50 * (1.9 ** lvl))
             if cost < 10: cost = 10
             
             if lvl >= 9:

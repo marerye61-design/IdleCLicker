@@ -28,15 +28,15 @@ class EnemyTemplate:
         self.min_level = min_level
 
     def generate(self, level):
-        # Mnożnik za bycie bossem / szczególnym wrogiem
+        # Mnożnik za bycie bossem / szczególnym wrogiem (tylko dla dedykowanych bossów)
         boss_mult = 1.0
-        if "boss" in self.e_id or self.base_hp > 500:
-            boss_mult = 3.0
+        if "boss" in self.e_id:
+            boss_mult = 2.0
             
         L = float(level)
-        hp = int((20 + (L ** 1.55) * 30) * boss_mult)
-        atk = int((5 + (L ** 1.45) * 6) * boss_mult)
-        defence = int((2 + (L ** 1.4) * 5) * boss_mult)
+        hp = int((self.base_hp + (L ** 1.42) * self.hp_per_lvl) * boss_mult)
+        atk = int((self.base_atk + (L ** 1.42) * self.atk_per_lvl) * boss_mult)
+        defence = int((self.base_def + (L ** 1.42) * self.def_per_lvl) * boss_mult)
         
         # Nagrody skalują się z potęgą przeciwnika
         exp = int((hp * 0.2 + atk * 0.5) * (10.0 if boss_mult > 1.0 else 1.0))
@@ -97,18 +97,53 @@ def get_expedition_choices(player_level, count=3):
     choices.sort(key=lambda x: x.level)
     return choices
 
+def get_hardcoded_boss(boss_id, player_level):
+    if boss_id == "boss_ptys":
+        # Giga Ork 'Ptyś' - wielki, unikalny potwór 1. lochu (Złowrogi Las)
+        hp = 850 + (player_level * 15)
+        atk = 45 + (player_level * 2)
+        defence = 15
+        exp = 2500
+        gold = 1000
+        return Enemy(boss_id, "[BOSS] Giga Ork 'Ptyś'", player_level, hp, atk, defence, exp, gold, "boss_ptys")
+        
+    elif boss_id == "boss_kollman":
+        # Kollman Wojowniczy Mag - potężny boss 2. lochu (Górska Przełęcz)
+        # Walczy stylem bokserskim/MMA połączonym z magią
+        lvl = max(15, player_level)
+        hp = 2200 + (lvl * 30)
+        atk = 80 + (lvl * 3)
+        defence = 30 + (lvl * 1)
+        exp = 7500
+        gold = 3000
+        return Enemy(boss_id, "[BOSS] Kollman 'Wojowniczy Mag'", lvl, hp, atk, defence, exp, gold, "boss_kollman")
+    
+    # Fallback
+    return Enemy("unknown_boss", "[BOSS] Nieznany Byt", player_level, 500, 30, 10, 500, 250, "e_golem")
+
 def calculate_player_dmg(player, enemy=None):
     p_atk = player.get_total_atk()
     if not enemy:
-        return max(1, p_atk)
+        return max(1, p_atk), False
     
     # Obrażenia gracza = ATK gracza redukowana częściowo przez DEF potwora (min. 25% ATK)
     base_dmg = p_atk - int(enemy.defence * 0.4)
     min_dmg = max(1, int(p_atk * 0.25))
     final_dmg = max(min_dmg, base_dmg)
     
-    variance = random.uniform(0.9, 1.1)
-    return max(1, int(final_dmg * variance))
+    # Rozpiętość obrażeń +- 15 do 20% np 85-115%
+    variance = random.uniform(0.85, 1.15)
+    
+    dmg = int(final_dmg * variance)
+    is_crit = False
+    
+    # Szansa na uderzenie krytyczne (Mnożnik x1.75)
+    crit_chance = player.get_total_crit()
+    if random.randint(1, 100) <= crit_chance:
+        dmg = int(dmg * 1.75)
+        is_crit = True
+        
+    return max(1, dmg), is_crit
 
 def calculate_enemy_dmg(enemy, player):
     e_atk = enemy.atk

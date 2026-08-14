@@ -22,6 +22,10 @@ class Equipment(Item):
         elif rarity == "Legendarny": mult = 2.5
         elif rarity == "Mityczny": mult = 4.0
         
+        # Balans dla wczesnego artefaktu Eczmego (dokładnie ~3.5x mocniejszy od startowego sygnetu)
+        if item_id == "acc_eczme":
+            mult = 1.45
+        
         L = float(max(1, self.level_req))
         new_stats = {}
         if slot == "weapon":
@@ -90,43 +94,48 @@ ITEMS_DB = {
     "helm_demon_crown": Equipment("helm_demon_crown", "Korona Demonów", "Płonąca aureola władcy otchłani.", 800000, "helmet", {"def": 140, "hp_max": 400}, level_req=75, rarity="Zwykły"),
     "acc_god_talisman": Equipment("acc_god_talisman", "Talisman Boskiej Mocy", "Absolutna potęga niebios i piekła.", 1200000, "accessory", {"atk": 120, "def": 120, "hp_max": 600}, level_req=75, rarity="Zwykły"),
 
-    # === UNIKALNY EKWIPUNEK LEGENDARNY (TYLKO Z LOCHÓW) ===
+    # === UNIKALNY EKWIPUNEK LEGENDARNY (NAGRODY Z ZADAŃ TOWARZYSZY) ===
+    # Lvl 1: Ponad 5x silniejszy od Pałki (ATK 3 -> ATK 16, HP 40)
     "wep_maslak": Equipment(
         "wep_maslak", 
         "Święty Kij Maślaka", 
         "HISTORIA: Młody Maślak zgubił ten sękaty kij w Złowrogim Lesie uciekając przed pszczołami. Obrobiony słodkim lukrem z jego cukierni i żywicą, zyskał niezwykłą twardość.", 
-        1500, "weapon", {"atk": 14, "hp_max": 15}, level_req=5, rarity="Legendarny"
+        1500, "weapon", {"atk": 16, "hp_max": 40}, level_req=1, rarity="Legendarny"
     ),
-    "helm_pianek": Equipment(
-        "helm_pianek", 
-        "Potowa Opaska Pianka", 
-        "HISTORIA: Kultowa opaska z czoła Pianka, przesiąknięta potem z tysięcy serii martwego ciągu. Wibracje czystego pakowania budzą lęk w sercach wrogów.", 
-        2000, "helmet", {"def": 8, "hp_max": 40, "atk": 4}, level_req=8, rarity="Legendarny"
-    ),
-    "arm_damian": Equipment(
-        "arm_damian", 
-        "Zbroja Mytnika Damiana", 
-        "HISTORIA: Zbroja, w której Damian pobierał 'dobrowolne' opłaty od strażników. Wyklepana przez kowala za dławienie dłużników, nosi ślady strzał nieprzekonanych wędrowców.", 
-        8000, "armor", {"def": 30, "hp_max": 75}, level_req=15, rarity="Legendarny"
-    ),
-    "acc_domcia": Equipment(
-        "acc_domcia", 
-        "Mistyczny Naszyjnik Domci", 
-        "HISTORIA: Naszyjnik wypleciony z najrzadszych ziół. Podobno w środku ukryty jest skruszony magiczny kamień.", 
-        12000, "accessory", {"atk": 15, "def": 15, "hp_max": 200}, level_req=20, rarity="Legendarny"
-    ),
+    # Lvl 10: Ponad 3x silniejszy od Sygnetu (ATK 4/DEF 4 -> ATK 25/DEF 15/HP 80)
     "acc_eczme": Equipment(
         "acc_eczme",
         "Owijki 'PowerKeeper'",
         "HISTORIA: Kłębek magicznej taśmy izolacyjnej, używanej przez Eczmego na każdym treningu. Skumulowana w niej potęga wzmacnia każde uderzenie.",
-        5000, "accessory", {"atk": 25, "def": 5, "hp_max": 50}, level_req=5, rarity="Legendarny"
+        5000, "accessory", {"atk": 25, "def": 15, "hp_max": 80}, level_req=10, rarity="Legendarny"
     ),
-
+    # Lvl 20: Ponad 3x silniejszy od Przyłbicy (DEF 10 -> DEF 35, HP 150, ATK 20)
+    "helm_pianek": Equipment(
+        "helm_pianek", 
+        "Potowa Opaska Pianka", 
+        "HISTORIA: Kultowa opaska z czoła Pianka, przesiąknięta potem z tysięcy serii martwego ciągu. Wibracje czystego pakowania budzą lęk w sercach wrogów.", 
+        10000, "helmet", {"def": 35, "hp_max": 150, "atk": 20}, level_req=20, rarity="Legendarny"
+    ),
+    # Lvl 30: Ponad 2x silniejszy od Mithrilowej Kolczugi (DEF 55/HP 120 -> DEF 120/HP 350)
+    "arm_damian": Equipment(
+        "arm_damian", 
+        "Zbroja Mytnika Damiana", 
+        "HISTORIA: Zbroja, w której Damian pobierał 'dobrowolne' opłaty od strażników. Wyklepana przez kowala za dławienie dłużników, nosi ślady strzał nieprzekonanych wędrowców.", 
+        25000, "armor", {"def": 120, "hp_max": 350, "atk": 20}, level_req=30, rarity="Legendarny"
+    ),
+    # Lvl 40: Ponad 3x silniejszy od Rubinowego Wisiorka (ATK 20/DEF 20 -> ATK 65/DEF 65/HP 450)
+    "acc_domcia": Equipment(
+        "acc_domcia", 
+        "Mistyczny Naszyjnik Domci", 
+        "HISTORIA: Naszyjnik wypleciony z najrzadszych ziół. Podobno w środku ukryty jest skruszony magiczny kamień.", 
+        50000, "accessory", {"atk": 65, "def": 65, "hp_max": 450}, level_req=40, rarity="Legendarny"
+    ),
+    # Lvl 50: Ponad 2.1x silniejszy od Adamantowego Miecza (ATK 180 -> ATK 380, HP 350, Kryt 8%)
     "wep_yomen": Equipment(
         "wep_yomen", 
         "Klucz Czternastka Yomena", 
         "HISTORIA: Ulubione narzędzie Yomena ze ścieków. Legenda głosi, że tym kluczem dokręcił uszczelki w maszynie BeeMWe i rozłupał czaszki dziesięciu goblinów.", 
-        18000, "weapon", {"atk": 38, "hp_max": 40}, level_req=22, rarity="Legendarny"
+        120000, "weapon", {"atk": 380, "hp_max": 350, "crit_chance": 8}, level_req=50, rarity="Legendarny"
     ),
     "arm_eczme": Equipment(
         "arm_eczme", 
@@ -138,7 +147,7 @@ ITEMS_DB = {
     # NOWE LOCHY (45 - 100)
     "wep_fire_axe": Equipment(
         "wep_fire_axe", "Ognisty Topór Czeluści", "Ocieka magmą. Z każdym uderzeniem spopiela pancerz wroga.", 
-        100000, "weapon", {"atk": 165, "hp_max": 100}, level_req=45, rarity="Legendarny"
+        100000, "weapon", {"atk": 165, "hp_max": 100, "crit_chance": 5}, level_req=45, rarity="Legendarny"
     ),
     "acc_fire_ruby": Equipment(
         "acc_fire_ruby", "Oko Wulkanu", "Pulsujący klejnot wyrwany z serca wulkanu.", 
@@ -156,7 +165,7 @@ ITEMS_DB = {
 
     "wep_frost_mourne": Equipment(
         "wep_frost_mourne", "Mroźne Ostrze", "Zamraża krew w żyłach każdego, kogo dotknie.", 
-        750000, "weapon", {"atk": 380, "hp_max": 400}, level_req=75, rarity="Legendarny"
+        750000, "weapon", {"atk": 380, "hp_max": 400, "crit_chance": 10}, level_req=75, rarity="Legendarny"
     ),
     "acc_frost_amulet": Equipment(
         "acc_frost_amulet", "Amulet Wiecznej Zimy", "Gwarantuje odporność na wszelkie skrajne temperatury.", 
@@ -174,7 +183,7 @@ ITEMS_DB = {
 
     "wep_void_blade": Equipment(
         "wep_void_blade", "Ostrze Nieskończoności", "Nie ma fizycznej formy. Rozcina samo kontinuum czasoprzestrzeni.", 
-        10000000, "weapon", {"atk": 1200, "hp_max": 1000}, level_req=100, rarity="Mityczny"
+        10000000, "weapon", {"atk": 1200, "hp_max": 1000, "crit_chance": 20}, level_req=100, rarity="Mityczny"
     ),
     "acc_void_core": Equipment(
         "acc_void_core", "Rdzeń Czasoprzestrzeni", "Zatrzymuje czas wokół posiadacza.", 

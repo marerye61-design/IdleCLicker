@@ -60,5 +60,17 @@ NPC_DB = {
             "Opowiedz mi swoją historię.": "Stary, to była długa podróż. Kiedyś mieszkałem w stolicy. Hałas, pośpiech, strażnicy czepiający się o zbieranie dziwnego mchu... Koszmar, negatywne wibracje. Pewnego dnia wziąłem swój kociołek i po prostu poszedłem przed siebie do puszczy. Trafiłem na magiczną polanę pełną Amanity. Usiadłem, zacząłem suszyć, testować i mieszać. Zrozumiałem wtedy, że drogie mikstury od tych nadętych alchemików z gildii to straszna ściema. Moje organiczne ekstrakty nie tylko leczą punkty życia, ale pokazują ci, gdzie to życie tak naprawdę ma swoje źródło we wszechświecie. Wprowadziłem się do tej tawerny, założyłem w kącie swój gabinet 'Wital-Punkt' i puszczam dymka.",
             "Co robisz w tawernie?": "Rozjaśniam umysły, stary. Przesiaduję tu, puszczam kółka z dymu i obserwuję przepływ energii awanturników. Jak ktoś wróci z lochu cały w siniakach, to daję mu ciepły wywar z muchomora i ziół. Po pięciu minutach przestaje czuć ból w nogach, a za to zaczyna słyszeć kolory. Najlepsze naturalne lekarstwo, wierz mi."
         }
+    },
+    "innkeeper": {
+        "name": "Karczmarz Barnaba, Gospodarz Tawerny",
+        "img": "innkeeper",
+        "greeting": "*Wyciera kufel lnianą ścierką i spogląda na ciebie zza lady z ciepłym uśmiechem* Witaj, wędrowcze, w gospodzie 'Pod Skrzydłem Upadłego Anioła'! Co ci podać? Zimne piwo, ciepłą strawę, czy może szukasz sprawdzonych wieści ze świata?",
+        "options": {
+            "Kim jesteś, gospodarzu?": "Zowią mnie Barnaba. Prowadzę ten przybytek od ponad trzydziestu lat. Widziałem królów tracących korony i żebraków stających się legendami. Ta tawerna stoi na skrzyżowaniu pradawnych szlaków – dla każdego, kto ma dość walki i szuka bezpiecznego dachu nad głową, moje drzwi stoją otworem. O ile oczywiście nie wszczyna burd przy stole!",
+            "Co słychać w okolicy? (Plotki i Wieści)": "Dzikie bestie w Złowrogim Lesie stają się coraz bardziej zuchwałe. Wilki podchodzą pod sam trakt, a z głębi puszczy dochodzi ryk Giga Orka Ptyśka... Jeśli planujesz zapuszczać się do lochów, upewnij się, że masz przy sobie zapas mikstur i solidnie okuty pancerz. Pamiętaj też, że kowal w mieście potrafi zdziałać cuda z każdym kawałkiem żelastwa!",
+            "Opowiedz mi o swoich gościach.": "Ach, moja wesoła kompania! *śmieje się cicho* Maślak przesiaduje w kącie z fajką i pączkami, Damian po piątym kuflu przysięga zbawić świat, Pianek bije rekordy w podnoszeniu beczek, Yomen ciągle majstruje przy rurach w piwnicy, Eczme trenuje ściny na korytarzu, a Domcia leczy skołatane nerwy ziółkami. Każdy z nich ma swoje dziwactwa, ale w walce możesz na nich polegać bez wahania!",
+            "Masz dla mnie jakieś zlecenie?": "Zajrzyj do Dziennika Zadań! Moi stali bywalcy często szukają kogoś o twardej ręce, by przetrzebić okoliczne potwory. Pomóż im, a z chęcią dołączą do twojej drużyny jako wierni towarzysze broni!"
+        }
     }
 }
+

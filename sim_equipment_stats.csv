@@ -1,0 +1,821 @@
+Item Name,Base Item,Modifier,Slot,Level Req,Rarity,ATK,DEF,HP,Value
+Ostry Drewniana Pałka,Drewniana Pałka,Ostry,weapon,1,Zwykły,6,0,0,75
+Ciężki Drewniana Pałka,Drewniana Pałka,Ciężki,weapon,1,Zwykły,12,0,0,75
+Zabójczy Drewniana Pałka,Drewniana Pałka,Zabójczy,weapon,1,Zwykły,8,0,0,75
+Krwawy Drewniana Pałka,Drewniana Pałka,Krwawy,weapon,1,Zwykły,6,0,20,75
+Ognisty Drewniana Pałka,Drewniana Pałka,Ognisty,weapon,1,Zwykły,17,0,0,75
+Lodowy Drewniana Pałka,Drewniana Pałka,Lodowy,weapon,1,Zwykły,6,10,0,75
+Trujący Drewniana Pałka,Drewniana Pałka,Trujący,weapon,1,Zwykły,7,0,-10,75
+Potężny Drewniana Pałka,Drewniana Pałka,Potężny,weapon,1,Zwykły,9,0,0,75
+Lekki Drewniana Pałka,Drewniana Pałka,Lekki,weapon,1,Zwykły,5,5,0,75
+Szybki Drewniana Pałka,Drewniana Pałka,Szybki,weapon,1,Zwykły,11,0,0,75
+Wampiryczny Drewniana Pałka,Drewniana Pałka,Wampiryczny,weapon,1,Zwykły,6,0,50,75
+Przeklęty Drewniana Pałka,Drewniana Pałka,Przeklęty,weapon,1,Zwykły,12,0,-50,75
+Święty Drewniana Pałka,Drewniana Pałka,Święty,weapon,1,Zwykły,7,10,30,75
+Mroczny Drewniana Pałka,Drewniana Pałka,Mroczny,weapon,1,Zwykły,7,-10,0,75
+Starożytny Drewniana Pałka,Drewniana Pałka,Starożytny,weapon,1,Zwykły,28,0,0,75
+Mistyczny Drewniana Pałka,Drewniana Pałka,Mistyczny,weapon,1,Zwykły,8,0,40,75
+Magiczny Drewniana Pałka,Drewniana Pałka,Magiczny,weapon,1,Zwykły,21,0,0,75
+Królewski Drewniana Pałka,Drewniana Pałka,Królewski,weapon,1,Zwykły,7,15,0,75
+Demoniczny Drewniana Pałka,Drewniana Pałka,Demoniczny,weapon,1,Zwykły,9,-20,0,75
+Boski Drewniana Pałka,Drewniana Pałka,Boski,weapon,1,Zwykły,10,20,100,75
+Solidny Skórzana Przeszywanica,Skórzana Przeszywanica,Solidny,armor,1,Zwykły,0,6,21,300
+Gruby Skórzana Przeszywanica,Skórzana Przeszywanica,Gruby,armor,1,Zwykły,0,7,41,300
+Wzmocniony Skórzana Przeszywanica,Skórzana Przeszywanica,Wzmocniony,armor,1,Zwykły,0,7,21,300
+Żelaznego Muru Skórzana Przeszywanica,Skórzana Przeszywanica,Żelaznego Muru,armor,1,Zwykły,0,18,21,300
+Lekki Skórzana Przeszywanica,Skórzana Przeszywanica,Lekki,armor,1,Zwykły,5,5,21,300
+Zręczny Skórzana Przeszywanica,Skórzana Przeszywanica,Zręczny,armor,1,Zwykły,10,6,21,300
+Zdrowy Skórzana Przeszywanica,Skórzana Przeszywanica,Zdrowy,armor,1,Zwykły,0,6,75,300
+Żywotny Skórzana Przeszywanica,Skórzana Przeszywanica,Żywotny,armor,1,Zwykły,0,6,129,300
+Niezniszczalny Skórzana Przeszywanica,Skórzana Przeszywanica,Niezniszczalny,armor,1,Zwykły,0,9,71,300
+Ochronny Skórzana Przeszywanica,Skórzana Przeszywanica,Ochronny,armor,1,Zwykły,0,6,51,300
+Kolczasty Skórzana Przeszywanica,Skórzana Przeszywanica,Kolczasty,armor,1,Zwykły,15,6,21,300
+Odbijający Skórzana Przeszywanica,Skórzana Przeszywanica,Odbijający,armor,1,Zwykły,20,7,21,300
+Święty Skórzana Przeszywanica,Skórzana Przeszywanica,Święty,armor,1,Zwykły,0,7,171,300
+Mroczny Skórzana Przeszywanica,Skórzana Przeszywanica,Mroczny,armor,1,Zwykły,0,8,1,300
+Starożytny Skórzana Przeszywanica,Skórzana Przeszywanica,Starożytny,armor,1,Zwykły,0,33,21,300
+Zapomniany Skórzana Przeszywanica,Skórzana Przeszywanica,Zapomniany,armor,1,Zwykły,0,22,61,300
+Królewski Skórzana Przeszywanica,Skórzana Przeszywanica,Królewski,armor,1,Zwykły,10,7,21,300
+Tytanowy Skórzana Przeszywanica,Skórzana Przeszywanica,Tytanowy,armor,1,Zwykły,0,9,221,300
+Demoniczny Skórzana Przeszywanica,Skórzana Przeszywanica,Demoniczny,armor,1,Zwykły,30,9,-29,300
+Boski Skórzana Przeszywanica,Skórzana Przeszywanica,Boski,armor,1,Zwykły,20,10,321,300
+Solidny Skórzany Hełm,Skórzany Hełm,Solidny,helmet,1,Zwykły,0,4,11,225
+Gruby Skórzany Hełm,Skórzany Hełm,Gruby,helmet,1,Zwykły,0,4,31,225
+Wzmocniony Skórzany Hełm,Skórzany Hełm,Wzmocniony,helmet,1,Zwykły,0,5,11,225
+Żelaznego Muru Skórzany Hełm,Skórzany Hełm,Żelaznego Muru,helmet,1,Zwykły,0,15,11,225
+Lekki Skórzany Hełm,Skórzany Hełm,Lekki,helmet,1,Zwykły,5,3,11,225
+Zręczny Skórzany Hełm,Skórzany Hełm,Zręczny,helmet,1,Zwykły,10,4,11,225
+Zdrowy Skórzany Hełm,Skórzany Hełm,Zdrowy,helmet,1,Zwykły,0,4,63,225
+Żywotny Skórzany Hełm,Skórzany Hełm,Żywotny,helmet,1,Zwykły,0,4,115,225
+Niezniszczalny Skórzany Hełm,Skórzany Hełm,Niezniszczalny,helmet,1,Zwykły,0,6,61,225
+Ochronny Skórzany Hełm,Skórzany Hełm,Ochronny,helmet,1,Zwykły,0,4,41,225
+Kolczasty Skórzany Hełm,Skórzany Hełm,Kolczasty,helmet,1,Zwykły,15,4,11,225
+Odbijający Skórzany Hełm,Skórzany Hełm,Odbijający,helmet,1,Zwykły,20,5,11,225
+Święty Skórzany Hełm,Skórzany Hełm,Święty,helmet,1,Zwykły,0,5,161,225
+Mroczny Skórzany Hełm,Skórzany Hełm,Mroczny,helmet,1,Zwykły,0,5,-9,225
+Starożytny Skórzany Hełm,Skórzany Hełm,Starożytny,helmet,1,Zwykły,0,30,11,225
+Zapomniany Skórzany Hełm,Skórzany Hełm,Zapomniany,helmet,1,Zwykły,0,19,51,225
+Królewski Skórzany Hełm,Skórzany Hełm,Królewski,helmet,1,Zwykły,10,5,11,225
+Tytanowy Skórzany Hełm,Skórzany Hełm,Tytanowy,helmet,1,Zwykły,0,6,211,225
+Demoniczny Skórzany Hełm,Skórzany Hełm,Demoniczny,helmet,1,Zwykły,30,6,-39,225
+Boski Skórzany Hełm,Skórzany Hełm,Boski,helmet,1,Zwykły,20,7,311,225
+Błyszczący Miedziany Pierścień,Miedziany Pierścień,Błyszczący,accessory,1,Zwykły,3,4,12,375
+Cenny Miedziany Pierścień,Miedziany Pierścień,Cenny,accessory,1,Zwykły,8,9,13,375
+Szczęśliwy Miedziany Pierścień,Miedziany Pierścień,Szczęśliwy,accessory,1,Zwykły,3,4,11,375
+Wojownika Miedziany Pierścień,Miedziany Pierścień,Wojownika,accessory,1,Zwykły,18,4,11,375
+Strażnika Miedziany Pierścień,Miedziany Pierścień,Strażnika,accessory,1,Zwykły,3,20,11,375
+Życia Miedziany Pierścień,Miedziany Pierścień,Życia,accessory,1,Zwykły,3,4,116,375
+Witalności Miedziany Pierścień,Miedziany Pierścień,Witalności,accessory,1,Zwykły,3,4,214,375
+Krwi Miedziany Pierścień,Miedziany Pierścień,Krwi,accessory,1,Zwykły,3,4,61,375
+Magiczny Miedziany Pierścień,Miedziany Pierścień,Magiczny,accessory,1,Zwykły,3,4,11,375
+Runiczny Miedziany Pierścień,Miedziany Pierścień,Runiczny,accessory,1,Zwykły,3,4,51,375
+Przeklęty Miedziany Pierścień,Miedziany Pierścień,Przeklęty,accessory,1,Zwykły,4,6,-89,375
+Święty Miedziany Pierścień,Miedziany Pierścień,Święty,accessory,1,Zwykły,3,5,161,375
+Mroczny Miedziany Pierścień,Miedziany Pierścień,Mroczny,accessory,1,Zwykły,4,-6,11,375
+Starożytny Miedziany Pierścień,Miedziany Pierścień,Starożytny,accessory,1,Zwykły,3,5,91,375
+Mistyczny Miedziany Pierścień,Miedziany Pierścień,Mistyczny,accessory,1,Zwykły,3,5,11,375
+Królewski Miedziany Pierścień,Miedziany Pierścień,Królewski,accessory,1,Zwykły,3,5,14,375
+Nieziemski Miedziany Pierścień,Miedziany Pierścień,Nieziemski,accessory,1,Zwykły,4,5,131,375
+Tytanowy Miedziany Pierścień,Miedziany Pierścień,Tytanowy,accessory,1,Zwykły,3,6,261,375
+Demoniczny Miedziany Pierścień,Miedziany Pierścień,Demoniczny,accessory,1,Zwykły,4,-16,-39,375
+Boski Miedziany Pierścień,Miedziany Pierścień,Boski,accessory,1,Zwykły,54,56,316,375
+Ostry Żelazny Miecz,Żelazny Miecz,Ostry,weapon,5,Zwykły,17,0,0,600
+Ciężki Żelazny Miecz,Żelazny Miecz,Ciężki,weapon,5,Zwykły,25,0,0,600
+Zabójczy Żelazny Miecz,Żelazny Miecz,Zabójczy,weapon,5,Zwykły,22,0,0,600
+Krwawy Żelazny Miecz,Żelazny Miecz,Krwawy,weapon,5,Zwykły,18,0,20,600
+Ognisty Żelazny Miecz,Żelazny Miecz,Ognisty,weapon,5,Zwykły,29,0,0,600
+Lodowy Żelazny Miecz,Żelazny Miecz,Lodowy,weapon,5,Zwykły,17,10,0,600
+Trujący Żelazny Miecz,Żelazny Miecz,Trujący,weapon,5,Zwykły,20,0,-10,600
+Potężny Żelazny Miecz,Żelazny Miecz,Potężny,weapon,5,Zwykły,24,0,0,600
+Lekki Żelazny Miecz,Żelazny Miecz,Lekki,weapon,5,Zwykły,14,5,0,600
+Szybki Żelazny Miecz,Żelazny Miecz,Szybki,weapon,5,Zwykły,21,0,0,600
+Wampiryczny Żelazny Miecz,Żelazny Miecz,Wampiryczny,weapon,5,Zwykły,17,0,50,600
+Przeklęty Żelazny Miecz,Żelazny Miecz,Przeklęty,weapon,5,Zwykły,32,0,-50,600
+Święty Żelazny Miecz,Żelazny Miecz,Święty,weapon,5,Zwykły,19,10,30,600
+Mroczny Żelazny Miecz,Żelazny Miecz,Mroczny,weapon,5,Zwykły,20,-10,0,600
+Starożytny Żelazny Miecz,Żelazny Miecz,Starożytny,weapon,5,Zwykły,42,0,0,600
+Mistyczny Żelazny Miecz,Żelazny Miecz,Mistyczny,weapon,5,Zwykły,21,0,40,600
+Magiczny Żelazny Miecz,Żelazny Miecz,Magiczny,weapon,5,Zwykły,33,0,0,600
+Królewski Żelazny Miecz,Żelazny Miecz,Królewski,weapon,5,Zwykły,20,15,0,600
+Demoniczny Żelazny Miecz,Żelazny Miecz,Demoniczny,weapon,5,Zwykły,25,-20,0,600
+Boski Żelazny Miecz,Żelazny Miecz,Boski,weapon,5,Zwykły,28,20,100,600
+Solidny Żelazna Płytówka,Żelazna Płytówka,Solidny,armor,5,Zwykły,0,16,34,900
+Gruby Żelazna Płytówka,Żelazna Płytówka,Gruby,armor,5,Zwykły,0,18,54,900
+Wzmocniony Żelazna Płytówka,Żelazna Płytówka,Wzmocniony,armor,5,Zwykły,0,19,34,900
+Żelaznego Muru Żelazna Płytówka,Żelazna Płytówka,Żelaznego Muru,armor,5,Zwykły,0,31,34,900
+Lekki Żelazna Płytówka,Żelazna Płytówka,Lekki,armor,5,Zwykły,5,13,34,900
+Zręczny Żelazna Płytówka,Żelazna Płytówka,Zręczny,armor,5,Zwykły,10,15,34,900
+Zdrowy Żelazna Płytówka,Żelazna Płytówka,Zdrowy,armor,5,Zwykły,0,15,90,900
+Żywotny Żelazna Płytówka,Żelazna Płytówka,Żywotny,armor,5,Zwykły,0,15,147,900
+Niezniszczalny Żelazna Płytówka,Żelazna Płytówka,Niezniszczalny,armor,5,Zwykły,0,24,84,900
+Ochronny Żelazna Płytówka,Żelazna Płytówka,Ochronny,armor,5,Zwykły,0,17,64,900
+Kolczasty Żelazna Płytówka,Żelazna Płytówka,Kolczasty,armor,5,Zwykły,15,16,34,900
+Odbijający Żelazna Płytówka,Żelazna Płytówka,Odbijający,armor,5,Zwykły,20,18,34,900
+Święty Żelazna Płytówka,Żelazna Płytówka,Święty,armor,5,Zwykły,0,19,184,900
+Mroczny Żelazna Płytówka,Żelazna Płytówka,Mroczny,armor,5,Zwykły,0,21,14,900
+Starożytny Żelazna Płytówka,Żelazna Płytówka,Starożytny,armor,5,Zwykły,0,45,34,900
+Zapomniany Żelazna Płytówka,Żelazna Płytówka,Zapomniany,armor,5,Zwykły,0,33,74,900
+Królewski Żelazna Płytówka,Żelazna Płytówka,Królewski,armor,5,Zwykły,10,19,34,900
+Tytanowy Żelazna Płytówka,Żelazna Płytówka,Tytanowy,armor,5,Zwykły,0,22,234,900
+Demoniczny Żelazna Płytówka,Żelazna Płytówka,Demoniczny,armor,5,Zwykły,30,24,-16,900
+Boski Żelazna Płytówka,Żelazna Płytówka,Boski,armor,5,Zwykły,20,27,334,900
+Solidny Żelazny Szyszak,Żelazny Szyszak,Solidny,helmet,5,Zwykły,0,12,22,525
+Gruby Żelazny Szyszak,Żelazny Szyszak,Gruby,helmet,5,Zwykły,0,13,42,525
+Wzmocniony Żelazny Szyszak,Żelazny Szyszak,Wzmocniony,helmet,5,Zwykły,0,14,22,525
+Żelaznego Muru Żelazny Szyszak,Żelazny Szyszak,Żelaznego Muru,helmet,5,Zwykły,0,25,22,525
+Lekki Żelazny Szyszak,Żelazny Szyszak,Lekki,helmet,5,Zwykły,5,9,22,525
+Zręczny Żelazny Szyszak,Żelazny Szyszak,Zręczny,helmet,5,Zwykły,10,11,22,525
+Zdrowy Żelazny Szyszak,Żelazny Szyszak,Zdrowy,helmet,5,Zwykły,0,11,76,525
+Żywotny Żelazny Szyszak,Żelazny Szyszak,Żywotny,helmet,5,Zwykły,0,11,130,525
+Niezniszczalny Żelazny Szyszak,Żelazny Szyszak,Niezniszczalny,helmet,5,Zwykły,0,17,72,525
+Ochronny Żelazny Szyszak,Żelazny Szyszak,Ochronny,helmet,5,Zwykły,0,12,52,525
+Kolczasty Żelazny Szyszak,Żelazny Szyszak,Kolczasty,helmet,5,Zwykły,15,12,22,525
+Odbijający Żelazny Szyszak,Żelazny Szyszak,Odbijający,helmet,5,Zwykły,20,13,22,525
+Święty Żelazny Szyszak,Żelazny Szyszak,Święty,helmet,5,Zwykły,0,14,172,525
+Mroczny Żelazny Szyszak,Żelazny Szyszak,Mroczny,helmet,5,Zwykły,0,15,2,525
+Starożytny Żelazny Szyszak,Żelazny Szyszak,Starożytny,helmet,5,Zwykły,0,39,22,525
+Zapomniany Żelazny Szyszak,Żelazny Szyszak,Zapomniany,helmet,5,Zwykły,0,28,62,525
+Królewski Żelazny Szyszak,Żelazny Szyszak,Królewski,helmet,5,Zwykły,10,14,22,525
+Tytanowy Żelazny Szyszak,Żelazny Szyszak,Tytanowy,helmet,5,Zwykły,0,16,222,525
+Demoniczny Żelazny Szyszak,Żelazny Szyszak,Demoniczny,helmet,5,Zwykły,30,17,-28,525
+Boski Żelazny Szyszak,Żelazny Szyszak,Boski,helmet,5,Zwykły,20,19,322,525
+Błyszczący Żelazny Sygnet,Żelazny Sygnet,Błyszczący,accessory,5,Zwykły,11,11,24,750
+Cenny Żelazny Sygnet,Żelazny Sygnet,Cenny,accessory,5,Zwykły,16,16,26,750
+Szczęśliwy Żelazny Sygnet,Żelazny Sygnet,Szczęśliwy,accessory,5,Zwykły,12,12,22,750
+Wojownika Żelazny Sygnet,Żelazny Sygnet,Wojownika,accessory,5,Zwykły,29,11,22,750
+Strażnika Żelazny Sygnet,Żelazny Sygnet,Strażnika,accessory,5,Zwykły,11,29,22,750
+Życia Żelazny Sygnet,Żelazny Sygnet,Życia,accessory,5,Zwykły,11,11,133,750
+Witalności Żelazny Sygnet,Żelazny Sygnet,Witalności,accessory,5,Zwykły,11,11,228,750
+Krwi Żelazny Sygnet,Żelazny Sygnet,Krwi,accessory,5,Zwykły,13,11,72,750
+Magiczny Żelazny Sygnet,Żelazny Sygnet,Magiczny,accessory,5,Zwykły,12,12,22,750
+Runiczny Żelazny Sygnet,Żelazny Sygnet,Runiczny,accessory,5,Zwykły,13,13,62,750
+Przeklęty Żelazny Sygnet,Żelazny Sygnet,Przeklęty,accessory,5,Zwykły,16,16,-78,750
+Święty Żelazny Sygnet,Żelazny Sygnet,Święty,accessory,5,Zwykły,11,15,172,750
+Mroczny Żelazny Sygnet,Żelazny Sygnet,Mroczny,accessory,5,Zwykły,15,1,22,750
+Starożytny Żelazny Sygnet,Żelazny Sygnet,Starożytny,accessory,5,Zwykły,13,13,102,750
+Mistyczny Żelazny Sygnet,Żelazny Sygnet,Mistyczny,accessory,5,Zwykły,14,14,22,750
+Królewski Żelazny Sygnet,Żelazny Sygnet,Królewski,accessory,5,Zwykły,14,14,28,750
+Nieziemski Żelazny Sygnet,Żelazny Sygnet,Nieziemski,accessory,5,Zwykły,15,15,142,750
+Tytanowy Żelazny Sygnet,Żelazny Sygnet,Tytanowy,accessory,5,Zwykły,11,16,272,750
+Demoniczny Żelazny Sygnet,Żelazny Sygnet,Demoniczny,accessory,5,Zwykły,17,-9,-28,750
+Boski Żelazny Sygnet,Żelazny Sygnet,Boski,accessory,5,Zwykły,66,66,333,750
+Ostry Stalowy Miecz Długi,Stalowy Miecz Długi,Ostry,weapon,15,Zwykły,69,0,0,3750
+Ciężki Stalowy Miecz Długi,Stalowy Miecz Długi,Ciężki,weapon,15,Zwykły,83,0,0,3750
+Zabójczy Stalowy Miecz Długi,Stalowy Miecz Długi,Zabójczy,weapon,15,Zwykły,88,0,0,3750
+Krwawy Stalowy Miecz Długi,Stalowy Miecz Długi,Krwawy,weapon,15,Zwykły,72,0,20,3750
+Ognisty Stalowy Miecz Długi,Stalowy Miecz Długi,Ognisty,weapon,15,Zwykły,85,0,0,3750
+Lodowy Stalowy Miecz Długi,Stalowy Miecz Długi,Lodowy,weapon,15,Zwykły,69,10,0,3750
+Trujący Stalowy Miecz Długi,Stalowy Miecz Długi,Trujący,weapon,15,Zwykły,81,0,-10,3750
+Potężny Stalowy Miecz Długi,Stalowy Miecz Długi,Potężny,weapon,15,Zwykły,94,0,0,3750
+Lekki Stalowy Miecz Długi,Stalowy Miecz Długi,Lekki,weapon,15,Zwykły,56,5,0,3750
+Szybki Stalowy Miecz Długi,Stalowy Miecz Długi,Szybki,weapon,15,Zwykły,71,0,0,3750
+Wampiryczny Stalowy Miecz Długi,Stalowy Miecz Długi,Wampiryczny,weapon,15,Zwykły,69,0,50,3750
+Przeklęty Stalowy Miecz Długi,Stalowy Miecz Długi,Przeklęty,weapon,15,Zwykły,126,0,-50,3750
+Święty Stalowy Miecz Długi,Stalowy Miecz Długi,Święty,weapon,15,Zwykły,75,10,30,3750
+Mroczny Stalowy Miecz Długi,Stalowy Miecz Długi,Mroczny,weapon,15,Zwykły,81,-10,0,3750
+Starożytny Stalowy Miecz Długi,Stalowy Miecz Długi,Starożytny,weapon,15,Zwykły,108,0,0,3750
+Mistyczny Stalowy Miecz Długi,Stalowy Miecz Długi,Mistyczny,weapon,15,Zwykły,85,0,40,3750
+Magiczny Stalowy Miecz Długi,Stalowy Miecz Długi,Magiczny,weapon,15,Zwykły,87,0,0,3750
+Królewski Stalowy Miecz Długi,Stalowy Miecz Długi,Królewski,weapon,15,Zwykły,78,15,0,3750
+Demoniczny Stalowy Miecz Długi,Stalowy Miecz Długi,Demoniczny,weapon,15,Zwykły,100,-20,0,3750
+Boski Stalowy Miecz Długi,Stalowy Miecz Długi,Boski,weapon,15,Zwykły,113,20,100,3750
+Solidny Stalowy Kirys,Stalowy Kirys,Solidny,armor,15,Zwykły,0,60,107,6000
+Gruby Stalowy Kirys,Stalowy Kirys,Gruby,armor,15,Zwykły,0,66,127,6000
+Wzmocniony Stalowy Kirys,Stalowy Kirys,Wzmocniony,armor,15,Zwykły,0,71,107,6000
+Żelaznego Muru Stalowy Kirys,Stalowy Kirys,Żelaznego Muru,armor,15,Zwykły,0,87,107,6000
+Lekki Stalowy Kirys,Stalowy Kirys,Lekki,armor,15,Zwykły,5,49,107,6000
+Zręczny Stalowy Kirys,Stalowy Kirys,Zręczny,armor,15,Zwykły,10,57,107,6000
+Zdrowy Stalowy Kirys,Stalowy Kirys,Zdrowy,armor,15,Zwykły,0,55,178,6000
+Żywotny Stalowy Kirys,Stalowy Kirys,Żywotny,armor,15,Zwykły,0,55,249,6000
+Niezniszczalny Stalowy Kirys,Stalowy Kirys,Niezniszczalny,armor,15,Zwykły,0,88,157,6000
+Ochronny Stalowy Kirys,Stalowy Kirys,Ochronny,armor,15,Zwykły,0,63,137,6000
+Kolczasty Stalowy Kirys,Stalowy Kirys,Kolczasty,armor,15,Zwykły,15,60,107,6000
+Odbijający Stalowy Kirys,Stalowy Kirys,Odbijający,armor,15,Zwykły,20,68,107,6000
+Święty Stalowy Kirys,Stalowy Kirys,Święty,armor,15,Zwykły,0,71,257,6000
+Mroczny Stalowy Kirys,Stalowy Kirys,Mroczny,armor,15,Zwykły,0,77,87,6000
+Starożytny Stalowy Kirys,Stalowy Kirys,Starożytny,armor,15,Zwykły,0,99,107,6000
+Zapomniany Stalowy Kirys,Stalowy Kirys,Zapomniany,armor,15,Zwykły,0,81,147,6000
+Królewski Stalowy Kirys,Stalowy Kirys,Królewski,armor,15,Zwykły,10,71,107,6000
+Tytanowy Stalowy Kirys,Stalowy Kirys,Tytanowy,armor,15,Zwykły,0,82,307,6000
+Demoniczny Stalowy Kirys,Stalowy Kirys,Demoniczny,armor,15,Zwykły,30,88,57,6000
+Boski Stalowy Kirys,Stalowy Kirys,Boski,armor,15,Zwykły,20,99,407,6000
+Solidny Stalowa Przyłbica,Stalowa Przyłbica,Solidny,helmet,15,Zwykły,0,45,76,2700
+Gruby Stalowa Przyłbica,Stalowa Przyłbica,Gruby,helmet,15,Zwykły,0,49,96,2700
+Wzmocniony Stalowa Przyłbica,Stalowa Przyłbica,Wzmocniony,helmet,15,Zwykły,0,53,76,2700
+Żelaznego Muru Stalowa Przyłbica,Stalowa Przyłbica,Żelaznego Muru,helmet,15,Zwykły,0,67,76,2700
+Lekki Stalowa Przyłbica,Stalowa Przyłbica,Lekki,helmet,15,Zwykły,5,36,76,2700
+Zręczny Stalowa Przyłbica,Stalowa Przyłbica,Zręczny,helmet,15,Zwykły,10,43,76,2700
+Zdrowy Stalowa Przyłbica,Stalowa Przyłbica,Zdrowy,helmet,15,Zwykły,0,41,141,2700
+Żywotny Stalowa Przyłbica,Stalowa Przyłbica,Żywotny,helmet,15,Zwykły,0,41,206,2700
+Niezniszczalny Stalowa Przyłbica,Stalowa Przyłbica,Niezniszczalny,helmet,15,Zwykły,0,65,126,2700
+Ochronny Stalowa Przyłbica,Stalowa Przyłbica,Ochronny,helmet,15,Zwykły,0,47,106,2700
+Kolczasty Stalowa Przyłbica,Stalowa Przyłbica,Kolczasty,helmet,15,Zwykły,15,45,76,2700
+Odbijający Stalowa Przyłbica,Stalowa Przyłbica,Odbijający,helmet,15,Zwykły,20,51,76,2700
+Święty Stalowa Przyłbica,Stalowa Przyłbica,Święty,helmet,15,Zwykły,0,53,226,2700
+Mroczny Stalowa Przyłbica,Stalowa Przyłbica,Mroczny,helmet,15,Zwykły,0,57,56,2700
+Starożytny Stalowa Przyłbica,Stalowa Przyłbica,Starożytny,helmet,15,Zwykły,0,80,76,2700
+Zapomniany Stalowa Przyłbica,Stalowa Przyłbica,Zapomniany,helmet,15,Zwykły,0,64,116,2700
+Królewski Stalowa Przyłbica,Stalowa Przyłbica,Królewski,helmet,15,Zwykły,10,53,76,2700
+Tytanowy Stalowa Przyłbica,Stalowa Przyłbica,Tytanowy,helmet,15,Zwykły,0,61,276,2700
+Demoniczny Stalowa Przyłbica,Stalowa Przyłbica,Demoniczny,helmet,15,Zwykły,30,65,26,2700
+Boski Stalowa Przyłbica,Stalowa Przyłbica,Boski,helmet,15,Zwykły,20,73,376,2700
+Błyszczący Srebrny Amulet,Srebrny Amulet,Błyszczący,accessory,15,Zwykły,46,41,83,5250
+Cenny Srebrny Amulet,Srebrny Amulet,Cenny,accessory,15,Zwykły,51,46,91,5250
+Szczęśliwy Srebrny Amulet,Srebrny Amulet,Szczęśliwy,accessory,15,Zwykły,50,45,76,5250
+Wojownika Srebrny Amulet,Srebrny Amulet,Wojownika,accessory,15,Zwykły,74,41,76,5250
+Strażnika Srebrny Amulet,Srebrny Amulet,Strażnika,accessory,15,Zwykły,46,68,76,5250
+Życia Srebrny Amulet,Srebrny Amulet,Życia,accessory,15,Zwykły,46,41,214,5250
+Witalności Srebrny Amulet,Srebrny Amulet,Witalności,accessory,15,Zwykły,46,41,298,5250
+Krwi Srebrny Amulet,Srebrny Amulet,Krwi,accessory,15,Zwykły,55,41,126,5250
+Magiczny Srebrny Amulet,Srebrny Amulet,Magiczny,accessory,15,Zwykły,52,47,76,5250
+Runiczny Srebrny Amulet,Srebrny Amulet,Runiczny,accessory,15,Zwykły,55,49,116,5250
+Przeklęty Srebrny Amulet,Srebrny Amulet,Przeklęty,accessory,15,Zwykły,69,61,-24,5250
+Święty Srebrny Amulet,Srebrny Amulet,Święty,accessory,15,Zwykły,46,57,226,5250
+Mroczny Srebrny Amulet,Srebrny Amulet,Mroczny,accessory,15,Zwykły,64,31,76,5250
+Starożytny Srebrny Amulet,Srebrny Amulet,Starożytny,accessory,15,Zwykły,57,51,156,5250
+Mistyczny Srebrny Amulet,Srebrny Amulet,Mistyczny,accessory,15,Zwykły,59,53,76,5250
+Królewski Srebrny Amulet,Srebrny Amulet,Królewski,accessory,15,Zwykły,59,53,98,5250
+Nieziemski Srebrny Amulet,Srebrny Amulet,Nieziemski,accessory,15,Zwykły,64,57,196,5250
+Tytanowy Srebrny Amulet,Srebrny Amulet,Tytanowy,accessory,15,Zwykły,46,61,326,5250
+Demoniczny Srebrny Amulet,Srebrny Amulet,Demoniczny,accessory,15,Zwykły,73,21,26,5250
+Boski Srebrny Amulet,Srebrny Amulet,Boski,accessory,15,Zwykły,119,111,414,5250
+Ostry Mithrilowe Ostrze,Mithrilowe Ostrze,Ostry,weapon,30,Zwykły,185,0,0,30000
+Ciężki Mithrilowe Ostrze,Mithrilowe Ostrze,Ciężki,weapon,30,Zwykły,216,0,0,30000
+Zabójczy Mithrilowe Ostrze,Mithrilowe Ostrze,Zabójczy,weapon,30,Zwykły,236,0,0,30000
+Krwawy Mithrilowe Ostrze,Mithrilowe Ostrze,Krwawy,weapon,30,Zwykły,194,0,20,30000
+Ognisty Mithrilowe Ostrze,Mithrilowe Ostrze,Ognisty,weapon,30,Zwykły,212,0,0,30000
+Lodowy Mithrilowe Ostrze,Mithrilowe Ostrze,Lodowy,weapon,30,Zwykły,185,10,0,30000
+Trujący Mithrilowe Ostrze,Mithrilowe Ostrze,Trujący,weapon,30,Zwykły,219,0,-10,30000
+Potężny Mithrilowe Ostrze,Mithrilowe Ostrze,Potężny,weapon,30,Zwykły,253,0,0,30000
+Lekki Mithrilowe Ostrze,Mithrilowe Ostrze,Lekki,weapon,30,Zwykły,152,5,0,30000
+Szybki Mithrilowe Ostrze,Mithrilowe Ostrze,Szybki,weapon,30,Zwykły,182,0,0,30000
+Wampiryczny Mithrilowe Ostrze,Mithrilowe Ostrze,Wampiryczny,weapon,30,Zwykły,185,0,50,30000
+Przeklęty Mithrilowe Ostrze,Mithrilowe Ostrze,Przeklęty,weapon,30,Zwykły,338,0,-50,30000
+Święty Mithrilowe Ostrze,Mithrilowe Ostrze,Święty,weapon,30,Zwykły,202,10,30,30000
+Mroczny Mithrilowe Ostrze,Mithrilowe Ostrze,Mroczny,weapon,30,Zwykły,219,-10,0,30000
+Starożytny Mithrilowe Ostrze,Mithrilowe Ostrze,Starożytny,weapon,30,Zwykły,256,0,0,30000
+Mistyczny Mithrilowe Ostrze,Mithrilowe Ostrze,Mistyczny,weapon,30,Zwykły,228,0,40,30000
+Magiczny Mithrilowe Ostrze,Mithrilowe Ostrze,Magiczny,weapon,30,Zwykły,209,0,0,30000
+Królewski Mithrilowe Ostrze,Mithrilowe Ostrze,Królewski,weapon,30,Zwykły,211,15,0,30000
+Demoniczny Mithrilowe Ostrze,Mithrilowe Ostrze,Demoniczny,weapon,30,Zwykły,270,-20,0,30000
+Boski Mithrilowe Ostrze,Mithrilowe Ostrze,Boski,weapon,30,Zwykły,304,20,100,30000
+Solidny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Solidny,armor,30,Zwykły,0,157,293,45000
+Gruby Mithrilowa Kolczuga,Mithrilowa Kolczuga,Gruby,armor,30,Zwykły,0,171,313,45000
+Wzmocniony Mithrilowa Kolczuga,Mithrilowa Kolczuga,Wzmocniony,armor,30,Zwykły,0,185,293,45000
+Żelaznego Muru Mithrilowa Kolczuga,Mithrilowa Kolczuga,Żelaznego Muru,armor,30,Zwykły,0,210,293,45000
+Lekki Mithrilowa Kolczuga,Mithrilowa Kolczuga,Lekki,armor,30,Zwykły,5,128,293,45000
+Zręczny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Zręczny,armor,30,Zwykły,10,150,293,45000
+Zdrowy Mithrilowa Kolczuga,Mithrilowa Kolczuga,Zdrowy,armor,30,Zwykły,0,143,401,45000
+Żywotny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Żywotny,armor,30,Zwykły,0,143,510,45000
+Niezniszczalny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Niezniszczalny,armor,30,Zwykły,0,228,343,45000
+Ochronny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Ochronny,armor,30,Zwykły,0,164,323,45000
+Kolczasty Mithrilowa Kolczuga,Mithrilowa Kolczuga,Kolczasty,armor,30,Zwykły,15,157,293,45000
+Odbijający Mithrilowa Kolczuga,Mithrilowa Kolczuga,Odbijający,armor,30,Zwykły,20,178,293,45000
+Święty Mithrilowa Kolczuga,Mithrilowa Kolczuga,Święty,armor,30,Zwykły,0,185,443,45000
+Mroczny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Mroczny,armor,30,Zwykły,0,200,273,45000
+Starożytny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Starożytny,armor,30,Zwykły,0,218,293,45000
+Zapomniany Mithrilowa Kolczuga,Mithrilowa Kolczuga,Zapomniany,armor,30,Zwykły,0,186,333,45000
+Królewski Mithrilowa Kolczuga,Mithrilowa Kolczuga,Królewski,armor,30,Zwykły,10,185,293,45000
+Tytanowy Mithrilowa Kolczuga,Mithrilowa Kolczuga,Tytanowy,armor,30,Zwykły,0,214,493,45000
+Demoniczny Mithrilowa Kolczuga,Mithrilowa Kolczuga,Demoniczny,armor,30,Zwykły,30,228,243,45000
+Boski Mithrilowa Kolczuga,Mithrilowa Kolczuga,Boski,armor,30,Zwykły,20,257,593,45000
+Solidny Mithrilowy Hełm,Mithrilowy Hełm,Solidny,helmet,30,Zwykły,0,111,204,22500
+Gruby Mithrilowy Hełm,Mithrilowy Hełm,Gruby,helmet,30,Zwykły,0,121,224,22500
+Wzmocniony Mithrilowy Hełm,Mithrilowy Hełm,Wzmocniony,helmet,30,Zwykły,0,131,204,22500
+Żelaznego Muru Mithrilowy Hełm,Mithrilowy Hełm,Żelaznego Muru,helmet,30,Zwykły,0,151,204,22500
+Lekki Mithrilowy Hełm,Mithrilowy Hełm,Lekki,helmet,30,Zwykły,5,90,204,22500
+Zręczny Mithrilowy Hełm,Mithrilowy Hełm,Zręczny,helmet,30,Zwykły,10,106,204,22500
+Zdrowy Mithrilowy Hełm,Mithrilowy Hełm,Zdrowy,helmet,30,Zwykły,0,101,294,22500
+Żywotny Mithrilowy Hełm,Mithrilowy Hełm,Żywotny,helmet,30,Zwykły,0,101,385,22500
+Niezniszczalny Mithrilowy Hełm,Mithrilowy Hełm,Niezniszczalny,helmet,30,Zwykły,0,161,254,22500
+Ochronny Mithrilowy Hełm,Mithrilowy Hełm,Ochronny,helmet,30,Zwykły,0,116,234,22500
+Kolczasty Mithrilowy Hełm,Mithrilowy Hełm,Kolczasty,helmet,30,Zwykły,15,111,204,22500
+Odbijający Mithrilowy Hełm,Mithrilowy Hełm,Odbijający,helmet,30,Zwykły,20,126,204,22500
+Święty Mithrilowy Hełm,Mithrilowy Hełm,Święty,helmet,30,Zwykły,0,131,354,22500
+Mroczny Mithrilowy Hełm,Mithrilowy Hełm,Mroczny,helmet,30,Zwykły,0,141,184,22500
+Starożytny Mithrilowy Hełm,Mithrilowy Hełm,Starożytny,helmet,30,Zwykły,0,161,204,22500
+Zapomniany Mithrilowy Hełm,Mithrilowy Hełm,Zapomniany,helmet,30,Zwykły,0,136,244,22500
+Królewski Mithrilowy Hełm,Mithrilowy Hełm,Królewski,helmet,30,Zwykły,10,131,204,22500
+Tytanowy Mithrilowy Hełm,Mithrilowy Hełm,Tytanowy,helmet,30,Zwykły,0,151,404,22500
+Demoniczny Mithrilowy Hełm,Mithrilowy Hełm,Demoniczny,helmet,30,Zwykły,30,161,154,22500
+Boski Mithrilowy Hełm,Mithrilowy Hełm,Boski,helmet,30,Zwykły,20,181,504,22500
+Błyszczący Rubinowy Wisiorek,Rubinowy Wisiorek,Błyszczący,accessory,30,Zwykły,118,101,224,37500
+Cenny Rubinowy Wisiorek,Rubinowy Wisiorek,Cenny,accessory,30,Zwykły,123,106,244,37500
+Szczęśliwy Rubinowy Wisiorek,Rubinowy Wisiorek,Szczęśliwy,accessory,30,Zwykły,129,111,204,37500
+Wojownika Rubinowy Wisiorek,Rubinowy Wisiorek,Wojownika,accessory,30,Zwykły,168,101,204,37500
+Strażnika Rubinowy Wisiorek,Rubinowy Wisiorek,Strażnika,accessory,30,Zwykły,118,146,204,37500
+Życia Rubinowy Wisiorek,Rubinowy Wisiorek,Życia,accessory,30,Zwykły,118,101,406,37500
+Witalności Rubinowy Wisiorek,Rubinowy Wisiorek,Witalności,accessory,30,Zwykły,118,101,465,37500
+Krwi Rubinowy Wisiorek,Rubinowy Wisiorek,Krwi,accessory,30,Zwykły,141,101,254,37500
+Magiczny Rubinowy Wisiorek,Rubinowy Wisiorek,Magiczny,accessory,30,Zwykły,135,116,204,37500
+Runiczny Rubinowy Wisiorek,Rubinowy Wisiorek,Runiczny,accessory,30,Zwykły,141,121,244,37500
+Przeklęty Rubinowy Wisiorek,Rubinowy Wisiorek,Przeklęty,accessory,30,Zwykły,177,151,104,37500
+Święty Rubinowy Wisiorek,Rubinowy Wisiorek,Święty,accessory,30,Zwykły,118,141,354,37500
+Mroczny Rubinowy Wisiorek,Rubinowy Wisiorek,Mroczny,accessory,30,Zwykły,165,91,204,37500
+Starożytny Rubinowy Wisiorek,Rubinowy Wisiorek,Starożytny,accessory,30,Zwykły,147,126,284,37500
+Mistyczny Rubinowy Wisiorek,Rubinowy Wisiorek,Mistyczny,accessory,30,Zwykły,153,131,204,37500
+Królewski Rubinowy Wisiorek,Rubinowy Wisiorek,Królewski,accessory,30,Zwykły,153,131,265,37500
+Nieziemski Rubinowy Wisiorek,Rubinowy Wisiorek,Nieziemski,accessory,30,Zwykły,165,141,324,37500
+Tytanowy Rubinowy Wisiorek,Rubinowy Wisiorek,Tytanowy,accessory,30,Zwykły,118,151,454,37500
+Demoniczny Rubinowy Wisiorek,Rubinowy Wisiorek,Demoniczny,accessory,30,Zwykły,188,81,154,37500
+Boski Rubinowy Wisiorek,Rubinowy Wisiorek,Boski,accessory,30,Zwykły,227,201,606,37500
+Ostry Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Ostry,weapon,50,Zwykły,393,0,0,225000
+Ciężki Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Ciężki,weapon,50,Zwykły,452,0,0,225000
+Zabójczy Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Zabójczy,weapon,50,Zwykły,501,0,0,225000
+Krwawy Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Krwawy,weapon,50,Zwykły,411,0,20,225000
+Ognisty Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Ognisty,weapon,50,Zwykły,439,0,0,225000
+Lodowy Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Lodowy,weapon,50,Zwykły,393,10,0,225000
+Trujący Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Trujący,weapon,50,Zwykły,465,0,-10,225000
+Potężny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Potężny,weapon,50,Zwykły,537,0,0,225000
+Lekki Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Lekki,weapon,50,Zwykły,322,5,0,225000
+Szybki Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Szybki,weapon,50,Zwykły,380,0,0,225000
+Wampiryczny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Wampiryczny,weapon,50,Zwykły,393,0,50,225000
+Przeklęty Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Przeklęty,weapon,50,Zwykły,716,0,-50,225000
+Święty Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Święty,weapon,50,Zwykły,429,10,30,225000
+Mroczny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Mroczny,weapon,50,Zwykły,465,-10,0,225000
+Starożytny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Starożytny,weapon,50,Zwykły,521,0,0,225000
+Mistyczny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Mistyczny,weapon,50,Zwykły,483,0,40,225000
+Magiczny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Magiczny,weapon,50,Zwykły,426,0,0,225000
+Królewski Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Królewski,weapon,50,Zwykły,447,15,0,225000
+Demoniczny Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Demoniczny,weapon,50,Zwykły,572,-20,0,225000
+Boski Adamantowy Wielki Miecz,Adamantowy Wielki Miecz,Boski,weapon,50,Zwykły,644,20,100,225000
+Solidny Adamantowa Zbroja,Adamantowa Zbroja,Solidny,armor,50,Zwykły,0,324,655,300000
+Gruby Adamantowa Zbroja,Adamantowa Zbroja,Gruby,armor,50,Zwykły,0,354,675,300000
+Wzmocniony Adamantowa Zbroja,Adamantowa Zbroja,Wzmocniony,armor,50,Zwykły,0,383,655,300000
+Żelaznego Muru Adamantowa Zbroja,Adamantowa Zbroja,Żelaznego Muru,armor,50,Zwykły,0,423,655,300000
+Lekki Adamantowa Zbroja,Adamantowa Zbroja,Lekki,armor,50,Zwykły,5,265,655,300000
+Zręczny Adamantowa Zbroja,Adamantowa Zbroja,Zręczny,armor,50,Zwykły,10,309,655,300000
+Zdrowy Adamantowa Zbroja,Adamantowa Zbroja,Zdrowy,armor,50,Zwykły,0,295,836,300000
+Żywotny Adamantowa Zbroja,Adamantowa Zbroja,Żywotny,armor,50,Zwykły,0,295,1016,300000
+Niezniszczalny Adamantowa Zbroja,Adamantowa Zbroja,Niezniszczalny,armor,50,Zwykły,0,472,705,300000
+Ochronny Adamantowa Zbroja,Adamantowa Zbroja,Ochronny,armor,50,Zwykły,0,339,685,300000
+Kolczasty Adamantowa Zbroja,Adamantowa Zbroja,Kolczasty,armor,50,Zwykły,15,324,655,300000
+Odbijający Adamantowa Zbroja,Adamantowa Zbroja,Odbijający,armor,50,Zwykły,20,368,655,300000
+Święty Adamantowa Zbroja,Adamantowa Zbroja,Święty,armor,50,Zwykły,0,383,805,300000
+Mroczny Adamantowa Zbroja,Adamantowa Zbroja,Mroczny,armor,50,Zwykły,0,413,635,300000
+Starożytny Adamantowa Zbroja,Adamantowa Zbroja,Starożytny,armor,50,Zwykły,0,423,655,300000
+Zapomniany Adamantowa Zbroja,Adamantowa Zbroja,Zapomniany,armor,50,Zwykły,0,369,695,300000
+Królewski Adamantowa Zbroja,Adamantowa Zbroja,Królewski,armor,50,Zwykły,10,383,655,300000
+Tytanowy Adamantowa Zbroja,Adamantowa Zbroja,Tytanowy,armor,50,Zwykły,0,442,855,300000
+Demoniczny Adamantowa Zbroja,Adamantowa Zbroja,Demoniczny,armor,50,Zwykły,30,472,605,300000
+Boski Adamantowa Zbroja,Adamantowa Zbroja,Boski,armor,50,Zwykły,20,531,955,300000
+Solidny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Solidny,helmet,50,Zwykły,0,218,439,150000
+Gruby Adamantowa Korona Wojny,Adamantowa Korona Wojny,Gruby,helmet,50,Zwykły,0,238,459,150000
+Wzmocniony Adamantowa Korona Wojny,Adamantowa Korona Wojny,Wzmocniony,helmet,50,Zwykły,0,258,439,150000
+Żelaznego Muru Adamantowa Korona Wojny,Adamantowa Korona Wojny,Żelaznego Muru,helmet,50,Zwykły,0,288,439,150000
+Lekki Adamantowa Korona Wojny,Adamantowa Korona Wojny,Lekki,helmet,50,Zwykły,5,179,439,150000
+Zręczny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Zręczny,helmet,50,Zwykły,10,208,439,150000
+Zdrowy Adamantowa Korona Wojny,Adamantowa Korona Wojny,Zdrowy,helmet,50,Zwykły,0,199,576,150000
+Żywotny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Żywotny,helmet,50,Zwykły,0,199,714,150000
+Niezniszczalny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Niezniszczalny,helmet,50,Zwykły,0,318,489,150000
+Ochronny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Ochronny,helmet,50,Zwykły,0,228,469,150000
+Kolczasty Adamantowa Korona Wojny,Adamantowa Korona Wojny,Kolczasty,helmet,50,Zwykły,15,218,439,150000
+Odbijający Adamantowa Korona Wojny,Adamantowa Korona Wojny,Odbijający,helmet,50,Zwykły,20,248,439,150000
+Święty Adamantowa Korona Wojny,Adamantowa Korona Wojny,Święty,helmet,50,Zwykły,0,258,589,150000
+Mroczny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Mroczny,helmet,50,Zwykły,0,278,419,150000
+Starożytny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Starożytny,helmet,50,Zwykły,0,293,439,150000
+Zapomniany Adamantowa Korona Wojny,Adamantowa Korona Wojny,Zapomniany,helmet,50,Zwykły,0,253,479,150000
+Królewski Adamantowa Korona Wojny,Adamantowa Korona Wojny,Królewski,helmet,50,Zwykły,10,258,439,150000
+Tytanowy Adamantowa Korona Wojny,Adamantowa Korona Wojny,Tytanowy,helmet,50,Zwykły,0,298,639,150000
+Demoniczny Adamantowa Korona Wojny,Adamantowa Korona Wojny,Demoniczny,helmet,50,Zwykły,30,318,389,150000
+Boski Adamantowa Korona Wojny,Adamantowa Korona Wojny,Boski,helmet,50,Zwykły,20,358,739,150000
+Błyszczący Oko Smoka,Oko Smoka,Błyszczący,accessory,50,Zwykły,241,199,482,270000
+Cenny Oko Smoka,Oko Smoka,Cenny,accessory,50,Zwykły,246,204,526,270000
+Szczęśliwy Oko Smoka,Oko Smoka,Szczęśliwy,accessory,50,Zwykły,265,218,439,270000
+Wojownika Oko Smoka,Oko Smoka,Wojownika,accessory,50,Zwykły,328,199,439,270000
+Strażnika Oko Smoka,Oko Smoka,Strażnika,accessory,50,Zwykły,241,273,439,270000
+Życia Oko Smoka,Oko Smoka,Życia,accessory,50,Zwykły,241,199,758,270000
+Witalności Oko Smoka,Oko Smoka,Witalności,accessory,50,Zwykły,241,199,770,270000
+Krwi Oko Smoka,Oko Smoka,Krwi,accessory,50,Zwykły,289,199,489,270000
+Magiczny Oko Smoka,Oko Smoka,Magiczny,accessory,50,Zwykły,277,228,439,270000
+Runiczny Oko Smoka,Oko Smoka,Runiczny,accessory,50,Zwykły,289,238,479,270000
+Przeklęty Oko Smoka,Oko Smoka,Przeklęty,accessory,50,Zwykły,361,298,339,270000
+Święty Oko Smoka,Oko Smoka,Święty,accessory,50,Zwykły,241,278,589,270000
+Mroczny Oko Smoka,Oko Smoka,Mroczny,accessory,50,Zwykły,337,189,439,270000
+Starożytny Oko Smoka,Oko Smoka,Starożytny,accessory,50,Zwykły,301,248,519,270000
+Mistyczny Oko Smoka,Oko Smoka,Mistyczny,accessory,50,Zwykły,313,258,439,270000
+Królewski Oko Smoka,Oko Smoka,Królewski,accessory,50,Zwykły,313,258,570,270000
+Nieziemski Oko Smoka,Oko Smoka,Nieziemski,accessory,50,Zwykły,337,278,559,270000
+Tytanowy Oko Smoka,Oko Smoka,Tytanowy,accessory,50,Zwykły,241,298,689,270000
+Demoniczny Oko Smoka,Oko Smoka,Demoniczny,accessory,50,Zwykły,385,179,389,270000
+Boski Oko Smoka,Oko Smoka,Boski,accessory,50,Zwykły,411,348,958,270000
+Ostry Pogromca Cieni,Pogromca Cieni,Ostry,weapon,75,Zwykły,719,0,0,1500000
+Ciężki Pogromca Cieni,Pogromca Cieni,Ciężki,weapon,75,Zwykły,822,0,0,1500000
+Zabójczy Pogromca Cieni,Pogromca Cieni,Zabójczy,weapon,75,Zwykły,915,0,0,1500000
+Krwawy Pogromca Cieni,Pogromca Cieni,Krwawy,weapon,75,Zwykły,752,0,20,1500000
+Ognisty Pogromca Cieni,Pogromca Cieni,Ognisty,weapon,75,Zwykły,794,0,0,1500000
+Lodowy Pogromca Cieni,Pogromca Cieni,Lodowy,weapon,75,Zwykły,719,10,0,1500000
+Trujący Pogromca Cieni,Pogromca Cieni,Trujący,weapon,75,Zwykły,850,0,-10,1500000
+Potężny Pogromca Cieni,Pogromca Cieni,Potężny,weapon,75,Zwykły,981,0,0,1500000
+Lekki Pogromca Cieni,Pogromca Cieni,Lekki,weapon,75,Zwykły,588,5,0,1500000
+Szybki Pogromca Cieni,Pogromca Cieni,Szybki,weapon,75,Zwykły,691,0,0,1500000
+Wampiryczny Pogromca Cieni,Pogromca Cieni,Wampiryczny,weapon,75,Zwykły,719,0,50,1500000
+Przeklęty Pogromca Cieni,Pogromca Cieni,Przeklęty,weapon,75,Zwykły,1308,0,-50,1500000
+Święty Pogromca Cieni,Pogromca Cieni,Święty,weapon,75,Zwykły,784,10,30,1500000
+Mroczny Pogromca Cieni,Pogromca Cieni,Mroczny,weapon,75,Zwykły,850,-10,0,1500000
+Starożytny Pogromca Cieni,Pogromca Cieni,Starożytny,weapon,75,Zwykły,935,0,0,1500000
+Mistyczny Pogromca Cieni,Pogromca Cieni,Mistyczny,weapon,75,Zwykły,882,0,40,1500000
+Magiczny Pogromca Cieni,Pogromca Cieni,Magiczny,weapon,75,Zwykły,767,0,0,1500000
+Królewski Pogromca Cieni,Pogromca Cieni,Królewski,weapon,75,Zwykły,817,15,0,1500000
+Demoniczny Pogromca Cieni,Pogromca Cieni,Demoniczny,weapon,75,Zwykły,1046,-20,0,1500000
+Boski Pogromca Cieni,Pogromca Cieni,Boski,weapon,75,Zwykły,1177,20,100,1500000
+Solidny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Solidny,armor,75,Zwykły,0,580,1261,2250000
+Gruby Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Gruby,armor,75,Zwykły,0,633,1281,2250000
+Wzmocniony Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Wzmocniony,armor,75,Zwykły,0,686,1261,2250000
+Żelaznego Muru Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Żelaznego Muru,armor,75,Zwykły,0,749,1261,2250000
+Lekki Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Lekki,armor,75,Zwykły,5,475,1261,2250000
+Zręczny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Zręczny,armor,75,Zwykły,10,554,1261,2250000
+Zdrowy Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Zdrowy,armor,75,Zwykły,0,528,1563,2250000
+Żywotny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Żywotny,armor,75,Zwykły,0,528,1865,2250000
+Niezniszczalny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Niezniszczalny,armor,75,Zwykły,0,844,1311,2250000
+Ochronny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Ochronny,armor,75,Zwykły,0,607,1291,2250000
+Kolczasty Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Kolczasty,armor,75,Zwykły,15,580,1261,2250000
+Odbijający Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Odbijający,armor,75,Zwykły,20,660,1261,2250000
+Święty Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Święty,armor,75,Zwykły,0,686,1411,2250000
+Mroczny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Mroczny,armor,75,Zwykły,0,739,1241,2250000
+Starożytny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Starożytny,armor,75,Zwykły,0,737,1261,2250000
+Zapomniany Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Zapomniany,armor,75,Zwykły,0,648,1301,2250000
+Królewski Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Królewski,armor,75,Zwykły,10,686,1261,2250000
+Tytanowy Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Tytanowy,armor,75,Zwykły,0,792,1461,2250000
+Demoniczny Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Demoniczny,armor,75,Zwykły,30,844,1211,2250000
+Boski Pancerz ze Smoczej Łuski,Pancerz ze Smoczej Łuski,Boski,armor,75,Zwykły,20,950,1561,2250000
+Solidny Korona Demonów,Korona Demonów,Solidny,helmet,75,Zwykły,0,376,816,1200000
+Gruby Korona Demonów,Korona Demonów,Gruby,helmet,75,Zwykły,0,410,836,1200000
+Wzmocniony Korona Demonów,Korona Demonów,Wzmocniony,helmet,75,Zwykły,0,444,816,1200000
+Żelaznego Muru Korona Demonów,Korona Demonów,Żelaznego Muru,helmet,75,Zwykły,0,488,816,1200000
+Lekki Korona Demonów,Korona Demonów,Lekki,helmet,75,Zwykły,5,307,816,1200000
+Zręczny Korona Demonów,Korona Demonów,Zręczny,helmet,75,Zwykły,10,359,816,1200000
+Zdrowy Korona Demonów,Korona Demonów,Zdrowy,helmet,75,Zwykły,0,342,1029,1200000
+Żywotny Korona Demonów,Korona Demonów,Żywotny,helmet,75,Zwykły,0,342,1242,1200000
+Niezniszczalny Korona Demonów,Korona Demonów,Niezniszczalny,helmet,75,Zwykły,0,547,866,1200000
+Ochronny Korona Demonów,Korona Demonów,Ochronny,helmet,75,Zwykły,0,393,846,1200000
+Kolczasty Korona Demonów,Korona Demonów,Kolczasty,helmet,75,Zwykły,15,376,816,1200000
+Odbijający Korona Demonów,Korona Demonów,Odbijający,helmet,75,Zwykły,20,427,816,1200000
+Święty Korona Demonów,Korona Demonów,Święty,helmet,75,Zwykły,0,444,966,1200000
+Mroczny Korona Demonów,Korona Demonów,Mroczny,helmet,75,Zwykły,0,478,796,1200000
+Starożytny Korona Demonów,Korona Demonów,Starożytny,helmet,75,Zwykły,0,486,816,1200000
+Zapomniany Korona Demonów,Korona Demonów,Zapomniany,helmet,75,Zwykły,0,425,856,1200000
+Królewski Korona Demonów,Korona Demonów,Królewski,helmet,75,Zwykły,10,444,816,1200000
+Tytanowy Korona Demonów,Korona Demonów,Tytanowy,helmet,75,Zwykły,0,513,1016,1200000
+Demoniczny Korona Demonów,Korona Demonów,Demoniczny,helmet,75,Zwykły,30,547,766,1200000
+Boski Korona Demonów,Korona Demonów,Boski,helmet,75,Zwykły,20,615,1116,1200000
+Błyszczący Talisman Boskiej Mocy,Talisman Boskiej Mocy,Błyszczący,accessory,75,Zwykły,423,342,897,1800000
+Cenny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Cenny,accessory,75,Zwykły,428,347,979,1800000
+Szczęśliwy Talisman Boskiej Mocy,Talisman Boskiej Mocy,Szczęśliwy,accessory,75,Zwykły,465,376,816,1800000
+Wojownika Talisman Boskiej Mocy,Talisman Boskiej Mocy,Wojownika,accessory,75,Zwykły,564,342,816,1800000
+Strażnika Talisman Boskiej Mocy,Talisman Boskiej Mocy,Strażnika,accessory,75,Zwykły,423,459,816,1800000
+Życia Talisman Boskiej Mocy,Talisman Boskiej Mocy,Życia,accessory,75,Zwykły,423,342,1324,1800000
+Witalności Talisman Boskiej Mocy,Talisman Boskiej Mocy,Witalności,accessory,75,Zwykły,423,342,1260,1800000
+Krwi Talisman Boskiej Mocy,Talisman Boskiej Mocy,Krwi,accessory,75,Zwykły,507,342,866,1800000
+Magiczny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Magiczny,accessory,75,Zwykły,486,393,816,1800000
+Runiczny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Runiczny,accessory,75,Zwykły,507,410,856,1800000
+Przeklęty Talisman Boskiej Mocy,Talisman Boskiej Mocy,Przeklęty,accessory,75,Zwykły,634,513,716,1800000
+Święty Talisman Boskiej Mocy,Talisman Boskiej Mocy,Święty,accessory,75,Zwykły,423,478,966,1800000
+Mroczny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Mroczny,accessory,75,Zwykły,592,332,816,1800000
+Starożytny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Starożytny,accessory,75,Zwykły,528,427,896,1800000
+Mistyczny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Mistyczny,accessory,75,Zwykły,549,444,816,1800000
+Królewski Talisman Boskiej Mocy,Talisman Boskiej Mocy,Królewski,accessory,75,Zwykły,549,444,1060,1800000
+Nieziemski Talisman Boskiej Mocy,Talisman Boskiej Mocy,Nieziemski,accessory,75,Zwykły,592,478,936,1800000
+Tytanowy Talisman Boskiej Mocy,Talisman Boskiej Mocy,Tytanowy,accessory,75,Zwykły,423,513,1066,1800000
+Demoniczny Talisman Boskiej Mocy,Talisman Boskiej Mocy,Demoniczny,accessory,75,Zwykły,676,322,766,1800000
+Boski Talisman Boskiej Mocy,Talisman Boskiej Mocy,Boski,accessory,75,Zwykły,684,563,1524,1800000
+Ostry Święty Kij Maślaka,Święty Kij Maślaka,Ostry,weapon,5,Legendarny,44,0,0,2250
+Ciężki Święty Kij Maślaka,Święty Kij Maślaka,Ciężki,weapon,5,Legendarny,55,0,0,2250
+Zabójczy Święty Kij Maślaka,Święty Kij Maślaka,Zabójczy,weapon,5,Legendarny,56,0,0,2250
+Krwawy Święty Kij Maślaka,Święty Kij Maślaka,Krwawy,weapon,5,Legendarny,46,0,20,2250
+Ognisty Święty Kij Maślaka,Święty Kij Maślaka,Ognisty,weapon,5,Legendarny,58,0,0,2250
+Lodowy Święty Kij Maślaka,Święty Kij Maślaka,Lodowy,weapon,5,Legendarny,44,10,0,2250
+Trujący Święty Kij Maślaka,Święty Kij Maślaka,Trujący,weapon,5,Legendarny,52,0,-10,2250
+Potężny Święty Kij Maślaka,Święty Kij Maślaka,Potężny,weapon,5,Legendarny,60,0,0,2250
+Lekki Święty Kij Maślaka,Święty Kij Maślaka,Lekki,weapon,5,Legendarny,36,5,0,2250
+Szybki Święty Kij Maślaka,Święty Kij Maślaka,Szybki,weapon,5,Legendarny,47,0,0,2250
+Wampiryczny Święty Kij Maślaka,Święty Kij Maślaka,Wampiryczny,weapon,5,Legendarny,44,0,50,2250
+Przeklęty Święty Kij Maślaka,Święty Kij Maślaka,Przeklęty,weapon,5,Legendarny,80,0,-50,2250
+Święty Święty Kij Maślaka,Święty Kij Maślaka,Święty,weapon,5,Legendarny,48,10,30,2250
+Mroczny Święty Kij Maślaka,Święty Kij Maślaka,Mroczny,weapon,5,Legendarny,52,-10,0,2250
+Starożytny Święty Kij Maślaka,Święty Kij Maślaka,Starożytny,weapon,5,Legendarny,76,0,0,2250
+Mistyczny Święty Kij Maślaka,Święty Kij Maślaka,Mistyczny,weapon,5,Legendarny,54,0,40,2250
+Magiczny Święty Kij Maślaka,Święty Kij Maślaka,Magiczny,weapon,5,Legendarny,61,0,0,2250
+Królewski Święty Kij Maślaka,Święty Kij Maślaka,Królewski,weapon,5,Legendarny,50,15,0,2250
+Demoniczny Święty Kij Maślaka,Święty Kij Maślaka,Demoniczny,weapon,5,Legendarny,64,-20,0,2250
+Boski Święty Kij Maślaka,Święty Kij Maślaka,Boski,weapon,5,Legendarny,72,20,100,2250
+Solidny Potowa Opaska Pianka,Potowa Opaska Pianka,Solidny,helmet,8,Legendarny,0,52,87,3000
+Gruby Potowa Opaska Pianka,Potowa Opaska Pianka,Gruby,helmet,8,Legendarny,0,57,107,3000
+Wzmocniony Potowa Opaska Pianka,Potowa Opaska Pianka,Wzmocniony,helmet,8,Legendarny,0,62,87,3000
+Żelaznego Muru Potowa Opaska Pianka,Potowa Opaska Pianka,Żelaznego Muru,helmet,8,Legendarny,0,77,87,3000
+Lekki Potowa Opaska Pianka,Potowa Opaska Pianka,Lekki,helmet,8,Legendarny,5,43,87,3000
+Zręczny Potowa Opaska Pianka,Potowa Opaska Pianka,Zręczny,helmet,8,Legendarny,10,50,87,3000
+Zdrowy Potowa Opaska Pianka,Potowa Opaska Pianka,Zdrowy,helmet,8,Legendarny,0,48,154,3000
+Żywotny Potowa Opaska Pianka,Potowa Opaska Pianka,Żywotny,helmet,8,Legendarny,0,48,221,3000
+Niezniszczalny Potowa Opaska Pianka,Potowa Opaska Pianka,Niezniszczalny,helmet,8,Legendarny,0,76,137,3000
+Ochronny Potowa Opaska Pianka,Potowa Opaska Pianka,Ochronny,helmet,8,Legendarny,0,55,117,3000
+Kolczasty Potowa Opaska Pianka,Potowa Opaska Pianka,Kolczasty,helmet,8,Legendarny,15,52,87,3000
+Odbijający Potowa Opaska Pianka,Potowa Opaska Pianka,Odbijający,helmet,8,Legendarny,20,60,87,3000
+Święty Potowa Opaska Pianka,Potowa Opaska Pianka,Święty,helmet,8,Legendarny,0,62,237,3000
+Mroczny Potowa Opaska Pianka,Potowa Opaska Pianka,Mroczny,helmet,8,Legendarny,0,67,67,3000
+Starożytny Potowa Opaska Pianka,Potowa Opaska Pianka,Starożytny,helmet,8,Legendarny,0,89,87,3000
+Zapomniany Potowa Opaska Pianka,Potowa Opaska Pianka,Zapomniany,helmet,8,Legendarny,0,72,127,3000
+Królewski Potowa Opaska Pianka,Potowa Opaska Pianka,Królewski,helmet,8,Legendarny,10,62,87,3000
+Tytanowy Potowa Opaska Pianka,Potowa Opaska Pianka,Tytanowy,helmet,8,Legendarny,0,72,287,3000
+Demoniczny Potowa Opaska Pianka,Potowa Opaska Pianka,Demoniczny,helmet,8,Legendarny,30,76,37,3000
+Boski Potowa Opaska Pianka,Potowa Opaska Pianka,Boski,helmet,8,Legendarny,20,86,387,3000
+Solidny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Solidny,armor,15,Legendarny,0,152,268,12000
+Gruby Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Gruby,armor,15,Legendarny,0,166,288,12000
+Wzmocniony Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Wzmocniony,armor,15,Legendarny,0,180,268,12000
+Żelaznego Muru Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Żelaznego Muru,armor,15,Legendarny,0,204,268,12000
+Lekki Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Lekki,armor,15,Legendarny,5,125,268,12000
+Zręczny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Zręczny,armor,15,Legendarny,10,145,268,12000
+Zdrowy Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Zdrowy,armor,15,Legendarny,0,139,371,12000
+Żywotny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Żywotny,armor,15,Legendarny,0,139,475,12000
+Niezniszczalny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Niezniszczalny,armor,15,Legendarny,0,222,318,12000
+Ochronny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Ochronny,armor,15,Legendarny,0,159,298,12000
+Kolczasty Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Kolczasty,armor,15,Legendarny,15,152,268,12000
+Odbijający Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Odbijający,armor,15,Legendarny,20,173,268,12000
+Święty Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Święty,armor,15,Legendarny,0,180,418,12000
+Mroczny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Mroczny,armor,15,Legendarny,0,194,248,12000
+Starożytny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Starożytny,armor,15,Legendarny,0,212,268,12000
+Zapomniany Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Zapomniany,armor,15,Legendarny,0,181,308,12000
+Królewski Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Królewski,armor,15,Legendarny,10,180,268,12000
+Tytanowy Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Tytanowy,armor,15,Legendarny,0,208,468,12000
+Demoniczny Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Demoniczny,armor,15,Legendarny,30,222,218,12000
+Boski Zbroja Mytnika Damiana,Zbroja Mytnika Damiana,Boski,armor,15,Legendarny,20,250,568,12000
+Błyszczący Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Błyszczący,accessory,20,Legendarny,170,150,312,18000
+Cenny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Cenny,accessory,20,Legendarny,175,155,340,18000
+Szczęśliwy Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Szczęśliwy,accessory,20,Legendarny,187,165,284,18000
+Wojownika Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Wojownika,accessory,20,Legendarny,236,150,284,18000
+Strażnika Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Strażnika,accessory,20,Legendarny,170,210,284,18000
+Życia Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Życia,accessory,20,Legendarny,170,150,526,18000
+Witalności Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Witalności,accessory,20,Legendarny,170,150,569,18000
+Krwi Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Krwi,accessory,20,Legendarny,204,150,334,18000
+Magiczny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Magiczny,accessory,20,Legendarny,195,172,284,18000
+Runiczny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Runiczny,accessory,20,Legendarny,204,180,324,18000
+Przeklęty Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Przeklęty,accessory,20,Legendarny,255,225,184,18000
+Święty Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Święty,accessory,20,Legendarny,170,210,434,18000
+Mroczny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Mroczny,accessory,20,Legendarny,237,140,284,18000
+Starożytny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Starożytny,accessory,20,Legendarny,212,187,364,18000
+Mistyczny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Mistyczny,accessory,20,Legendarny,221,195,284,18000
+Królewski Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Królewski,accessory,20,Legendarny,221,195,369,18000
+Nieziemski Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Nieziemski,accessory,20,Legendarny,237,210,404,18000
+Tytanowy Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Tytanowy,accessory,20,Legendarny,170,225,534,18000
+Demoniczny Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Demoniczny,accessory,20,Legendarny,272,130,234,18000
+Boski Mistyczny Naszyjnik Domci,Mistyczny Naszyjnik Domci,Boski,accessory,20,Legendarny,305,275,726,18000
+Błyszczący Owijki 'PowerKeeper',Owijki 'PowerKeeper',Błyszczący,accessory,5,Legendarny,28,29,60,7500
+Cenny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Cenny,accessory,5,Legendarny,33,34,66,7500
+Szczęśliwy Owijki 'PowerKeeper',Owijki 'PowerKeeper',Szczęśliwy,accessory,5,Legendarny,30,31,55,7500
+Wojownika Owijki 'PowerKeeper',Owijki 'PowerKeeper',Wojownika,accessory,5,Legendarny,51,29,55,7500
+Strażnika Owijki 'PowerKeeper',Owijki 'PowerKeeper',Strażnika,accessory,5,Legendarny,28,52,55,7500
+Życia Owijki 'PowerKeeper',Owijki 'PowerKeeper',Życia,accessory,5,Legendarny,28,29,182,7500
+Witalności Owijki 'PowerKeeper',Owijki 'PowerKeeper',Witalności,accessory,5,Legendarny,28,29,271,7500
+Krwi Owijki 'PowerKeeper',Owijki 'PowerKeeper',Krwi,accessory,5,Legendarny,33,29,105,7500
+Magiczny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Magiczny,accessory,5,Legendarny,32,33,55,7500
+Runiczny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Runiczny,accessory,5,Legendarny,33,34,95,7500
+Przeklęty Owijki 'PowerKeeper',Owijki 'PowerKeeper',Przeklęty,accessory,5,Legendarny,42,43,-45,7500
+Święty Owijki 'PowerKeeper',Owijki 'PowerKeeper',Święty,accessory,5,Legendarny,28,40,205,7500
+Mroczny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Mroczny,accessory,5,Legendarny,39,19,55,7500
+Starożytny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Starożytny,accessory,5,Legendarny,35,36,135,7500
+Mistyczny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Mistyczny,accessory,5,Legendarny,36,37,55,7500
+Królewski Owijki 'PowerKeeper',Owijki 'PowerKeeper',Królewski,accessory,5,Legendarny,36,37,71,7500
+Nieziemski Owijki 'PowerKeeper',Owijki 'PowerKeeper',Nieziemski,accessory,5,Legendarny,39,40,175,7500
+Tytanowy Owijki 'PowerKeeper',Owijki 'PowerKeeper',Tytanowy,accessory,5,Legendarny,28,43,305,7500
+Demoniczny Owijki 'PowerKeeper',Owijki 'PowerKeeper',Demoniczny,accessory,5,Legendarny,44,9,5,7500
+Boski Owijki 'PowerKeeper',Owijki 'PowerKeeper',Boski,accessory,5,Legendarny,92,93,382,7500
+Ostry Klucz Czternastka Yomena,Klucz Czternastka Yomena,Ostry,weapon,22,Legendarny,297,0,0,27000
+Ciężki Klucz Czternastka Yomena,Klucz Czternastka Yomena,Ciężki,weapon,22,Legendarny,342,0,0,27000
+Zabójczy Klucz Czternastka Yomena,Klucz Czternastka Yomena,Zabójczy,weapon,22,Legendarny,378,0,0,27000
+Krwawy Klucz Czternastka Yomena,Klucz Czternastka Yomena,Krwawy,weapon,22,Legendarny,310,0,20,27000
+Ognisty Klucz Czternastka Yomena,Klucz Czternastka Yomena,Ognisty,weapon,22,Legendarny,334,0,0,27000
+Lodowy Klucz Czternastka Yomena,Klucz Czternastka Yomena,Lodowy,weapon,22,Legendarny,297,10,0,27000
+Trujący Klucz Czternastka Yomena,Klucz Czternastka Yomena,Trujący,weapon,22,Legendarny,351,0,-10,27000
+Potężny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Potężny,weapon,22,Legendarny,405,0,0,27000
+Lekki Klucz Czternastka Yomena,Klucz Czternastka Yomena,Lekki,weapon,22,Legendarny,243,5,0,27000
+Szybki Klucz Czternastka Yomena,Klucz Czternastka Yomena,Szybki,weapon,22,Legendarny,288,0,0,27000
+Wampiryczny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Wampiryczny,weapon,22,Legendarny,297,0,50,27000
+Przeklęty Klucz Czternastka Yomena,Klucz Czternastka Yomena,Przeklęty,weapon,22,Legendarny,540,0,-50,27000
+Święty Klucz Czternastka Yomena,Klucz Czternastka Yomena,Święty,weapon,22,Legendarny,324,10,30,27000
+Mroczny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Mroczny,weapon,22,Legendarny,351,-10,0,27000
+Starożytny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Starożytny,weapon,22,Legendarny,398,0,0,27000
+Mistyczny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Mistyczny,weapon,22,Legendarny,364,0,40,27000
+Magiczny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Magiczny,weapon,22,Legendarny,325,0,0,27000
+Królewski Klucz Czternastka Yomena,Klucz Czternastka Yomena,Królewski,weapon,22,Legendarny,337,15,0,27000
+Demoniczny Klucz Czternastka Yomena,Klucz Czternastka Yomena,Demoniczny,weapon,22,Legendarny,432,-20,0,27000
+Boski Klucz Czternastka Yomena,Klucz Czternastka Yomena,Boski,weapon,22,Legendarny,486,20,100,27000
+Solidny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Solidny,armor,30,Legendarny,0,394,734,67500
+Gruby Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Gruby,armor,30,Legendarny,0,430,754,67500
+Wzmocniony Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Wzmocniony,armor,30,Legendarny,0,466,734,67500
+Żelaznego Muru Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Żelaznego Muru,armor,30,Legendarny,0,512,734,67500
+Lekki Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Lekki,armor,30,Legendarny,5,323,734,67500
+Zręczny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Zręczny,armor,30,Legendarny,10,376,734,67500
+Zdrowy Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Zdrowy,armor,30,Legendarny,0,359,930,67500
+Żywotny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Żywotny,armor,30,Legendarny,0,359,1127,67500
+Niezniszczalny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Niezniszczalny,armor,30,Legendarny,0,574,784,67500
+Ochronny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Ochronny,armor,30,Legendarny,0,412,764,67500
+Kolczasty Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Kolczasty,armor,30,Legendarny,15,394,734,67500
+Odbijający Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Odbijający,armor,30,Legendarny,20,448,734,67500
+Święty Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Święty,armor,30,Legendarny,0,466,884,67500
+Mroczny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Mroczny,armor,30,Legendarny,0,502,714,67500
+Starożytny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Starożytny,armor,30,Legendarny,0,509,734,67500
+Zapomniany Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Zapomniany,armor,30,Legendarny,0,445,774,67500
+Królewski Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Królewski,armor,30,Legendarny,10,466,734,67500
+Tytanowy Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Tytanowy,armor,30,Legendarny,0,538,934,67500
+Demoniczny Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Demoniczny,armor,30,Legendarny,30,574,684,67500
+Boski Nakolanniki Przeznaczenia Eczme,Nakolanniki Przeznaczenia Eczme,Boski,armor,30,Legendarny,20,646,1034,67500
+Ostry Ognisty Topór Czeluści,Ognisty Topór Czeluści,Ostry,weapon,45,Legendarny,843,0,0,150000
+Ciężki Ognisty Topór Czeluści,Ognisty Topór Czeluści,Ciężki,weapon,45,Legendarny,963,0,0,150000
+Zabójczy Ognisty Topór Czeluści,Ognisty Topór Czeluści,Zabójczy,weapon,45,Legendarny,1073,0,0,150000
+Krwawy Ognisty Topór Czeluści,Ognisty Topór Czeluści,Krwawy,weapon,45,Legendarny,882,0,20,150000
+Ognisty Ognisty Topór Czeluści,Ognisty Topór Czeluści,Ognisty,weapon,45,Legendarny,930,0,0,150000
+Lodowy Ognisty Topór Czeluści,Ognisty Topór Czeluści,Lodowy,weapon,45,Legendarny,843,10,0,150000
+Trujący Ognisty Topór Czeluści,Ognisty Topór Czeluści,Trujący,weapon,45,Legendarny,997,0,-10,150000
+Potężny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Potężny,weapon,45,Legendarny,1150,0,0,150000
+Lekki Ognisty Topór Czeluści,Ognisty Topór Czeluści,Lekki,weapon,45,Legendarny,690,5,0,150000
+Szybki Ognisty Topór Czeluści,Ognisty Topór Czeluści,Szybki,weapon,45,Legendarny,810,0,0,150000
+Wampiryczny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Wampiryczny,weapon,45,Legendarny,843,0,50,150000
+Przeklęty Ognisty Topór Czeluści,Ognisty Topór Czeluści,Przeklęty,weapon,45,Legendarny,1534,0,-50,150000
+Święty Ognisty Topór Czeluści,Ognisty Topór Czeluści,Święty,weapon,45,Legendarny,920,10,30,150000
+Mroczny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Mroczny,weapon,45,Legendarny,997,-10,0,150000
+Starożytny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Starożytny,weapon,45,Legendarny,1093,0,0,150000
+Mistyczny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Mistyczny,weapon,45,Legendarny,1035,0,40,150000
+Magiczny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Magiczny,weapon,45,Legendarny,897,0,0,150000
+Królewski Ognisty Topór Czeluści,Ognisty Topór Czeluści,Królewski,weapon,45,Legendarny,958,15,0,150000
+Demoniczny Ognisty Topór Czeluści,Ognisty Topór Czeluści,Demoniczny,weapon,45,Legendarny,1227,-20,0,150000
+Boski Ognisty Topór Czeluści,Ognisty Topór Czeluści,Boski,weapon,45,Legendarny,1380,20,100,150000
+Błyszczący Oko Wulkanu,Oko Wulkanu,Błyszczący,accessory,45,Legendarny,520,433,1030,180000
+Cenny Oko Wulkanu,Oko Wulkanu,Cenny,accessory,45,Legendarny,525,438,1124,180000
+Szczęśliwy Oko Wulkanu,Oko Wulkanu,Szczęśliwy,accessory,45,Legendarny,572,476,937,180000
+Wojownika Oko Wulkanu,Oko Wulkanu,Wojownika,accessory,45,Legendarny,691,433,937,180000
+Strażnika Oko Wulkanu,Oko Wulkanu,Strażnika,accessory,45,Legendarny,520,577,937,180000
+Życia Oko Wulkanu,Oko Wulkanu,Życia,accessory,45,Legendarny,520,433,1505,180000
+Witalności Oko Wulkanu,Oko Wulkanu,Witalności,accessory,45,Legendarny,520,433,1418,180000
+Krwi Oko Wulkanu,Oko Wulkanu,Krwi,accessory,45,Legendarny,624,433,987,180000
+Magiczny Oko Wulkanu,Oko Wulkanu,Magiczny,accessory,45,Legendarny,598,497,937,180000
+Runiczny Oko Wulkanu,Oko Wulkanu,Runiczny,accessory,45,Legendarny,624,519,977,180000
+Przeklęty Oko Wulkanu,Oko Wulkanu,Przeklęty,accessory,45,Legendarny,780,649,837,180000
+Święty Oko Wulkanu,Oko Wulkanu,Święty,accessory,45,Legendarny,520,606,1087,180000
+Mroczny Oko Wulkanu,Oko Wulkanu,Mroczny,accessory,45,Legendarny,728,423,937,180000
+Starożytny Oko Wulkanu,Oko Wulkanu,Starożytny,accessory,45,Legendarny,650,541,1017,180000
+Mistyczny Oko Wulkanu,Oko Wulkanu,Mistyczny,accessory,45,Legendarny,676,562,937,180000
+Królewski Oko Wulkanu,Oko Wulkanu,Królewski,accessory,45,Legendarny,676,562,1218,180000
+Nieziemski Oko Wulkanu,Oko Wulkanu,Nieziemski,accessory,45,Legendarny,728,606,1057,180000
+Tytanowy Oko Wulkanu,Oko Wulkanu,Tytanowy,accessory,45,Legendarny,520,649,1187,180000
+Demoniczny Oko Wulkanu,Oko Wulkanu,Demoniczny,accessory,45,Legendarny,832,413,887,180000
+Boski Oko Wulkanu,Oko Wulkanu,Boski,accessory,45,Legendarny,830,699,1705,180000
+Solidny Kryształowy Pancerz,Kryształowy Pancerz,Solidny,armor,60,Legendarny,0,1054,2197,375000
+Gruby Kryształowy Pancerz,Kryształowy Pancerz,Gruby,armor,60,Legendarny,0,1150,2217,375000
+Wzmocniony Kryształowy Pancerz,Kryształowy Pancerz,Wzmocniony,armor,60,Legendarny,0,1246,2197,375000
+Żelaznego Muru Kryształowy Pancerz,Kryształowy Pancerz,Żelaznego Muru,armor,60,Legendarny,0,1352,2197,375000
+Lekki Kryształowy Pancerz,Kryształowy Pancerz,Lekki,armor,60,Legendarny,5,863,2197,375000
+Zręczny Kryształowy Pancerz,Kryształowy Pancerz,Zręczny,armor,60,Legendarny,10,1006,2197,375000
+Zdrowy Kryształowy Pancerz,Kryształowy Pancerz,Zdrowy,armor,60,Legendarny,0,959,2686,375000
+Żywotny Kryształowy Pancerz,Kryształowy Pancerz,Żywotny,armor,60,Legendarny,0,959,3175,375000
+Niezniszczalny Kryształowy Pancerz,Kryształowy Pancerz,Niezniszczalny,armor,60,Legendarny,0,1534,2247,375000
+Ochronny Kryształowy Pancerz,Kryształowy Pancerz,Ochronny,armor,60,Legendarny,0,1102,2227,375000
+Kolczasty Kryształowy Pancerz,Kryształowy Pancerz,Kolczasty,armor,60,Legendarny,15,1054,2197,375000
+Odbijający Kryształowy Pancerz,Kryształowy Pancerz,Odbijający,armor,60,Legendarny,20,1198,2197,375000
+Święty Kryształowy Pancerz,Kryształowy Pancerz,Święty,armor,60,Legendarny,0,1246,2347,375000
+Mroczny Kryształowy Pancerz,Kryształowy Pancerz,Mroczny,armor,60,Legendarny,0,1342,2177,375000
+Starożytny Kryształowy Pancerz,Kryształowy Pancerz,Starożytny,armor,60,Legendarny,0,1319,2197,375000
+Zapomniany Kryształowy Pancerz,Kryształowy Pancerz,Zapomniany,armor,60,Legendarny,0,1165,2237,375000
+Królewski Kryształowy Pancerz,Kryształowy Pancerz,Królewski,armor,60,Legendarny,10,1246,2197,375000
+Tytanowy Kryształowy Pancerz,Kryształowy Pancerz,Tytanowy,armor,60,Legendarny,0,1438,2397,375000
+Demoniczny Kryształowy Pancerz,Kryształowy Pancerz,Demoniczny,armor,60,Legendarny,30,1534,2147,375000
+Boski Kryształowy Pancerz,Kryształowy Pancerz,Boski,armor,60,Legendarny,20,1726,2497,375000
+Solidny Diadem Jaskini,Diadem Jaskini,Solidny,helmet,60,Legendarny,0,699,1450,300000
+Gruby Diadem Jaskini,Diadem Jaskini,Gruby,helmet,60,Legendarny,0,763,1470,300000
+Wzmocniony Diadem Jaskini,Diadem Jaskini,Wzmocniony,helmet,60,Legendarny,0,826,1450,300000
+Żelaznego Muru Diadem Jaskini,Diadem Jaskini,Żelaznego Muru,helmet,60,Legendarny,0,900,1450,300000
+Lekki Diadem Jaskini,Diadem Jaskini,Lekki,helmet,60,Legendarny,5,572,1450,300000
+Zręczny Diadem Jaskini,Diadem Jaskini,Zręczny,helmet,60,Legendarny,10,667,1450,300000
+Zdrowy Diadem Jaskini,Diadem Jaskini,Zdrowy,helmet,60,Legendarny,0,636,1790,300000
+Żywotny Diadem Jaskini,Diadem Jaskini,Żywotny,helmet,60,Legendarny,0,636,2129,300000
+Niezniszczalny Diadem Jaskini,Diadem Jaskini,Niezniszczalny,helmet,60,Legendarny,0,1017,1500,300000
+Ochronny Diadem Jaskini,Diadem Jaskini,Ochronny,helmet,60,Legendarny,0,731,1480,300000
+Kolczasty Diadem Jaskini,Diadem Jaskini,Kolczasty,helmet,60,Legendarny,15,699,1450,300000
+Odbijający Diadem Jaskini,Diadem Jaskini,Odbijający,helmet,60,Legendarny,20,795,1450,300000
+Święty Diadem Jaskini,Diadem Jaskini,Święty,helmet,60,Legendarny,0,826,1600,300000
+Mroczny Diadem Jaskini,Diadem Jaskini,Mroczny,helmet,60,Legendarny,0,890,1430,300000
+Starożytny Diadem Jaskini,Diadem Jaskini,Starożytny,helmet,60,Legendarny,0,883,1450,300000
+Zapomniany Diadem Jaskini,Diadem Jaskini,Zapomniany,helmet,60,Legendarny,0,778,1490,300000
+Królewski Diadem Jaskini,Diadem Jaskini,Królewski,helmet,60,Legendarny,10,826,1450,300000
+Tytanowy Diadem Jaskini,Diadem Jaskini,Tytanowy,helmet,60,Legendarny,0,954,1650,300000
+Demoniczny Diadem Jaskini,Diadem Jaskini,Demoniczny,helmet,60,Legendarny,30,1017,1400,300000
+Boski Diadem Jaskini,Diadem Jaskini,Boski,helmet,60,Legendarny,20,1144,1750,300000
+Ostry Mroźne Ostrze,Mroźne Ostrze,Ostry,weapon,75,Legendarny,1799,0,0,1125000
+Ciężki Mroźne Ostrze,Mroźne Ostrze,Ciężki,weapon,75,Legendarny,2050,0,0,1125000
+Zabójczy Mroźne Ostrze,Mroźne Ostrze,Zabójczy,weapon,75,Legendarny,2290,0,0,1125000
+Krwawy Mroźne Ostrze,Mroźne Ostrze,Krwawy,weapon,75,Legendarny,1881,0,20,1125000
+Ognisty Mroźne Ostrze,Mroźne Ostrze,Ognisty,weapon,75,Legendarny,1973,0,0,1125000
+Lodowy Mroźne Ostrze,Mroźne Ostrze,Lodowy,weapon,75,Legendarny,1799,10,0,1125000
+Trujący Mroźne Ostrze,Mroźne Ostrze,Trujący,weapon,75,Legendarny,2126,0,-10,1125000
+Potężny Mroźne Ostrze,Mroźne Ostrze,Potężny,weapon,75,Legendarny,2454,0,0,1125000
+Lekki Mroźne Ostrze,Mroźne Ostrze,Lekki,weapon,75,Legendarny,1472,5,0,1125000
+Szybki Mroźne Ostrze,Mroźne Ostrze,Szybki,weapon,75,Legendarny,1722,0,0,1125000
+Wampiryczny Mroźne Ostrze,Mroźne Ostrze,Wampiryczny,weapon,75,Legendarny,1799,0,50,1125000
+Przeklęty Mroźne Ostrze,Mroźne Ostrze,Przeklęty,weapon,75,Legendarny,3272,0,-50,1125000
+Święty Mroźne Ostrze,Mroźne Ostrze,Święty,weapon,75,Legendarny,1963,10,30,1125000
+Mroczny Mroźne Ostrze,Mroźne Ostrze,Mroczny,weapon,75,Legendarny,2126,-10,0,1125000
+Starożytny Mroźne Ostrze,Mroźne Ostrze,Starożytny,weapon,75,Legendarny,2310,0,0,1125000
+Mistyczny Mroźne Ostrze,Mroźne Ostrze,Mistyczny,weapon,75,Legendarny,2208,0,40,1125000
+Magiczny Mroźne Ostrze,Mroźne Ostrze,Magiczny,weapon,75,Legendarny,1896,0,0,1125000
+Królewski Mroźne Ostrze,Mroźne Ostrze,Królewski,weapon,75,Legendarny,2045,15,0,1125000
+Demoniczny Mroźne Ostrze,Mroźne Ostrze,Demoniczny,weapon,75,Legendarny,2617,-20,0,1125000
+Boski Mroźne Ostrze,Mroźne Ostrze,Boski,weapon,75,Legendarny,2944,20,100,1125000
+Błyszczący Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Błyszczący,accessory,75,Legendarny,1059,857,2244,1200000
+Cenny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Cenny,accessory,75,Legendarny,1064,862,2448,1200000
+Szczęśliwy Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Szczęśliwy,accessory,75,Legendarny,1164,942,2040,1200000
+Wojownika Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Wojownika,accessory,75,Legendarny,1391,857,2040,1200000
+Strażnika Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Strażnika,accessory,75,Legendarny,1059,1129,2040,1200000
+Życia Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Życia,accessory,75,Legendarny,1059,857,3160,1200000
+Witalności Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Witalności,accessory,75,Legendarny,1059,857,2852,1200000
+Krwi Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Krwi,accessory,75,Legendarny,1270,857,2090,1200000
+Magiczny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Magiczny,accessory,75,Legendarny,1217,985,2040,1200000
+Runiczny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Runiczny,accessory,75,Legendarny,1270,1028,2080,1200000
+Przeklęty Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Przeklęty,accessory,75,Legendarny,1588,1285,1940,1200000
+Święty Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Święty,accessory,75,Legendarny,1059,1199,2190,1200000
+Mroczny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Mroczny,accessory,75,Legendarny,1482,847,2040,1200000
+Starożytny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Starożytny,accessory,75,Legendarny,1323,1071,2120,1200000
+Mistyczny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Mistyczny,accessory,75,Legendarny,1376,1114,2040,1200000
+Królewski Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Królewski,accessory,75,Legendarny,1376,1114,2652,1200000
+Nieziemski Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Nieziemski,accessory,75,Legendarny,1482,1199,2160,1200000
+Tytanowy Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Tytanowy,accessory,75,Legendarny,1059,1285,2290,1200000
+Demoniczny Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Demoniczny,accessory,75,Legendarny,1694,837,1990,1200000
+Boski Amulet Wiecznej Zimy,Amulet Wiecznej Zimy,Boski,accessory,75,Legendarny,1638,1335,3360,1200000
+Solidny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Solidny,armor,90,Mityczny,0,3021,6787,3750000
+Gruby Pancerz Upadłego Boga,Pancerz Upadłego Boga,Gruby,armor,90,Mityczny,0,3296,6807,3750000
+Wzmocniony Pancerz Upadłego Boga,Pancerz Upadłego Boga,Wzmocniony,armor,90,Mityczny,0,3571,6787,3750000
+Żelaznego Muru Pancerz Upadłego Boga,Pancerz Upadłego Boga,Żelaznego Muru,armor,90,Mityczny,0,3855,6787,3750000
+Lekki Pancerz Upadłego Boga,Pancerz Upadłego Boga,Lekki,armor,90,Mityczny,5,2472,6787,3750000
+Zręczny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Zręczny,armor,90,Mityczny,10,2884,6787,3750000
+Zdrowy Pancerz Upadłego Boga,Pancerz Upadłego Boga,Zdrowy,armor,90,Mityczny,0,2747,8194,3750000
+Żywotny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Żywotny,armor,90,Mityczny,0,2747,9601,3750000
+Niezniszczalny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Niezniszczalny,armor,90,Mityczny,0,4395,6837,3750000
+Ochronny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Ochronny,armor,90,Mityczny,0,3159,6817,3750000
+Kolczasty Pancerz Upadłego Boga,Pancerz Upadłego Boga,Kolczasty,armor,90,Mityczny,15,3021,6787,3750000
+Odbijający Pancerz Upadłego Boga,Pancerz Upadłego Boga,Odbijający,armor,90,Mityczny,20,3433,6787,3750000
+Święty Pancerz Upadłego Boga,Pancerz Upadłego Boga,Święty,armor,90,Mityczny,0,3571,6937,3750000
+Mroczny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Mroczny,armor,90,Mityczny,0,3845,6767,3750000
+Starożytny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Starożytny,armor,90,Mityczny,0,3733,6787,3750000
+Zapomniany Pancerz Upadłego Boga,Pancerz Upadłego Boga,Zapomniany,armor,90,Mityczny,0,3311,6827,3750000
+Królewski Pancerz Upadłego Boga,Pancerz Upadłego Boga,Królewski,armor,90,Mityczny,10,3571,6787,3750000
+Tytanowy Pancerz Upadłego Boga,Pancerz Upadłego Boga,Tytanowy,armor,90,Mityczny,0,4120,6987,3750000
+Demoniczny Pancerz Upadłego Boga,Pancerz Upadłego Boga,Demoniczny,armor,90,Mityczny,30,4395,6737,3750000
+Boski Pancerz Upadłego Boga,Pancerz Upadłego Boga,Boski,armor,90,Mityczny,20,4944,7087,3750000
+Solidny Aureola Zniszczenia,Aureola Zniszczenia,Solidny,helmet,90,Mityczny,0,1925,4316,2700000
+Gruby Aureola Zniszczenia,Aureola Zniszczenia,Gruby,helmet,90,Mityczny,0,2100,4336,2700000
+Wzmocniony Aureola Zniszczenia,Aureola Zniszczenia,Wzmocniony,helmet,90,Mityczny,0,2275,4316,2700000
+Żelaznego Muru Aureola Zniszczenia,Aureola Zniszczenia,Żelaznego Muru,helmet,90,Mityczny,0,2460,4316,2700000
+Lekki Aureola Zniszczenia,Aureola Zniszczenia,Lekki,helmet,90,Mityczny,5,1575,4316,2700000
+Zręczny Aureola Zniszczenia,Aureola Zniszczenia,Zręczny,helmet,90,Mityczny,10,1837,4316,2700000
+Zdrowy Aureola Zniszczenia,Aureola Zniszczenia,Zdrowy,helmet,90,Mityczny,0,1750,5229,2700000
+Żywotny Aureola Zniszczenia,Aureola Zniszczenia,Żywotny,helmet,90,Mityczny,0,1750,6142,2700000
+Niezniszczalny Aureola Zniszczenia,Aureola Zniszczenia,Niezniszczalny,helmet,90,Mityczny,0,2800,4366,2700000
+Ochronny Aureola Zniszczenia,Aureola Zniszczenia,Ochronny,helmet,90,Mityczny,0,2012,4346,2700000
+Kolczasty Aureola Zniszczenia,Aureola Zniszczenia,Kolczasty,helmet,90,Mityczny,15,1925,4316,2700000
+Odbijający Aureola Zniszczenia,Aureola Zniszczenia,Odbijający,helmet,90,Mityczny,20,2187,4316,2700000
+Święty Aureola Zniszczenia,Aureola Zniszczenia,Święty,helmet,90,Mityczny,0,2275,4466,2700000
+Mroczny Aureola Zniszczenia,Aureola Zniszczenia,Mroczny,helmet,90,Mityczny,0,2450,4296,2700000
+Starożytny Aureola Zniszczenia,Aureola Zniszczenia,Starożytny,helmet,90,Mityczny,0,2387,4316,2700000
+Zapomniany Aureola Zniszczenia,Aureola Zniszczenia,Zapomniany,helmet,90,Mityczny,0,2115,4356,2700000
+Królewski Aureola Zniszczenia,Aureola Zniszczenia,Królewski,helmet,90,Mityczny,10,2275,4316,2700000
+Tytanowy Aureola Zniszczenia,Aureola Zniszczenia,Tytanowy,helmet,90,Mityczny,0,2625,4516,2700000
+Demoniczny Aureola Zniszczenia,Aureola Zniszczenia,Demoniczny,helmet,90,Mityczny,30,2800,4266,2700000
+Boski Aureola Zniszczenia,Aureola Zniszczenia,Boski,helmet,90,Mityczny,20,3150,4616,2700000
+Ostry Ostrze Nieskończoności,Ostrze Nieskończoności,Ostry,weapon,100,Mityczny,4422,0,0,15000000
+Ciężki Ostrze Nieskończoności,Ostrze Nieskończoności,Ciężki,weapon,100,Mityczny,5030,0,0,15000000
+Zabójczy Ostrze Nieskończoności,Ostrze Nieskończoności,Zabójczy,weapon,100,Mityczny,5628,0,0,15000000
+Krwawy Ostrze Nieskończoności,Ostrze Nieskończoności,Krwawy,weapon,100,Mityczny,4623,0,20,15000000
+Ognisty Ostrze Nieskończoności,Ostrze Nieskończoności,Ognisty,weapon,100,Mityczny,4834,0,0,15000000
+Lodowy Ostrze Nieskończoności,Ostrze Nieskończoności,Lodowy,weapon,100,Mityczny,4422,10,0,15000000
+Trujący Ostrze Nieskończoności,Ostrze Nieskończoności,Trujący,weapon,100,Mityczny,5226,0,-10,15000000
+Potężny Ostrze Nieskończoności,Ostrze Nieskończoności,Potężny,weapon,100,Mityczny,6030,0,0,15000000
+Lekki Ostrze Nieskończoności,Ostrze Nieskończoności,Lekki,weapon,100,Mityczny,3618,5,0,15000000
+Szybki Ostrze Nieskończoności,Ostrze Nieskończoności,Szybki,weapon,100,Mityczny,4226,0,0,15000000
+Wampiryczny Ostrze Nieskończoności,Ostrze Nieskończoności,Wampiryczny,weapon,100,Mityczny,4422,0,50,15000000
+Przeklęty Ostrze Nieskończoności,Ostrze Nieskończoności,Przeklęty,weapon,100,Mityczny,8040,0,-50,15000000
+Święty Ostrze Nieskończoności,Ostrze Nieskończoności,Święty,weapon,100,Mityczny,4824,10,30,15000000
+Mroczny Ostrze Nieskończoności,Ostrze Nieskończoności,Mroczny,weapon,100,Mityczny,5226,-10,0,15000000
+Starożytny Ostrze Nieskończoności,Ostrze Nieskończoności,Starożytny,weapon,100,Mityczny,5648,0,0,15000000
+Mistyczny Ostrze Nieskończoności,Ostrze Nieskończoności,Mistyczny,weapon,100,Mityczny,5427,0,40,15000000
+Magiczny Ostrze Nieskończoności,Ostrze Nieskończoności,Magiczny,weapon,100,Mityczny,4638,0,0,15000000
+Królewski Ostrze Nieskończoności,Ostrze Nieskończoności,Królewski,weapon,100,Mityczny,5025,15,0,15000000
+Demoniczny Ostrze Nieskończoności,Ostrze Nieskończoności,Demoniczny,weapon,100,Mityczny,6432,-20,0,15000000
+Boski Ostrze Nieskończoności,Ostrze Nieskończoności,Boski,weapon,100,Mityczny,7236,20,100,15000000
+Błyszczący Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Błyszczący,accessory,100,Mityczny,2531,2016,5582,18000000
+Cenny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Cenny,accessory,100,Mityczny,2536,2021,6090,18000000
+Szczęśliwy Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Szczęśliwy,accessory,100,Mityczny,2784,2217,5075,18000000
+Wojownika Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Wojownika,accessory,100,Mityczny,3305,2016,5075,18000000
+Strażnika Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Strażnika,accessory,100,Mityczny,2531,2635,5075,18000000
+Życia Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Życia,accessory,100,Mityczny,2531,2016,7712,18000000
+Witalności Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Witalności,accessory,100,Mityczny,2531,2016,6797,18000000
+Krwi Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Krwi,accessory,100,Mityczny,3037,2016,5125,18000000
+Magiczny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Magiczny,accessory,100,Mityczny,2910,2318,5075,18000000
+Runiczny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Runiczny,accessory,100,Mityczny,3037,2419,5115,18000000
+Przeklęty Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Przeklęty,accessory,100,Mityczny,3796,3024,4975,18000000
+Święty Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Święty,accessory,100,Mityczny,2531,2822,5225,18000000
+Mroczny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Mroczny,accessory,100,Mityczny,3543,2006,5075,18000000
+Starożytny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Starożytny,accessory,100,Mityczny,3163,2520,5155,18000000
+Mistyczny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Mistyczny,accessory,100,Mityczny,3290,2620,5075,18000000
+Królewski Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Królewski,accessory,100,Mityczny,3290,2620,6597,18000000
+Nieziemski Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Nieziemski,accessory,100,Mityczny,3543,2822,5195,18000000
+Tytanowy Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Tytanowy,accessory,100,Mityczny,2531,3024,5325,18000000
+Demoniczny Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Demoniczny,accessory,100,Mityczny,4049,1996,5025,18000000
+Boski Rdzeń Czasoprzestrzeni,Rdzeń Czasoprzestrzeni,Boski,accessory,100,Mityczny,3846,3074,7912,18000000

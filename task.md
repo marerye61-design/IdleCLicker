@@ -1,17 +1,5 @@
-# Implementacja Nowych Mechanik i UI
-
-- [/] **Krok 1: Poprawki UI (Suwak Paska Bocznego)**
-  - [ ] Owinięcie 
-av_frame w Pasku Bocznym (main.py) w ScrollableFrame.
-
-- [ ] **Krok 2: Bestiariusz (Kolekcjoner Dusz)**
-  - [ ] Dodanie licznika zabójstw w player.py (np. self.bestiary = {'enemy_id': count}).
-  - [ ] Inkrementacja licznika przy end_combat(won=True).
-  - [ ] Stworzenie nowej zakładki show_bestiary() z listą odkrytych potworów i nagrodami (pasywny bonus).
-  - [ ] Dodanie uwzględniania bonusów z bestiariusza w walkach.
-
-- [ ] **Krok 3: Kowalstwo i Refaktoryzacja Ekwipunku**
-  - [ ] Zmiana struktury zapisu przedmiotów w inventory i equipment na wsparcie poziomów ulepszeń (migracja save'ów).
-  - [ ] Zaktualizowanie player.py do poprawnego czytania zmodyfikowanych statystyk sprzętu (+1, +2...).
-  - [ ] Stworzenie widoku Kowala (show_blacksmith()) w Tawernie.
-  - [ ] Kalibracja Balansu: Ceny ulepszeń muszą rosnąć z każdym poziomem potęgując zapotrzebowanie na złoto, a przeciwnicy z wyższych poziomów będą mieli zwiększone HP by ulepszanie było konieczne.
+- `[x]` 1. Aktualizacja `player.py` (crit_chance=0, get_total_crit)
+- `[x]` 2. Aktualizacja `combat.py` (Nowe widełki RNG, obsługa uderzeń krytycznych x1.75)
+- `[x]` 3. Aktualizacja `main.py` (Czerwony napis "KRYT!" w `apply_player_damage`, przycisk `show_stats` do max 30%, sidebar)
+- `[x]` 4. Dodanie `crit_chance` do wbudowanych przedmiotów w `items.py`
+- `[x]` 5. Dodanie `crit_chance` do niektórych modyfikatorów w `modifiers.py`

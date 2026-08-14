@@ -5,7 +5,7 @@ from flavor_texts import get_random_flavor_text
 from items import ITEMS_DB
 
 class Dungeon:
-    def __init__(self, d_id, name, level_req, duration, exp_reward, gold_reward, drop_pool):
+    def __init__(self, d_id, name, level_req, duration, exp_reward, gold_reward, drop_pool, hardcoded_boss=None):
         self.d_id = d_id
         self.name = name
         self.level_req = level_req
@@ -13,19 +13,20 @@ class Dungeon:
         self.exp_reward = exp_reward
         self.gold_reward = gold_reward
         self.drop_pool = drop_pool
+        self.hardcoded_boss = hardcoded_boss
 
 DUNGEONS = [
     # Wczesne / Środkowe Lochy
-    Dungeon("d1", "Złowrogi Las", 5, 180, 500, 250, ["wep_maslak", "helm_pianek"]),
-    Dungeon("d2", "Opuszczona Kopalnia", 15, 180, 2500, 1000, ["arm_damian", "acc_domcia"]),
-    Dungeon("d3", "Twierdza Cieni", 30, 180, 12000, 5000, ["wep_yomen", "arm_eczme"]),
+    Dungeon("d1", "Złowrogi Las", 5, 60, 500, 250, ["wep_maslak", "helm_pianek"], hardcoded_boss="boss_ptys"),
+    Dungeon("d2", "Górska Przełęcz", 15, 60, 2500, 1000, ["arm_damian", "acc_domcia"], hardcoded_boss="boss_kollman"),
+    Dungeon("d3", "Twierdza Cieni", 30, 60, 12000, 5000, ["wep_yomen", "arm_eczme"]),
     
     # Nowe Lochy (End-Game)
-    Dungeon("d4", "Wulkaniczne Czeluście", 45, 180, 45000, 18000, ["wep_fire_axe", "acc_fire_ruby"]),
-    Dungeon("d5", "Kryształowe Jaskinie", 60, 180, 150000, 50000, ["arm_crystal", "helm_crystal"]),
-    Dungeon("d6", "Zamarznięta Pustka", 75, 180, 400000, 120000, ["wep_frost_mourne", "acc_frost_amulet"]),
-    Dungeon("d7", "Świątynia Upadłych Bogów", 90, 180, 1200000, 350000, ["arm_fallen_god", "helm_fallen_god"]),
-    Dungeon("d8", "Wymiar Czasoprzestrzeni", 100, 180, 3500000, 1000000, ["wep_void_blade", "acc_void_core"])
+    Dungeon("d4", "Wulkaniczne Czeluście", 45, 60, 45000, 18000, ["wep_fire_axe", "acc_fire_ruby"]),
+    Dungeon("d5", "Kryształowe Jaskinie", 60, 60, 150000, 50000, ["arm_crystal", "helm_crystal"]),
+    Dungeon("d6", "Zamarznięta Pustka", 75, 60, 400000, 120000, ["wep_frost_mourne", "acc_frost_amulet"]),
+    Dungeon("d7", "Świątynia Upadłych Bogów", 90, 60, 1200000, 350000, ["arm_fallen_god", "helm_fallen_god"]),
+    Dungeon("d8", "Wymiar Czasoprzestrzeni", 100, 60, 3500000, 1000000, ["wep_void_blade", "acc_void_core"])
 ]
 
 def run_dungeon(player, dungeon):

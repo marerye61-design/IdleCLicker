@@ -1,0 +1,411 @@
+Item ID,Name,Rarity,Upgrade Level,ATK,DEF,HP,Total Cumulative Cost (Gold),Gold per Stat Point
+wep_wooden_club,Drewniana Pałka,Zwykły,0,6,0,0,0,0
+wep_wooden_club,Drewniana Pałka,Zwykły,1,6,0,0,300,50.0
+wep_wooden_club,Drewniana Pałka,Zwykły,2,6,0,0,870,145.0
+wep_wooden_club,Drewniana Pałka,Zwykły,3,6,0,0,1953,325.5
+wep_wooden_club,Drewniana Pałka,Zwykły,4,6,0,0,4010,668.33
+wep_wooden_club,Drewniana Pałka,Zwykły,5,6,0,0,7919,1319.83
+wep_wooden_club,Drewniana Pałka,Zwykły,6,6,0,0,15347,2557.83
+wep_wooden_club,Drewniana Pałka,Zwykły,7,6,0,0,29460,4910.0
+wep_wooden_club,Drewniana Pałka,Zwykły,8,6,0,0,56276,9379.33
+wep_wooden_club,Drewniana Pałka,Zwykły,9,6,0,0,107226,17871.0
+arm_leather,Skórzana Przeszywanica,Zwykły,0,0,6,21,0,0
+arm_leather,Skórzana Przeszywanica,Zwykły,1,0,6,21,405,50.0
+arm_leather,Skórzana Przeszywanica,Zwykły,2,0,6,21,1174,144.94
+arm_leather,Skórzana Przeszywanica,Zwykły,3,0,6,21,2636,325.43
+arm_leather,Skórzana Przeszywanica,Zwykły,4,0,6,21,5413,668.27
+arm_leather,Skórzana Przeszywanica,Zwykły,5,0,6,21,10691,1319.88
+arm_leather,Skórzana Przeszywanica,Zwykły,6,0,6,21,20719,2557.9
+arm_leather,Skórzana Przeszywanica,Zwykły,7,0,6,21,39772,4910.12
+arm_leather,Skórzana Przeszywanica,Zwykły,8,0,6,21,75973,9379.38
+arm_leather,Skórzana Przeszywanica,Zwykły,9,0,6,21,144756,17871.11
+helm_leather,Skórzany Hełm,Zwykły,0,0,4,11,0,0
+helm_leather,Skórzany Hełm,Zwykły,1,0,4,11,254,49.8
+helm_leather,Skórzany Hełm,Zwykły,2,0,4,11,738,144.71
+helm_leather,Skórzany Hełm,Zwykły,3,0,4,11,1658,325.1
+helm_leather,Skórzany Hełm,Zwykły,4,0,4,11,3407,668.04
+helm_leather,Skórzany Hełm,Zwykły,5,0,4,11,6730,1319.61
+helm_leather,Skórzany Hełm,Zwykły,6,0,4,11,13044,2557.65
+helm_leather,Skórzany Hełm,Zwykły,7,0,4,11,25040,4909.8
+helm_leather,Skórzany Hełm,Zwykły,8,0,4,11,47833,9379.02
+helm_leather,Skórzany Hełm,Zwykły,9,0,4,11,91141,17870.78
+acc_ring_small,Miedziany Pierścień,Zwykły,0,3,4,11,0,0
+acc_ring_small,Miedziany Pierścień,Zwykły,1,3,4,11,405,50.0
+acc_ring_small,Miedziany Pierścień,Zwykły,2,3,4,11,1174,144.94
+acc_ring_small,Miedziany Pierścień,Zwykły,3,3,4,11,2636,325.43
+acc_ring_small,Miedziany Pierścień,Zwykły,4,3,4,11,5413,668.27
+acc_ring_small,Miedziany Pierścień,Zwykły,5,3,4,11,10691,1319.88
+acc_ring_small,Miedziany Pierścień,Zwykły,6,3,4,11,20719,2557.9
+acc_ring_small,Miedziany Pierścień,Zwykły,7,3,4,11,39772,4910.12
+acc_ring_small,Miedziany Pierścień,Zwykły,8,3,4,11,75973,9379.38
+acc_ring_small,Miedziany Pierścień,Zwykły,9,3,4,11,144756,17871.11
+wep_iron_sword,Żelazny Miecz,Zwykły,0,16,0,0,0,0
+wep_iron_sword,Żelazny Miecz,Zwykły,1,16,0,0,800,50.0
+wep_iron_sword,Żelazny Miecz,Zwykły,2,16,0,0,2320,145.0
+wep_iron_sword,Żelazny Miecz,Zwykły,3,16,0,0,5208,325.5
+wep_iron_sword,Żelazny Miecz,Zwykły,4,16,0,0,10695,668.44
+wep_iron_sword,Żelazny Miecz,Zwykły,5,16,0,0,21120,1320.0
+wep_iron_sword,Żelazny Miecz,Zwykły,6,16,0,0,40928,2558.0
+wep_iron_sword,Żelazny Miecz,Zwykły,7,16,0,0,78564,4910.25
+wep_iron_sword,Żelazny Miecz,Zwykły,8,16,0,0,150073,9379.56
+wep_iron_sword,Żelazny Miecz,Zwykły,9,16,0,0,285941,17871.31
+arm_iron_plate,Żelazna Płytówka,Zwykły,0,0,15,34,0,0
+arm_iron_plate,Żelazna Płytówka,Zwykły,1,0,15,34,919,49.95
+arm_iron_plate,Żelazna Płytówka,Zwykły,2,0,15,34,2666,144.89
+arm_iron_plate,Żelazna Płytówka,Zwykły,3,0,15,34,5987,325.38
+arm_iron_plate,Żelazna Płytówka,Zwykły,4,0,15,34,12297,668.32
+arm_iron_plate,Żelazna Płytówka,Zwykły,5,0,15,34,24286,1319.89
+arm_iron_plate,Żelazna Płytówka,Zwykły,6,0,15,34,47066,2557.93
+arm_iron_plate,Żelazna Płytówka,Zwykły,7,0,15,34,90348,4910.22
+arm_iron_plate,Żelazna Płytówka,Zwykły,8,0,15,34,172584,9379.57
+arm_iron_plate,Żelazna Płytówka,Zwykły,9,0,15,34,328832,17871.3
+helm_iron,Żelazny Szyszak,Zwykły,0,0,11,22,0,0
+helm_iron,Żelazny Szyszak,Zwykły,1,0,11,22,660,50.0
+helm_iron,Żelazny Szyszak,Zwykły,2,0,11,22,1914,145.0
+helm_iron,Żelazny Szyszak,Zwykły,3,0,11,22,4296,325.45
+helm_iron,Żelazny Szyszak,Zwykły,4,0,11,22,8822,668.33
+helm_iron,Żelazny Szyszak,Zwykły,5,0,11,22,17423,1319.92
+helm_iron,Żelazny Szyszak,Zwykły,6,0,11,22,33765,2557.95
+helm_iron,Żelazny Szyszak,Zwykły,7,0,11,22,64815,4910.23
+helm_iron,Żelazny Szyszak,Zwykły,8,0,11,22,123810,9379.55
+helm_iron,Żelazny Szyszak,Zwykły,9,0,11,22,235901,17871.29
+acc_iron_ring,Żelazny Sygnet,Zwykły,0,11,11,22,0,0
+acc_iron_ring,Żelazny Sygnet,Zwykły,1,11,11,22,1210,50.0
+acc_iron_ring,Żelazny Sygnet,Zwykły,2,11,11,22,3509,145.0
+acc_iron_ring,Żelazny Sygnet,Zwykły,3,11,11,22,7877,325.5
+acc_iron_ring,Żelazny Sygnet,Zwykły,4,11,11,22,16176,668.43
+acc_iron_ring,Żelazny Sygnet,Zwykły,5,11,11,22,31944,1320.0
+acc_iron_ring,Żelazny Sygnet,Zwykły,6,11,11,22,61904,2558.02
+acc_iron_ring,Żelazny Sygnet,Zwykły,7,11,11,22,118829,4910.29
+acc_iron_ring,Żelazny Sygnet,Zwykły,8,11,11,22,226987,9379.63
+acc_iron_ring,Żelazny Sygnet,Zwykły,9,11,11,22,432488,17871.4
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,0,63,0,0,0,0
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,1,63,0,0,3150,50.0
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,2,63,0,0,9135,145.0
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,3,63,0,0,20506,325.49
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,4,63,0,0,42111,668.43
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,5,63,0,0,83162,1320.03
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,6,63,0,0,161159,2558.08
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,7,63,0,0,309353,4910.37
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,8,63,0,0,590922,9379.71
+wep_steel_sword,Stalowy Miecz Długi,Zwykły,9,63,0,0,1125904,17871.49
+arm_steel_plate,Stalowy Kirys,Zwykły,0,0,55,107,0,0
+arm_steel_plate,Stalowy Kirys,Zwykły,1,0,55,107,3285,50.0
+arm_steel_plate,Stalowy Kirys,Zwykły,2,0,55,107,9526,144.99
+arm_steel_plate,Stalowy Kirys,Zwykły,3,0,55,107,21384,325.48
+arm_steel_plate,Stalowy Kirys,Zwykły,4,0,55,107,43915,668.42
+arm_steel_plate,Stalowy Kirys,Zwykły,5,0,55,107,86725,1320.02
+arm_steel_plate,Stalowy Kirys,Zwykły,6,0,55,107,168064,2558.05
+arm_steel_plate,Stalowy Kirys,Zwykły,7,0,55,107,322609,4910.33
+arm_steel_plate,Stalowy Kirys,Zwykły,8,0,55,107,616245,9379.68
+arm_steel_plate,Stalowy Kirys,Zwykły,9,0,55,107,1174155,17871.46
+helm_steel,Stalowa Przyłbica,Zwykły,0,0,41,76,0,0
+helm_steel,Stalowa Przyłbica,Zwykły,1,0,41,76,2430,50.0
+helm_steel,Stalowa Przyłbica,Zwykły,2,0,41,76,7047,145.0
+helm_steel,Stalowa Przyłbica,Zwykły,3,0,41,76,15819,325.49
+helm_steel,Stalowa Przyłbica,Zwykły,4,0,41,76,32486,668.44
+helm_steel,Stalowa Przyłbica,Zwykły,5,0,41,76,64154,1320.04
+helm_steel,Stalowa Przyłbica,Zwykły,6,0,41,76,124323,2558.09
+helm_steel,Stalowa Przyłbica,Zwykły,7,0,41,76,238644,4910.37
+helm_steel,Stalowa Przyłbica,Zwykły,8,0,41,76,455854,9379.71
+helm_steel,Stalowa Przyłbica,Zwykły,9,0,41,76,868554,17871.48
+acc_silver_amulet,Srebrny Amulet,Zwykły,0,46,41,76,0,0
+acc_silver_amulet,Srebrny Amulet,Zwykły,1,46,41,76,4730,50.0
+acc_silver_amulet,Srebrny Amulet,Zwykły,2,46,41,76,13717,145.0
+acc_silver_amulet,Srebrny Amulet,Zwykły,3,46,41,76,30792,325.5
+acc_silver_amulet,Srebrny Amulet,Zwykły,4,46,41,76,63235,668.45
+acc_silver_amulet,Srebrny Amulet,Zwykły,5,46,41,76,124876,1320.04
+acc_silver_amulet,Srebrny Amulet,Zwykły,6,46,41,76,241995,2558.09
+acc_silver_amulet,Srebrny Amulet,Zwykły,7,46,41,76,464522,4910.38
+acc_silver_amulet,Srebrny Amulet,Zwykły,8,46,41,76,887323,9379.74
+acc_silver_amulet,Srebrny Amulet,Zwykły,9,46,41,76,1690645,17871.51
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,0,169,0,0,0,0
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,1,169,0,0,8450,50.0
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,2,169,0,0,24505,145.0
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,3,169,0,0,55009,325.5
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,4,169,0,0,112967,668.44
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,5,169,0,0,223088,1320.05
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,6,169,0,0,432318,2558.09
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,7,169,0,0,829855,4910.38
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,8,169,0,0,1585176,9379.74
+wep_mithril_blade,Mithrilowe Ostrze,Zwykły,9,169,0,0,3020287,17871.52
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,0,0,143,293,0,0
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,1,0,143,293,8615,50.0
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,2,0,143,293,24983,145.0
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,3,0,143,293,56083,325.5
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,4,0,143,293,115173,668.44
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,5,0,143,293,227444,1320.05
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,6,0,143,293,440759,2558.09
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,7,0,143,293,846059,4910.38
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,8,0,143,293,1616129,9379.74
+arm_mithril_mail,Mithrilowa Kolczuga,Zwykły,9,0,143,293,3079262,17871.51
+helm_mithril,Mithrilowy Hełm,Zwykły,0,0,101,204,0,0
+helm_mithril,Mithrilowy Hełm,Zwykły,1,0,101,204,6070,50.0
+helm_mithril,Mithrilowy Hełm,Zwykły,2,0,101,204,17603,145.0
+helm_mithril,Mithrilowy Hełm,Zwykły,3,0,101,204,39515,325.49
+helm_mithril,Mithrilowy Hełm,Zwykły,4,0,101,204,81149,668.44
+helm_mithril,Mithrilowy Hełm,Zwykły,5,0,101,204,160253,1320.04
+helm_mithril,Mithrilowy Hełm,Zwykły,6,0,101,204,310552,2558.09
+helm_mithril,Mithrilowy Hełm,Zwykły,7,0,101,204,596120,4910.38
+helm_mithril,Mithrilowy Hełm,Zwykły,8,0,101,204,1138700,9379.74
+helm_mithril,Mithrilowy Hełm,Zwykły,9,0,101,204,2169602,17871.52
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,0,118,101,204,0,0
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,1,118,101,204,11970,50.0
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,2,118,101,204,34713,145.0
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,3,118,101,204,77924,325.5
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,4,118,101,204,160026,668.45
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,5,118,101,204,316020,1320.05
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,6,118,101,204,612409,2558.1
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,7,118,101,204,1175548,4910.39
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,8,118,101,204,2245512,9379.75
+acc_ruby_pendant,Rubinowy Wisiorek,Zwykły,9,118,101,204,4278444,17871.53
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,0,358,0,0,0,0
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,1,358,0,0,17900,50.0
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,2,358,0,0,51910,145.0
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,3,358,0,0,116529,325.5
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,4,358,0,0,239305,668.45
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,5,358,0,0,472579,1320.05
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,6,358,0,0,915800,2558.1
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,7,358,0,0,1757921,4910.39
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,8,358,0,0,3357951,9379.75
+wep_adamant_greatsword,Adamantowy Wielki Miecz,Zwykły,9,358,0,0,6398008,17871.53
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,0,0,295,655,0,0
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,1,0,295,655,18025,50.0
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,2,0,295,655,52272,145.0
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,3,0,295,655,117342,325.5
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,4,0,295,655,240975,668.45
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,5,0,295,655,475878,1320.05
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,6,0,295,655,922194,2558.1
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,7,0,295,655,1770196,4910.39
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,8,0,295,655,3381399,9379.75
+arm_adamant_cuirass,Adamantowa Zbroja,Zwykły,9,0,295,655,6442686,17871.53
+helm_adamant,Adamantowa Korona Wojny,Zwykły,0,0,199,439,0,0
+helm_adamant,Adamantowa Korona Wojny,Zwykły,1,0,199,439,12145,50.0
+helm_adamant,Adamantowa Korona Wojny,Zwykły,2,0,199,439,35220,145.0
+helm_adamant,Adamantowa Korona Wojny,Zwykły,3,0,199,439,79063,325.5
+helm_adamant,Adamantowa Korona Wojny,Zwykły,4,0,199,439,162365,668.44
+helm_adamant,Adamantowa Korona Wojny,Zwykły,5,0,199,439,320639,1320.05
+helm_adamant,Adamantowa Korona Wojny,Zwykły,6,0,199,439,621361,2558.09
+helm_adamant,Adamantowa Korona Wojny,Zwykły,7,0,199,439,1192733,4910.39
+helm_adamant,Adamantowa Korona Wojny,Zwykły,8,0,199,439,2278340,9379.74
+helm_adamant,Adamantowa Korona Wojny,Zwykły,9,0,199,439,4340993,17871.52
+acc_dragon_eye,Oko Smoka,Zwykły,0,241,199,439,0,0
+acc_dragon_eye,Oko Smoka,Zwykły,1,241,199,439,24195,50.0
+acc_dragon_eye,Oko Smoka,Zwykły,2,241,199,439,70165,145.0
+acc_dragon_eye,Oko Smoka,Zwykły,3,241,199,439,157508,325.5
+acc_dragon_eye,Oko Smoka,Zwykły,4,241,199,439,323461,668.45
+acc_dragon_eye,Oko Smoka,Zwykły,5,241,199,439,638772,1320.05
+acc_dragon_eye,Oko Smoka,Zwykły,6,241,199,439,1237864,2558.1
+acc_dragon_eye,Oko Smoka,Zwykły,7,241,199,439,2376139,4910.39
+acc_dragon_eye,Oko Smoka,Zwykły,8,241,199,439,4538861,9379.75
+acc_dragon_eye,Oko Smoka,Zwykły,9,241,199,439,8648034,17871.53
+wep_shadow_slayer,Pogromca Cieni,Zwykły,0,654,0,0,0,0
+wep_shadow_slayer,Pogromca Cieni,Zwykły,1,654,0,0,32700,50.0
+wep_shadow_slayer,Pogromca Cieni,Zwykły,2,654,0,0,94830,145.0
+wep_shadow_slayer,Pogromca Cieni,Zwykły,3,654,0,0,212877,325.5
+wep_shadow_slayer,Pogromca Cieni,Zwykły,4,654,0,0,437166,668.45
+wep_shadow_slayer,Pogromca Cieni,Zwykły,5,654,0,0,863315,1320.05
+wep_shadow_slayer,Pogromca Cieni,Zwykły,6,654,0,0,1672999,2558.1
+wep_shadow_slayer,Pogromca Cieni,Zwykły,7,654,0,0,3211399,4910.4
+wep_shadow_slayer,Pogromca Cieni,Zwykły,8,654,0,0,6134359,9379.75
+wep_shadow_slayer,Pogromca Cieni,Zwykły,9,654,0,0,11687984,17871.54
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,0,0,528,1261,0,0
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,1,0,528,1261,32705,50.0
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,2,0,528,1261,94844,145.0
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,3,0,528,1261,212909,325.5
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,4,0,528,1261,437232,668.45
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,5,0,528,1261,863446,1320.05
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,6,0,528,1261,1673254,2558.1
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,7,0,528,1261,3211889,4910.39
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,8,0,528,1261,6135296,9379.75
+arm_dragon_scale,Pancerz ze Smoczej Łuski,Zwykły,9,0,528,1261,11689770,17871.53
+helm_demon_crown,Korona Demonów,Zwykły,0,0,342,816,0,0
+helm_demon_crown,Korona Demonów,Zwykły,1,0,342,816,21180,50.0
+helm_demon_crown,Korona Demonów,Zwykły,2,0,342,816,61422,145.0
+helm_demon_crown,Korona Demonów,Zwykły,3,0,342,816,137881,325.5
+helm_demon_crown,Korona Demonów,Zwykły,4,0,342,816,283154,668.45
+helm_demon_crown,Korona Demonów,Zwykły,5,0,342,816,559173,1320.05
+helm_demon_crown,Korona Demonów,Zwykły,6,0,342,816,1083610,2558.1
+helm_demon_crown,Korona Demonów,Zwykły,7,0,342,816,2080041,4910.39
+helm_demon_crown,Korona Demonów,Zwykły,8,0,342,816,3973261,9379.75
+helm_demon_crown,Korona Demonów,Zwykły,9,0,342,816,7570379,17871.53
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,0,423,342,816,0,0
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,1,423,342,816,42330,50.0
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,2,423,342,816,122757,145.0
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,3,423,342,816,275568,325.5
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,4,423,342,816,565909,668.45
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,5,423,342,816,1117557,1320.05
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,6,423,342,816,2165689,2558.1
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,7,423,342,816,4157141,4910.4
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,8,423,342,816,7940900,9379.75
+acc_god_talisman,Talisman Boskiej Mocy,Zwykły,9,423,342,816,15130042,17871.54
+wep_maslak,Święty Kij Maślaka,Legendarny,0,40,0,0,0,0
+wep_maslak,Święty Kij Maślaka,Legendarny,1,40,0,0,2000,50.0
+wep_maslak,Święty Kij Maślaka,Legendarny,2,40,0,0,5800,145.0
+wep_maslak,Święty Kij Maślaka,Legendarny,3,40,0,0,13020,325.5
+wep_maslak,Święty Kij Maślaka,Legendarny,4,40,0,0,26737,668.42
+wep_maslak,Święty Kij Maślaka,Legendarny,5,40,0,0,52801,1320.03
+wep_maslak,Święty Kij Maślaka,Legendarny,6,40,0,0,102322,2558.05
+wep_maslak,Święty Kij Maślaka,Legendarny,7,40,0,0,196413,4910.32
+wep_maslak,Święty Kij Maślaka,Legendarny,8,40,0,0,375187,9379.67
+wep_maslak,Święty Kij Maślaka,Legendarny,9,40,0,0,714858,17871.45
+helm_pianek,Potowa Opaska Pianka,Legendarny,0,0,48,87,0,0
+helm_pianek,Potowa Opaska Pianka,Legendarny,1,0,48,87,2835,50.0
+helm_pianek,Potowa Opaska Pianka,Legendarny,2,0,48,87,8221,144.99
+helm_pianek,Potowa Opaska Pianka,Legendarny,3,0,48,87,18455,325.49
+helm_pianek,Potowa Opaska Pianka,Legendarny,4,0,48,87,37900,668.43
+helm_pianek,Potowa Opaska Pianka,Legendarny,5,0,48,87,74846,1320.04
+helm_pianek,Potowa Opaska Pianka,Legendarny,6,0,48,87,145043,2558.08
+helm_pianek,Potowa Opaska Pianka,Legendarny,7,0,48,87,278418,4910.37
+helm_pianek,Potowa Opaska Pianka,Legendarny,8,0,48,87,531830,9379.72
+helm_pianek,Potowa Opaska Pianka,Legendarny,9,0,48,87,1013314,17871.5
+arm_damian,Zbroja Mytnika Damiana,Legendarny,0,0,139,268,0,0
+arm_damian,Zbroja Mytnika Damiana,Legendarny,1,0,139,268,8290,50.0
+arm_damian,Zbroja Mytnika Damiana,Legendarny,2,0,139,268,24041,145.0
+arm_damian,Zbroja Mytnika Damiana,Legendarny,3,0,139,268,53967,325.49
+arm_damian,Zbroja Mytnika Damiana,Legendarny,4,0,139,268,110828,668.44
+arm_damian,Zbroja Mytnika Damiana,Legendarny,5,0,139,268,218864,1320.05
+arm_damian,Zbroja Mytnika Damiana,Legendarny,6,0,139,268,424132,2558.09
+arm_damian,Zbroja Mytnika Damiana,Legendarny,7,0,139,268,814142,4910.39
+arm_damian,Zbroja Mytnika Damiana,Legendarny,8,0,139,268,1555161,9379.74
+arm_damian,Zbroja Mytnika Damiana,Legendarny,9,0,139,268,2963098,17871.52
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,0,170,150,284,0,0
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,1,170,150,284,17420,50.0
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,2,170,150,284,50518,145.0
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,3,170,150,284,113404,325.5
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,4,170,150,284,232887,668.45
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,5,170,150,284,459906,1320.05
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,6,170,150,284,891242,2558.1
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,7,170,150,284,1710781,4910.39
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,8,170,150,284,3267905,9379.75
+acc_domcia,Mistyczny Naszyjnik Domci,Legendarny,9,170,150,284,6226441,17871.53
+acc_eczme,Owijki 'PowerKeeper',Legendarny,0,28,29,55,0,0
+acc_eczme,Owijki 'PowerKeeper',Legendarny,1,28,29,55,3125,50.0
+acc_eczme,Owijki 'PowerKeeper',Legendarny,2,28,29,55,9062,144.99
+acc_eczme,Owijki 'PowerKeeper',Legendarny,3,28,29,55,20343,325.49
+acc_eczme,Owijki 'PowerKeeper',Legendarny,4,28,29,55,41777,668.43
+acc_eczme,Owijki 'PowerKeeper',Legendarny,5,28,29,55,82502,1320.03
+acc_eczme,Owijki 'PowerKeeper',Legendarny,6,28,29,55,159880,2558.08
+acc_eczme,Owijki 'PowerKeeper',Legendarny,7,28,29,55,306898,4910.37
+acc_eczme,Owijki 'PowerKeeper',Legendarny,8,28,29,55,586232,9379.71
+acc_eczme,Owijki 'PowerKeeper',Legendarny,9,28,29,55,1116968,17871.49
+wep_yomen,Klucz Czternastka Yomena,Legendarny,0,270,0,0,0,0
+wep_yomen,Klucz Czternastka Yomena,Legendarny,1,270,0,0,13500,50.0
+wep_yomen,Klucz Czternastka Yomena,Legendarny,2,270,0,0,39150,145.0
+wep_yomen,Klucz Czternastka Yomena,Legendarny,3,270,0,0,87885,325.5
+wep_yomen,Klucz Czternastka Yomena,Legendarny,4,270,0,0,180481,668.45
+wep_yomen,Klucz Czternastka Yomena,Legendarny,5,270,0,0,356414,1320.05
+wep_yomen,Klucz Czternastka Yomena,Legendarny,6,270,0,0,690687,2558.1
+wep_yomen,Klucz Czternastka Yomena,Legendarny,7,270,0,0,1325806,4910.39
+wep_yomen,Klucz Czternastka Yomena,Legendarny,8,270,0,0,2532532,9379.75
+wep_yomen,Klucz Czternastka Yomena,Legendarny,9,270,0,0,4825313,17871.53
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,0,0,359,734,0,0
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,1,0,359,734,21620,50.0
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,2,0,359,734,62698,145.0
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,3,0,359,734,140746,325.5
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,4,0,359,734,289037,668.45
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,5,0,359,734,570791,1320.05
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,6,0,359,734,1106123,2558.1
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,7,0,359,734,2123254,4910.39
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,8,0,359,734,4055804,9379.75
+arm_eczme,Nakolanniki Przeznaczenia Eczme,Legendarny,9,0,359,734,7727650,17871.53
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,0,767,0,0,0,0
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,1,767,0,0,38350,50.0
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,2,767,0,0,111215,145.0
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,3,767,0,0,249658,325.5
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,4,767,0,0,512700,668.45
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,5,767,0,0,1012481,1320.05
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,6,767,0,0,1962064,2558.1
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,7,767,0,0,3766273,4910.4
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,8,767,0,0,7194271,9379.75
+wep_fire_axe,Ognisty Topór Czeluści,Legendarny,9,767,0,0,13707467,17871.53
+acc_fire_ruby,Oko Wulkanu,Legendarny,0,520,433,937,0,0
+acc_fire_ruby,Oko Wulkanu,Legendarny,1,520,433,937,52335,50.0
+acc_fire_ruby,Oko Wulkanu,Legendarny,2,520,433,937,151771,145.0
+acc_fire_ruby,Oko Wulkanu,Legendarny,3,520,433,937,340700,325.5
+acc_fire_ruby,Oko Wulkanu,Legendarny,4,520,433,937,699665,668.45
+acc_fire_ruby,Oko Wulkanu,Legendarny,5,520,433,937,1381699,1320.05
+acc_fire_ruby,Oko Wulkanu,Legendarny,6,520,433,937,2677565,2558.1
+acc_fire_ruby,Oko Wulkanu,Legendarny,7,520,433,937,5139711,4910.4
+acc_fire_ruby,Oko Wulkanu,Legendarny,8,520,433,937,9817788,9379.75
+acc_fire_ruby,Oko Wulkanu,Legendarny,9,520,433,937,18706135,17871.53
+arm_crystal,Kryształowy Pancerz,Legendarny,0,0,959,2197,0,0
+arm_crystal,Kryształowy Pancerz,Legendarny,1,0,959,2197,58935,50.0
+arm_crystal,Kryształowy Pancerz,Legendarny,2,0,959,2197,170911,145.0
+arm_crystal,Kryształowy Pancerz,Legendarny,3,0,959,2197,383666,325.5
+arm_crystal,Kryształowy Pancerz,Legendarny,4,0,959,2197,787901,668.45
+arm_crystal,Kryształowy Pancerz,Legendarny,5,0,959,2197,1555947,1320.05
+arm_crystal,Kryształowy Pancerz,Legendarny,6,0,959,2197,3015235,2558.1
+arm_crystal,Kryształowy Pancerz,Legendarny,7,0,959,2197,5787883,4910.4
+arm_crystal,Kryształowy Pancerz,Legendarny,8,0,959,2197,11055916,9379.75
+arm_crystal,Kryształowy Pancerz,Legendarny,9,0,959,2197,21065178,17871.53
+helm_crystal,Diadem Jaskini,Legendarny,0,0,636,1450,0,0
+helm_crystal,Diadem Jaskini,Legendarny,1,0,636,1450,39050,50.0
+helm_crystal,Diadem Jaskini,Legendarny,2,0,636,1450,113245,145.0
+helm_crystal,Diadem Jaskini,Legendarny,3,0,636,1450,254215,325.5
+helm_crystal,Diadem Jaskini,Legendarny,4,0,636,1450,522058,668.45
+helm_crystal,Diadem Jaskini,Legendarny,5,0,636,1450,1030961,1320.05
+helm_crystal,Diadem Jaskini,Legendarny,6,0,636,1450,1997877,2558.1
+helm_crystal,Diadem Jaskini,Legendarny,7,0,636,1450,3835018,4910.39
+helm_crystal,Diadem Jaskini,Legendarny,8,0,636,1450,7325587,9379.75
+helm_crystal,Diadem Jaskini,Legendarny,9,0,636,1450,13957668,17871.53
+wep_frost_mourne,Mroźne Ostrze,Legendarny,0,1636,0,0,0,0
+wep_frost_mourne,Mroźne Ostrze,Legendarny,1,1636,0,0,81800,50.0
+wep_frost_mourne,Mroźne Ostrze,Legendarny,2,1636,0,0,237220,145.0
+wep_frost_mourne,Mroźne Ostrze,Legendarny,3,1636,0,0,532518,325.5
+wep_frost_mourne,Mroźne Ostrze,Legendarny,4,1636,0,0,1093584,668.45
+wep_frost_mourne,Mroźne Ostrze,Legendarny,5,1636,0,0,2159609,1320.05
+wep_frost_mourne,Mroźne Ostrze,Legendarny,6,1636,0,0,4185057,2558.1
+wep_frost_mourne,Mroźne Ostrze,Legendarny,7,1636,0,0,8033410,4910.4
+wep_frost_mourne,Mroźne Ostrze,Legendarny,8,1636,0,0,15345280,9379.76
+wep_frost_mourne,Mroźne Ostrze,Legendarny,9,1636,0,0,29237834,17871.54
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,0,1059,857,2040,0,0
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,1,1059,857,2040,106000,50.0
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,2,1059,857,2040,307400,145.0
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,3,1059,857,2040,690060,325.5
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,4,1059,857,2040,1417113,668.45
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,5,1059,857,2040,2798515,1320.05
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,6,1059,857,2040,5423179,2558.1
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,7,1059,857,2040,10410042,4910.4
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,8,1059,857,2040,19885082,9379.76
+acc_frost_amulet,Amulet Wiecznej Zimy,Legendarny,9,1059,857,2040,37887658,17871.54
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,0,0,2747,6787,0,0
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,1,0,2747,6787,171285,50.0
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,2,0,2747,6787,496726,145.0
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,3,0,2747,6787,1115064,325.5
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,4,0,2747,6787,2289907,668.45
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,5,0,2747,6787,4522110,1320.05
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,6,0,2747,6787,8763296,2558.1
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,7,0,2747,6787,16821549,4910.4
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,8,0,2747,6787,32132231,9379.76
+arm_fallen_god,Pancerz Upadłego Boga,Mityczny,9,0,2747,6787,61222526,17871.54
+helm_fallen_god,Aureola Zniszczenia,Mityczny,0,0,1750,4316,0,0
+helm_fallen_god,Aureola Zniszczenia,Mityczny,1,0,1750,4316,109080,50.0
+helm_fallen_god,Aureola Zniszczenia,Mityczny,2,0,1750,4316,316332,145.0
+helm_fallen_god,Aureola Zniszczenia,Mityczny,3,0,1750,4316,710110,325.5
+helm_fallen_god,Aureola Zniszczenia,Mityczny,4,0,1750,4316,1458289,668.45
+helm_fallen_god,Aureola Zniszczenia,Mityczny,5,0,1750,4316,2879830,1320.05
+helm_fallen_god,Aureola Zniszczenia,Mityczny,6,0,1750,4316,5580758,2558.1
+helm_fallen_god,Aureola Zniszczenia,Mityczny,7,0,1750,4316,10712522,4910.4
+helm_fallen_god,Aureola Zniszczenia,Mityczny,8,0,1750,4316,20462874,9379.76
+helm_fallen_god,Aureola Zniszczenia,Mityczny,9,0,1750,4316,38988544,17871.54
+wep_void_blade,Ostrze Nieskończoności,Mityczny,0,4020,0,0,0,0
+wep_void_blade,Ostrze Nieskończoności,Mityczny,1,4020,0,0,201000,50.0
+wep_void_blade,Ostrze Nieskończoności,Mityczny,2,4020,0,0,582900,145.0
+wep_void_blade,Ostrze Nieskończoności,Mityczny,3,4020,0,0,1308510,325.5
+wep_void_blade,Ostrze Nieskończoności,Mityczny,4,4020,0,0,2687168,668.45
+wep_void_blade,Ostrze Nieskończoności,Mityczny,5,4020,0,0,5306620,1320.05
+wep_void_blade,Ostrze Nieskończoności,Mityczny,6,4020,0,0,10283578,2558.1
+wep_void_blade,Ostrze Nieskończoności,Mityczny,7,4020,0,0,19739800,4910.4
+wep_void_blade,Ostrze Nieskończoności,Mityczny,8,4020,0,0,37706621,9379.76
+wep_void_blade,Ostrze Nieskończoności,Mityczny,9,4020,0,0,71843582,17871.54
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,0,2531,2016,5075,0,0
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,1,2531,2016,5075,252725,50.0
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,2,2531,2016,5075,732902,145.0
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,3,2531,2016,5075,1645239,325.5
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,4,2531,2016,5075,3378679,668.45
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,5,2531,2016,5075,6672216,1320.05
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,6,2531,2016,5075,12929937,2558.1
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,7,2531,2016,5075,24819607,4910.4
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,8,2531,2016,5075,47409980,9379.76
+acc_void_core,Rdzeń Czasoprzestrzeni,Mityczny,9,2531,2016,5075,90331689,17871.54

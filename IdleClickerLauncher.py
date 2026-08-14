@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import subprocess
+import shutil
 import zipfile
 import threading
 import io
@@ -14,8 +15,14 @@ REPO_OWNER = "marerye61-design"
 REPO_NAME = "IdleCLicker"
 API_URL = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases"
 REPO_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/releases"
-VERSION_FILE = "version.txt"
-MAIN_EXECUTABLE = "IdleClicker.exe"
+# Zabezpieczenie ścieżek bezwzględnych dla skrótów Windows
+if getattr(sys, 'frozen', False):
+    SCRIPT_DIR = os.path.dirname(sys.executable)
+else:
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+VERSION_FILE = os.path.join(SCRIPT_DIR, "version.txt")
+MAIN_EXECUTABLE = os.path.join(SCRIPT_DIR, "IdleClicker.exe")
 
 class LauncherApp:
     def __init__(self, root):
@@ -44,8 +51,8 @@ class LauncherApp:
         
     def get_local_version(self):
         if os.path.exists(VERSION_FILE):
-            with open(VERSION_FILE, "r") as f:
-                return f.read().strip()
+            with open(VERSION_FILE, "r", encoding="utf-8") as f:
+                return f.read().strip().replace('\ufeff', '')
         return "0.0.0"
 
     def set_local_version(self, version):
@@ -90,8 +97,8 @@ class LauncherApp:
                     data = json.loads(response.read().decode('utf-8'))
                     if data and isinstance(data, list):
                         latest_release = data[0]
-                        latest_version = latest_release.get("tag_name", "0.0.0").replace("v", "")
-                        local_version = self.get_local_version().replace("v", "")
+                        latest_version = latest_release.get("tag_name", "0.0.0").replace("v", "").strip()
+                        local_version = self.get_local_version().replace("v", "").strip()
                         
                         if latest_version != local_version and latest_version != "0.0.0":
                             assets = latest_release.get("assets", [])
@@ -138,12 +145,31 @@ class LauncherApp:
                         percent = int((downloaded / total_size) * 100)
                         self.root.after(0, lambda p=percent: self.progress.config(value=p))
                 
+            self.root.after(0, lambda: self.status_lbl.config(text="Czyszczenie starych plików..."))
+            
+            safe_to_keep = {
+                "IdleClickerLauncher.py", "IdleClickerLauncher.exe", "IdleClickerLauncher.spec",
+                "saves", "savegame.pkl", "version.txt", ".git", ".gitignore", "build.ps1", "IdleClicker.spec"
+            }
+            
+            for item in os.listdir(SCRIPT_DIR):
+                if item in safe_to_keep:
+                    continue
+                item_path = os.path.join(SCRIPT_DIR, item)
+                try:
+                    if os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+                    else:
+                        os.remove(item_path)
+                except Exception as e:
+                    print(f"Nie usunięto {item}: {e}")
+                    
             self.root.after(0, lambda: self.status_lbl.config(text="Rozpakowywanie..."))
             
             with zipfile.ZipFile(zip_buffer) as zip_ref:
                 for member in zip_ref.namelist():
                     if not member.endswith("IdleClickerLauncher.exe"):
-                        zip_ref.extract(member, ".")
+                        zip_ref.extract(member, SCRIPT_DIR)
                         
             self.set_local_version(new_version)
             self.launch_game()
