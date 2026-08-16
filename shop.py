@@ -68,7 +68,13 @@ class FantasyShop:
             if 0 <= idx < len(self.stock):
                 item_id = self.stock[idx]
                 item = ITEMS_DB.get(item_id)
-                if item and player.gold >= item.value:
+                if not item:
+                    print("Przedmiot nie istnieje.")
+                    return False
+                if player.is_inventory_full():
+                    print("Twój ekwipunek jest pełny! Nie możesz kupić przedmiotu.")
+                    return False
+                if player.gold >= item.value:
                     player.gold -= item.value
                     player.add_to_inventory(item_id)
                     print(f"Kupiłeś {item.name}!")

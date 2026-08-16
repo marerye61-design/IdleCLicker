@@ -44,11 +44,58 @@ class Player:
         self.max_dungeon_tickets = 3
         self.last_dungeon_ticket_refresh = time.time()
         
+        self.inventory_stash = [] # Przechowane przedmioty u Karczmarza Barnaby (gdy ekwipunek był pełny)
         self.seen_cinematics = {}
+        
+        # === NOWE SYSTEMY: OSIĄGNIĘCIA, ALCHEMIA I BUFFY ===
+        self.achievements = {} # {ach_id: {"completed": bool, "claimed": bool, "progress": int}}
+        self.permanent_perks = [] # lista ID odblokowanych stałych perków z osiągnięć
+        self.achievement_stats = {
+            "total_kills": 0,
+            "total_crits": 0,
+            "boss_ptys_kills": 0,
+            "boss_kollman_kills": 0,
+            "dungeons_cleared": 0,
+            "upgrades_done": 0,
+            "max_upgrade_level": 0,
+            "gems_socketed": 0,
+            "herbs_harvested": 0,
+            "potions_brewed": 0,
+            "psychedelic_brewed": 0,
+            "total_gold_earned": 0
+        }
+        self.herb_garden = [
+            {"type": "herb_amanita", "planted_at": time.time(), "growth_time": 45},
+            {"type": "herb_moss", "planted_at": time.time(), "growth_time": 60},
+            {"type": "herb_flower", "planted_at": time.time(), "growth_time": 75},
+            {"type": "herb_mystery", "planted_at": time.time(), "growth_time": 120}
+        ]
+        self.active_buffs = {} # {buff_id: remaining_fights}
         self.last_update_time = time.time()
 
     def migrate(self):
         """ Iteracja 4: Odporność na stare wersje zapisów (Backward compatibility) """
+        if not hasattr(self, 'inventory_stash'):
+            self.inventory_stash = []
+        if not hasattr(self, 'achievements'):
+            self.achievements = {}
+        if not hasattr(self, 'permanent_perks'):
+            self.permanent_perks = []
+        if not hasattr(self, 'achievement_stats'):
+            self.achievement_stats = {
+                "total_kills": 0, "total_crits": 0, "boss_ptys_kills": 0, "boss_kollman_kills": 0,
+                "dungeons_cleared": 0, "upgrades_done": 0, "max_upgrade_level": 0, "gems_socketed": 0,
+                "herbs_harvested": 0, "potions_brewed": 0, "psychedelic_brewed": 0, "total_gold_earned": 0
+            }
+        if not hasattr(self, 'herb_garden') or not self.herb_garden:
+            self.herb_garden = [
+                {"type": "herb_amanita", "planted_at": time.time(), "growth_time": 45},
+                {"type": "herb_moss", "planted_at": time.time(), "growth_time": 60},
+                {"type": "herb_flower", "planted_at": time.time(), "growth_time": 75},
+                {"type": "herb_mystery", "planted_at": time.time(), "growth_time": 120}
+            ]
+        if not hasattr(self, 'active_buffs'):
+            self.active_buffs = {}
         if not hasattr(self, 'level'):
             self.level = 1; self.exp = 0; self.stat_points = 0
         if not hasattr(self, 'party'):
@@ -61,6 +108,8 @@ class Player:
             self.bestiary = {}
         if not hasattr(self, 'seen_cinematics'):
             self.seen_cinematics = {}
+        if not hasattr(self, 'bounties'):
+            self.bounties = []
             
         # Aktualizacja starych statystyk bazowych do nowego balansu (łatwiejszy początek)
         if getattr(self, 'stats', {}).get("base_atk", 0) < 12:
@@ -139,8 +188,8 @@ class Player:
             self.level += 1
             self.stat_points += 3
             print(f"\n*** AWANS NA {self.level} POZIOM! Otrzymujesz pasywnie +2 ATK, +1 DEF, +10 Max HP. ***\n")
-            # Heal player on level up
-            self.hp = self.get_max_hp()
+            # Zwiększamy HP jedynie o +10 z nowego poziomu, bez pełnego leczenia
+            self.hp = min(self.get_max_hp(), self.hp + 10)
             
         req = self.get_exp_required()
         remaining = req - self.exp
@@ -177,12 +226,35 @@ class Player:
         elif c == "yomen":
             bonus_atk += int(15 + self.level * 2.2)
             bonus_def += int(10 + self.level * 1.2)
-        elif c == "domcia":
-            bonus_atk += int(12 + self.level * 1.5)
-            bonus_def += int(12 + self.level * 1.5)
-            bonus_hp += int(80 + self.level * 6.0) # Domcia to wsparcie ziołolecznictwa (support healer)
+        if getattr(self, 'permanent_perks', None) and "perk_party_synergy" in self.permanent_perks:
+            bonus_atk = int(bonus_atk * 1.10)
+            bonus_def = int(bonus_def * 1.10)
+            bonus_hp = int(bonus_hp * 1.10)
             
         return {"atk": bonus_atk, "def": bonus_def, "hp": bonus_hp}
+
+    def get_gems_bonus(self):
+        """Kalkulacja bonusów z klejnotów wprawionych we wszystkich założonych przedmiotach (skalowanych z tierem sprzętu)."""
+        from gems import GEMS_DB
+        gem_mult = 1.10 if getattr(self, 'permanent_perks', None) and "perk_gem_resonance" in self.permanent_perks else 1.0
+        
+        bonus = {
+            "atk": 0, "def": 0, "hp_max": 0, "crit_chance": 0, 
+            "double_strike_pct": 0, "bonus_gold_pct": 0, "bonus_loot_pct": 0
+        }
+        
+        for item_dict in self.equipment.values():
+            if item_dict and isinstance(item_dict, dict) and "sockets" in item_dict:
+                item_obj = get_item(item_dict.get("id"))
+                item_lvl = getattr(item_obj, "level_req", 1) if item_obj else 1
+                for gem_id in item_dict["sockets"]:
+                    if gem_id and gem_id in GEMS_DB:
+                        gem = GEMS_DB[gem_id]
+                        scaled_stats = gem.get_stats_for_level(item_lvl)
+                        for s_key, s_val in scaled_stats.items():
+                            if s_key in bonus:
+                                bonus[s_key] += int(s_val * gem_mult)
+        return bonus
 
     def get_total_atk(self):
         # Pasywny przyrost bez broni wynosi +2.0 ATK / poziom
@@ -194,9 +266,19 @@ class Player:
                     base = item.stats.get("atk", 0)
                     atk += int(base * (1.0 + 0.15 * item_dict.get("lvl", 0)))
         atk += self.get_party_bonus()["atk"]
+        atk += self.get_gems_bonus()["atk"]
         
         # Iteracja 5 (Bestiariusz) - mnożnik
         atk_multiplier = 1.0 + self.get_bestiary_bonus()
+        
+        # Stały perk z osiągnięć: Żniwiarz Cienia (+5% ATK)
+        if getattr(self, 'permanent_perks', None) and "perk_slayer" in self.permanent_perks:
+            atk_multiplier += 0.05
+            
+        # Aktywny eliksir: Eliksir Berserkera (+35% ATK)
+        if getattr(self, 'active_buffs', None) and self.active_buffs.get("elixir_berserk", 0) > 0:
+            atk_multiplier += 0.35
+            
         return int(atk * atk_multiplier)
 
     def get_total_def(self):
@@ -209,10 +291,21 @@ class Player:
                     base = item.stats.get("def", 0)
                     df += int(base * (1.0 + 0.15 * item_dict.get("lvl", 0)))
         df += self.get_party_bonus()["def"]
+        df += self.get_gems_bonus()["def"]
+        
+        # Pasywka Pianka: "Żelazna Pompa" (+25% DEF gdy zdrowie spadnie poniżej 60%)
+        if getattr(self, 'active_companion', None) == "pianek":
+            if self.get_max_hp() > 0 and (self.hp / self.get_max_hp()) < 0.60:
+                df = int(df * 1.25)
+                
+        # Aktywny eliksir: Mikstura Kamiennej Skóry (+35% DEF)
+        if getattr(self, 'active_buffs', None) and self.active_buffs.get("elixir_stone_skin", 0) > 0:
+            df = int(df * 1.35)
+            
         return df
 
     def get_total_crit(self):
-        # Maks 30 ze statystyk (bazowe punkty), ale mogą być przekroczone przez przedmioty
+        # Maks 30 ze statystyk (bazowe punkty), ale mogą być przekroczone przez przedmioty i klejnoty
         crit = min(30, self.stats.get("crit_chance", 0))
         for item_dict in self.equipment.values():
             if item_dict:
@@ -220,6 +313,16 @@ class Player:
                 if item and hasattr(item, "stats"):
                     base_crit = item.stats.get("crit_chance", 0)
                     crit += base_crit
+        crit += self.get_gems_bonus()["crit_chance"]
+        
+        # Stały perk z osiągnięć: Precyzja Zabójcy (+3% KRYT)
+        if getattr(self, 'permanent_perks', None) and "perk_crit_master" in self.permanent_perks:
+            crit += 3
+            
+        # Aktywny eliksir: Ekstrakt Nieznanej Głębi (+50% KRYT)
+        if getattr(self, 'active_buffs', None) and self.active_buffs.get("elixir_psychedelic", 0) > 0:
+            crit += 50
+            
         return crit
 
     def get_max_hp(self):
@@ -232,10 +335,63 @@ class Player:
                     base = item.stats.get("hp_max", 0)
                     hp += int(base * (1.0 + 0.15 * item_dict.get("lvl", 0)))
         hp += self.get_party_bonus()["hp"]
+        hp += self.get_gems_bonus()["hp_max"]
         return hp
+
+    def get_double_strike_chance(self):
+        chance = self.get_gems_bonus().get("double_strike_pct", 0)
+        if getattr(self, 'active_buffs', None) and self.active_buffs.get("elixir_swiftness", 0) > 0:
+            chance += 15
+        return chance
+
+    def record_achievement_stat(self, key, value=1, mode="add"):
+        """Aktualizuje statystyki do osiągnięć."""
+        if not hasattr(self, 'achievement_stats'):
+            self.achievement_stats = {}
+        if mode == "add":
+            self.achievement_stats[key] = self.achievement_stats.get(key, 0) + value
+        elif mode == "max":
+            self.achievement_stats[key] = max(self.achievement_stats.get(key, 0), value)
+        elif mode == "set":
+            self.achievement_stats[key] = value
+
+    def tick_active_buffs(self):
+        """Zmniejsza licznik walk dla aktywnych eliksirów po ukończonym starciu."""
+        if not hasattr(self, 'active_buffs') or not self.active_buffs:
+            return
+        expired = []
+        for buff_id in list(self.active_buffs.keys()):
+            self.active_buffs[buff_id] -= 1
+            if self.active_buffs[buff_id] <= 0:
+                expired.append(buff_id)
+        for e in expired:
+            del self.active_buffs[e]
+        return expired
         
-    def add_to_inventory(self, item_id, modifier=None):
-        self.inventory.append({"id": item_id, "lvl": 0, "modifier": modifier})
+    def get_max_inventory_slots(self):
+        # 4 strony x 20 slotów = 80 miejsc
+        return 80
+
+    def is_inventory_full(self):
+        return len(self.inventory) >= self.get_max_inventory_slots()
+        
+    def add_to_inventory(self, item_id, modifier=None, is_reward=False):
+        if isinstance(item_id, dict):
+            item_dict = item_id
+        else:
+            item_dict = {"id": item_id, "lvl": 0, "modifier": modifier}
+            
+        if not self.is_inventory_full():
+            self.inventory.append(item_dict)
+            return True, "added"
+        else:
+            if is_reward:
+                if not hasattr(self, 'inventory_stash'):
+                    self.inventory_stash = []
+                self.inventory_stash.append(item_dict)
+                return False, "stashed"
+            else:
+                return False, "full"
         
     def equip(self, item_dict):
         if item_dict in self.inventory:
@@ -243,12 +399,12 @@ class Player:
             if not item: return False
             slot = getattr(item, "slot", None)
             if slot and slot in self.equipment:
-                # Jesli cos juz mamy w slocie, sciagamy to do plecaka
-                if self.equipment[slot] is not None:
-                    self.inventory.append(self.equipment[slot])
-                # Zakladamy nowy przedmiot i usuwamy go z plecaka
+                # Zamiana / założenie:
+                old_eq = self.equipment[slot]
                 self.equipment[slot] = item_dict
                 self.inventory.remove(item_dict)
+                if old_eq is not None:
+                    self.inventory.append(old_eq)
                 return True
             else:
                 print("Tego przedmiotu nie można założyć.")

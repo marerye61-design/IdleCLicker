@@ -19,14 +19,14 @@ DUNGEONS = [
     # Wczesne / Środkowe Lochy
     Dungeon("d1", "Złowrogi Las", 5, 60, 500, 250, ["wep_maslak", "helm_pianek"], hardcoded_boss="boss_ptys"),
     Dungeon("d2", "Górska Przełęcz", 15, 60, 2500, 1000, ["arm_damian", "acc_domcia"], hardcoded_boss="boss_kollman"),
-    Dungeon("d3", "Twierdza Cieni", 30, 60, 12000, 5000, ["wep_yomen", "arm_eczme"]),
+    Dungeon("d3", "Twierdza Cieni", 30, 60, 12000, 5000, ["wep_yomen", "arm_eczme"], hardcoded_boss="boss_wraith_lord"),
     
     # Nowe Lochy (End-Game)
-    Dungeon("d4", "Wulkaniczne Czeluście", 45, 60, 45000, 18000, ["wep_fire_axe", "acc_fire_ruby"]),
-    Dungeon("d5", "Kryształowe Jaskinie", 60, 60, 150000, 50000, ["arm_crystal", "helm_crystal"]),
-    Dungeon("d6", "Zamarznięta Pustka", 75, 60, 400000, 120000, ["wep_frost_mourne", "acc_frost_amulet"]),
-    Dungeon("d7", "Świątynia Upadłych Bogów", 90, 60, 1200000, 350000, ["arm_fallen_god", "helm_fallen_god"]),
-    Dungeon("d8", "Wymiar Czasoprzestrzeni", 100, 60, 3500000, 1000000, ["wep_void_blade", "acc_void_core"])
+    Dungeon("d4", "Wulkaniczne Czeluście", 45, 60, 45000, 18000, ["wep_fire_axe", "acc_fire_ruby"], hardcoded_boss="boss_magma_lord"),
+    Dungeon("d5", "Kryształowe Jaskinie", 60, 60, 150000, 50000, ["arm_crystal", "helm_crystal"], hardcoded_boss="boss_crystal_golem"),
+    Dungeon("d6", "Zamarznięta Pustka", 75, 60, 400000, 120000, ["wep_frost_mourne", "acc_frost_amulet"], hardcoded_boss="boss_frost_lich"),
+    Dungeon("d7", "Świątynia Upadłych Bogów", 90, 60, 1200000, 350000, ["arm_fallen_god", "helm_fallen_god"], hardcoded_boss="boss_fallen_avatar"),
+    Dungeon("d8", "Wymiar Czasoprzestrzeni", 100, 60, 3500000, 1000000, ["wep_void_blade", "acc_void_core"], hardcoded_boss="boss_void_emperor")
 ]
 
 def run_dungeon(player, dungeon):

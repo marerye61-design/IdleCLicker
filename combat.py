@@ -98,30 +98,84 @@ def get_expedition_choices(player_level, count=3):
     return choices
 
 def get_hardcoded_boss(boss_id, player_level):
+    lvl = max(1, player_level)
+    
     if boss_id == "boss_ptys":
-        # Giga Ork 'Ptyś' - wielki, unikalny potwór 1. lochu (Złowrogi Las)
-        hp = 850 + (player_level * 15)
-        atk = 45 + (player_level * 2)
-        defence = 15
+        # Loch 1: Złowrogi Las (Lvl 5 - 15)
+        hp = 650 + (lvl * 15)
+        atk = 32 + int(lvl * 1.5)
+        defence = 12
         exp = 2500
         gold = 1000
-        return Enemy(boss_id, "[BOSS] Giga Ork 'Ptyś'", player_level, hp, atk, defence, exp, gold, "boss_ptys")
+        return Enemy(boss_id, "[BOSS] Giga Ork 'Ptyś'", lvl, hp, atk, defence, exp, gold, "boss_ptys")
         
     elif boss_id == "boss_kollman":
-        # Kollman Wojowniczy Mag - potężny boss 2. lochu (Górska Przełęcz)
-        # Walczy stylem bokserskim/MMA połączonym z magią
-        lvl = max(15, player_level)
-        hp = 2200 + (lvl * 30)
-        atk = 80 + (lvl * 3)
-        defence = 30 + (lvl * 1)
+        # Loch 2: Górska Przełęcz (Lvl 15 - 30)
+        hp = 1800 + (lvl * 25)
+        atk = 65 + int(lvl * 2.2)
+        defence = 25
         exp = 7500
         gold = 3000
         return Enemy(boss_id, "[BOSS] Kollman 'Wojowniczy Mag'", lvl, hp, atk, defence, exp, gold, "boss_kollman")
+        
+    elif boss_id == "boss_wraith_lord":
+        # Loch 3: Twierdza Cieni (Lvl 30 - 45)
+        hp = 4500 + (lvl * 40)
+        atk = 140 + int(lvl * 3.5)
+        defence = 55
+        exp = 20000
+        gold = 8000
+        return Enemy(boss_id, "[BOSS] Władca Cieni 'Morgar'", lvl, hp, atk, defence, exp, gold, "e_wraith")
+        
+    elif boss_id == "boss_magma_lord":
+        # Loch 4: Wulkaniczne Czeluście (Lvl 45 - 60)
+        hp = 9500 + (lvl * 60)
+        atk = 260 + int(lvl * 4.5)
+        defence = 110
+        exp = 55000
+        gold = 22000
+        return Enemy(boss_id, "[BOSS] Władca Magmy 'Ignis'", lvl, hp, atk, defence, exp, gold, "e_fiend")
+        
+    elif boss_id == "boss_crystal_golem":
+        # Loch 5: Kryształowe Jaskinie (Lvl 60 - 75)
+        hp = 22000 + (lvl * 100)
+        atk = 480 + int(lvl * 6.0)
+        defence = 220
+        exp = 180000
+        gold = 60000
+        return Enemy(boss_id, "[BOSS] Kryształowy Kolos", lvl, hp, atk, defence, exp, gold, "e_golem")
+        
+    elif boss_id == "boss_frost_lich":
+        # Loch 6: Zamarznięta Pustka (Lvl 75 - 90)
+        hp = 50000 + (lvl * 150)
+        atk = 850 + int(lvl * 8.0)
+        defence = 380
+        exp = 500000
+        gold = 150000
+        return Enemy(boss_id, "[BOSS] Mroźny Licz 'Kel-Thuzar'", lvl, hp, atk, defence, exp, gold, "e_cultist")
+        
+    elif boss_id == "boss_fallen_avatar":
+        # Loch 7: Świątynia Upadłych Bogów (Lvl 90 - 100)
+        hp = 110000 + (lvl * 250)
+        atk = 1500 + int(lvl * 12.0)
+        defence = 650
+        exp = 1500000
+        gold = 400000
+        return Enemy(boss_id, "[BOSS] Awatar Upadłego Bóstwa", lvl, hp, atk, defence, exp, gold, "e_knight")
+        
+    elif boss_id == "boss_void_emperor":
+        # Loch 8: Wymiar Czasoprzestrzeni (Lvl 100+)
+        hp = 250000 + (lvl * 400)
+        atk = 2800 + int(lvl * 18.0)
+        defence = 1100
+        exp = 4000000
+        gold = 1200000
+        return Enemy(boss_id, "[BOSS] Cesarz Czasoprzestrzeni", lvl, hp, atk, defence, exp, gold, "e_dragon")
     
     # Fallback
-    return Enemy("unknown_boss", "[BOSS] Nieznany Byt", player_level, 500, 30, 10, 500, 250, "e_golem")
+    return Enemy("unknown_boss", "[BOSS] Nieznany Byt", lvl, 500 + lvl * 20, 30 + lvl * 2, 10 + lvl, 500, 250, "e_golem")
 
-def calculate_player_dmg(player, enemy=None):
+def calculate_player_dmg(player, enemy=None, is_first_turn=False):
     p_atk = player.get_total_atk()
     if not enemy:
         return max(1, p_atk), False
@@ -135,6 +189,11 @@ def calculate_player_dmg(player, enemy=None):
     variance = random.uniform(0.85, 1.15)
     
     dmg = int(final_dmg * variance)
+    
+    # Pasywka Eczmego: "Serwis z Wyskoku" (+25% obrażeń w pierwszej rundzie walki)
+    if is_first_turn and getattr(player, 'active_companion', None) == "eczme":
+        dmg = int(dmg * 1.25)
+        
     is_crit = False
     
     # Szansa na uderzenie krytyczne (Mnożnik x1.75)
@@ -161,4 +220,8 @@ def calculate_enemy_dmg(enemy, player):
     variance = random.uniform(0.9, 1.1)
     final_dmg = int(raw_dmg * variance)
     
+    # Pasywka Damiana: "Niezłomna Tarcza" (stała redukcja wszystkich otrzymywanych obrażeń o 10%)
+    if getattr(player, 'active_companion', None) == "damian":
+        final_dmg = int(final_dmg * 0.90)
+        
     return max(1, final_dmg)

@@ -4,6 +4,9 @@ NPC_DB = {
     "maslak": {
         "name": "Maślak, Słodki Mnich",
         "img": "maslak",
+        "passive_name": "Słodki Łup",
+        "passive_short": "+15% szansy na podwójne złoto i +5% na miksturę",
+        "passive_desc": "Maślak dzieli się słodkościami i wywęszy każdą monetę – po wygranej walce masz 15% szansy na podwójną sakiewkę złota oraz 5% szansy na znalezienie Mikstury Pełnego Zdrowia.",
         "greeting": "*Wypuszcza gęsty obłok dymu i uśmiecha się szeroko* Pokój z tobą, wędrowcze! Skusisz się na lukrowanego pączka? A może wolisz zimnego Namysłowa?",
         "options": {
             "Witaj, kim jesteś?": "Zwą mnie Maślak. Kiedyś byłem pokornym bratem w Klasztorze Surowej Ascezy, ale... cóż, ich dieta składająca się z czerstwego chleba i wody jakoś mi nie podpasowała. Zrozumiałem, że prawdziwe oświecenie można znaleźć tylko w pysznych słodkościach, wybornym piwie i chwili relaksu z nabitą fajką. Zostałem więc wędrownym kapłanem dobrego humoru i pełnego brzucha!",
@@ -14,6 +17,9 @@ NPC_DB = {
     "damian": {
         "name": "Damian, Rycerz Cnoty (po Godzinach)",
         "img": "damian",
+        "passive_name": "Niezłomna Tarcza",
+        "passive_short": "-10% wszystkich otrzymywanych obrażeń",
+        "passive_desc": "Błogosławiona zbroja Damiana roztacza pole ochronne – zmniejsza o 10% wszystkie obrażenia zadawane bohaterowi przez wrogów.",
         "greeting": "*hic* Na honor i... polejcie mi jeszcze jeden kufel! Witajże, zacny wędrowcze!",
         "options": {
             "Witaj, kim jesteś?": "Zowią mnie Damian. Kiedyś byłem dumą Zakonu Złotej Róży. Ślubowałem bronić słabszych, tępić zło i zachować czystość ducha... Ale prawda jest taka, że to wszystko strasznie wysusza gardło. A rycerz bez zwilżonego gardła, to jak miecz bez klingi, prawda?",
@@ -24,6 +30,9 @@ NPC_DB = {
     "pianek": {
         "name": "Pianek, Mięśniak",
         "img": "pianek",
+        "passive_name": "Żelazna Pompa",
+        "passive_short": "+25% DEF gdy zdrowie spadnie poniżej 60%",
+        "passive_desc": "Gdy walka staje się zacięta, mięśnie Pianka napinają się jak stal – zyskujesz potężne +25% do całkowitej wartości Pancerza (DEF), gdy twoje zdrowie spadnie poniżej 60%.",
         "greeting": "ARGH! *Głośno stęka, podnosząc beczkę pełną piwa jednym palcem* Cześć! Masz może... ten, no... trochę białka?",
         "options": {
             "Witaj, kim jesteś?": "Ja jestem Pianek. Najsilniejszy wojownik w całej wsi! Wszyscy mówili: 'Pianek, czytaj zwoje magii, ucz się'. Ale po co? Zwojem nie zgnieciesz łba goblinowi! Moja magia to moje bicepsy! Rozdałem wszystkie swoje punkty umiejętności w siłę. WSZYSTKIE. Może i nie umiem doliczyć do dziesięciu bez używania palców, ale za to potrafię rzucić niedźwiedziem na odległość trzystu kroków!",
@@ -34,6 +43,9 @@ NPC_DB = {
     "yomen": {
         "name": "Yomen, Szczurzy Alchemik",
         "img": "yomen",
+        "passive_name": "Złota Rączka",
+        "passive_short": "-15% kosztu ulepszeń ekwipunku u Kowala",
+        "passive_desc": "Szczurzy spryt i klucz czternastka czynią cuda – kucie i ulepszanie ekwipunku u miejskiego Kowala kosztuje o 15% mniej złota.",
         "greeting": "Siema mordeczki! Wbiłem przez okienko w piwnicy. Ma ktoś klucz czternastkę albo trochę uszczelniacza do chłodnic?",
         "options": {
             "Witaj, kim jesteś?": "Zowią mnie Yomen! Jestem mistrzem eliksirów, koneserem kanałów i niezaproszonym gościem na każdym spotkaniu w tej karczmie. Nieważne jak dobrze zamkniecie drzwi, i tak wejdę. Moja specjalność to mieszanie rzadkich ziół z olejem silnikowym.",
@@ -44,6 +56,9 @@ NPC_DB = {
     "eczme": {
         "name": "Eczme, Siatkarz Lochów",
         "img": "eczme",
+        "passive_name": "Serwis z Wyskoku",
+        "passive_short": "+25% obrażeń pierwszego ataku w walce",
+        "passive_desc": "Błyskawiczne wejście w mecz – twoje pierwsze uderzenie w każdej walce (runda otwarcia) zadaje o 25% zwiększone obrażenia.",
         "greeting": "Odbicie, wystawa, i... ŚCINA! Hej, uważaj z tą zbroją, żebyś nie przebił mi piłki!",
         "options": {
             "Witaj, kim jesteś?": "Nazywam się Eczme! Jestem kapitanem i zarazem jedynym ocalałym członkiem drużyny 'Mroczne Kolce'. Wszyscy myślą, że w lochach trzeba machać mieczem. Bzdura! Wystarczy odpowiednio mocno zaserwować skórzaną piłką prosto w twarz nekromanty. Złote medale? Ja wolę zdobywać skrzynie ze złotem!",
@@ -54,6 +69,9 @@ NPC_DB = {
     "domcia": {
         "name": "Domcia, Szaman Ziołolecznictwa",
         "img": "domcia",
+        "passive_name": "Mistyczna Prędkość",
+        "passive_short": "+8% szybkości ataku (dodatkowy cios)",
+        "passive_desc": "Aromatyczne wywary szamanki wyostrzają zmysły i refleks – zyskujesz +8% do szybkości ataku (8% szansy na natychmiastowe wyprowadzenie dodatkowego ciosu z rzędu w walce).",
         "greeting": "Wooo, stary... Ale masz aurę. Złocista, jak poranny wschód. Usiądź, zapal z nami i poczuj wibracje lasu.",
         "options": {
             "Witaj, kim jesteś?": "Zowią mnie Domcia. Jestem... niezależnym badaczem świadomości. I botanikiem. Kiedy inni wojownicy machają żelastwem i krzyczą na potwory, ja szukam z nimi porozumienia na wyższym poziomie egzystencji. Głównie dzięki moim wyjątkowym grzybkom i specjalnym mieszankom ziół. Chcesz spróbować 'Fioletowego Horyzontu'? Rozluźnia napięte mięśnie i otwiera trzecie oko. Albo i czwarte, zależy ile spalisz.",
@@ -69,6 +87,7 @@ NPC_DB = {
             "Kim jesteś, gospodarzu?": "Zowią mnie Barnaba. Prowadzę ten przybytek od ponad trzydziestu lat. Widziałem królów tracących korony i żebraków stających się legendami. Ta tawerna stoi na skrzyżowaniu pradawnych szlaków – dla każdego, kto ma dość walki i szuka bezpiecznego dachu nad głową, moje drzwi stoją otworem. O ile oczywiście nie wszczyna burd przy stole!",
             "Co słychać w okolicy? (Plotki i Wieści)": "Dzikie bestie w Złowrogim Lesie stają się coraz bardziej zuchwałe. Wilki podchodzą pod sam trakt, a z głębi puszczy dochodzi ryk Giga Orka Ptyśka... Jeśli planujesz zapuszczać się do lochów, upewnij się, że masz przy sobie zapas mikstur i solidnie okuty pancerz. Pamiętaj też, że kowal w mieście potrafi zdziałać cuda z każdym kawałkiem żelastwa!",
             "Opowiedz mi o swoich gościach.": "Ach, moja wesoła kompania! *śmieje się cicho* Maślak przesiaduje w kącie z fajką i pączkami, Damian po piątym kuflu przysięga zbawić świat, Pianek bije rekordy w podnoszeniu beczek, Yomen ciągle majstruje przy rurach w piwnicy, Eczme trenuje ściny na korytarzu, a Domcia leczy skołatane nerwy ziółkami. Każdy z nich ma swoje dziwactwa, ale w walce możesz na nich polegać bez wahania!",
+            "Jak działa depozyt na nagrody?": "To proste! Jeśli twój plecak będzie w pełni zapełniony (wszystkie 4 strony / 80 slotów), żadna nagroda ze zleceń, zadań czy lochów nie przepadnie. Zostanie bezpiecznie zdeponowana u mnie za ladą. Gdy tylko zwolnisz miejsce, możesz do mnie podejść i odebrać swoje skarby!",
             "Masz dla mnie jakieś zlecenie?": "Zajrzyj do Dziennika Zadań! Moi stali bywalcy często szukają kogoś o twardej ręce, by przetrzebić okoliczne potwory. Pomóż im, a z chęcią dołączą do twojej drużyny jako wierni towarzysze broni!"
         }
     }

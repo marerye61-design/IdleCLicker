@@ -55,7 +55,7 @@ class Consumable(Item):
 
 # Słownik wszystkich dostępnych przedmiotów w grze
 ITEMS_DB = {
-    "pot_hp": Consumable("pot_hp", "Mikstura Pełnego Zdrowia", "Natychmiastowo leczy 100% maksymalnego HP w trakcie walki.", 50, {"hp_pct": 100}),
+    "pot_hp": Consumable("pot_hp", "Mikstura Pełnego Zdrowia", "Natychmiastowo leczy 100% maksymalnego HP bohatera (w trakcie walki lub z poziomu ekwipunku).", 50, {"hp_pct": 100}),
     
     # === PODSTAWOWY EKWIPUNEK SKLEPOWY (ZWYKŁY) ===
     # Tier 1 (Poziom 1)
@@ -188,7 +188,26 @@ ITEMS_DB = {
     "acc_void_core": Equipment(
         "acc_void_core", "Rdzeń Czasoprzestrzeni", "Zatrzymuje czas wokół posiadacza.", 
         12000000, "accessory", {"atk": 400, "def": 400, "hp_max": 3000}, level_req=100, rarity="Mityczny"
-    )
+    ),
+    
+    # === MAGICZNE KLEJNOTY (GEMS) ===
+    "gem_ruby": Item("gem_ruby", "Rubin Siły", "🔴 Płonący klejnot bojowy (+15 ATK w gnieździe ekwipunku).", 600),
+    "gem_emerald": Item("gem_emerald", "Szmaragd Żywotności", "🟢 Kamień natury (+80 Max HP, +8 DEF w gnieździe ekwipunku).", 600),
+    "gem_sapphire": Item("gem_sapphire", "Szafir Prędkości", "🔵 Kryształ niebios (+5% Szansy na Podwójny Atak w gnieździe).", 750),
+    "gem_topaz": Item("gem_topaz", "Topaz Chciwości", "🟡 Złocisty klejnot fortuny (+15% Złota, +5% Szansy na Łup).", 700),
+    "gem_amethyst": Item("gem_amethyst", "Ametyst Zguby", "🟣 Klejnot magii cienia (+3% Szansy na Cios Krytyczny).", 800),
+
+    # === ZIOŁA I SKŁADNIKI ALCHEMICZNE (HERBS & INGREDIENTS) ===
+    "herb_amanita": Item("herb_amanita", "Amanita Lasu", "🍄 Czerwony grzyb leśny o właściwościach stymulujących siłę.", 40),
+    "herb_moss": Item("herb_moss", "Srebrzysty Mech", "🌿 Lśniący chłodny mech skalny, kluczowy do wywarów leczniczych.", 50),
+    "herb_flower": Item("herb_flower", "Krwawy Kwiat", "🌸 Szkarłatny kwiat z zarośli o zapachu siarki i witalności.", 60),
+    "herb_root": Item("herb_root", "Smoczy Korzeń", "🌾 Rzadki, twardy korzeń gromadzący energię ziemi i bogactwa.", 80),
+    "herb_mystery": Item("herb_mystery", "Ziółko", "🌀 Efekt nieznany. (Kliknij 'Zażyj Ziółko' w plecaku, aby doświadczyć 60s mistycznej fali deformacji świata i spowolnienia czasu)", 150),
+    
+    "ing_fang": Item("ing_fang", "Kieł Bestii", "🦷 Ostry kieł drapieżnika. Upuszczany przez wilki i bestie.", 30),
+    "ing_venom": Item("ing_venom", "Gruczoł Jadowy", "🧪 Lepki jad pająków i pełzających potworów.", 45),
+    "ing_ectoplasm": Item("ing_ectoplasm", "Ektoplazma Upiora", "👻 Świetlista maź pozostająca po nieumarłych i zjawach.", 60),
+    "ing_core": Item("ing_core", "Rdzeń Skalny", "💎 Ciężki, twardy fragment ożywionego golema lub gargulca.", 75)
 }
 
 from modifiers import MODIFIERS_DB

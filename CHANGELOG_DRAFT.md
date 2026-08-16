@@ -1,9 +1,3 @@
 # Szkic Zmian dla Nadchodzącej Wersji (Prace w toku)
 
-### 🏰 Lochy & Bossowie
-
-### 📜 Zadania Fabularne & Tawerna
-
-### 🎮 Mechanika & Balans
-
-### 🚀 Launcher & System
+_Brak oczekujących zmian. Wszystkie wcześniejsze funkcje zostały opublikowane w wersji v0.18._

@@ -81,7 +81,7 @@ class Quest:
             if 'gold' in self.rewards:
                 player.gold += self.rewards['gold']
             if 'item' in self.rewards:
-                player.add_to_inventory(self.rewards['item'])
+                player.add_to_inventory(self.rewards['item'], is_reward=True)
             if 'party' in self.rewards:
                 member = self.rewards['party']
                 if member not in player.party:
