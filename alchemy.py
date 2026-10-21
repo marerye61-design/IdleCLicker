@@ -6,7 +6,7 @@ HERBS_DB = {
     "herb_amanita": {
         "id": "herb_amanita",
         "name": "Amanita Lasu",
-        "icon": "🍄",
+        "icon": "",
         "color": "#e67e22",
         "description": "Czerwony grzyb leśny o właściwościach stymulujących siłę i agresję.",
         "growth_time": 30, # sekundy
@@ -15,7 +15,7 @@ HERBS_DB = {
     "herb_moss": {
         "id": "herb_moss",
         "name": "Srebrzysty Mech",
-        "icon": "🌿",
+        "icon": "",
         "color": "#2ecc71",
         "description": "Lśniący chłodny mech skalny, kluczowy do wywarów leczniczych i ochronnych.",
         "growth_time": 45,
@@ -24,7 +24,7 @@ HERBS_DB = {
     "herb_flower": {
         "id": "herb_flower",
         "name": "Krwawy Kwiat",
-        "icon": "🌸",
+        "icon": "",
         "color": "#e74c3c",
         "description": "Szkarłatny kwiat z zarośli o zapachu siarki i witalności.",
         "growth_time": 60,
@@ -33,7 +33,7 @@ HERBS_DB = {
     "herb_root": {
         "id": "herb_root",
         "name": "Smoczy Korzeń",
-        "icon": "🌾",
+        "icon": "",
         "color": "#f1c40f",
         "description": "Rzadki, twardy korzeń gromadzący energię ziemi i bogactwa.",
         "growth_time": 90,
@@ -42,7 +42,7 @@ HERBS_DB = {
     "herb_mystery": {
         "id": "herb_mystery",
         "name": "Ziółko",
-        "icon": "🌀",
+        "icon": "",
         "color": "#9b59b6",
         "description": "Mistyczna roślina o niezwykłym aromacie. (Można zażyć z ekwipunku lub uwarzyć w kociołku)",
         "growth_time": 120,
@@ -54,7 +54,7 @@ MONSTER_INGREDIENTS_DB = {
     "ing_fang": {
         "id": "ing_fang",
         "name": "Kieł Bestii",
-        "icon": "🦷",
+        "icon": "",
         "color": "#dcdde1",
         "description": "Ostry kieł drapieżnika. Upuszczany przez wilki i dzikie bestie.",
         "value": 30
@@ -62,7 +62,7 @@ MONSTER_INGREDIENTS_DB = {
     "ing_venom": {
         "id": "ing_venom",
         "name": "Gruczoł Jadowy",
-        "icon": "🧪",
+        "icon": "",
         "color": "#8c7ae6",
         "description": "Lepki jad pająków i pełzających potworów.",
         "value": 45
@@ -70,7 +70,7 @@ MONSTER_INGREDIENTS_DB = {
     "ing_ectoplasm": {
         "id": "ing_ectoplasm",
         "name": "Ektoplazma Upiora",
-        "icon": "👻",
+        "icon": "",
         "color": "#00d2d3",
         "description": "Świetlista maź pozostająca po nieumarłych i zjawach.",
         "value": 60
@@ -78,7 +78,7 @@ MONSTER_INGREDIENTS_DB = {
     "ing_core": {
         "id": "ing_core",
         "name": "Rdzeń Skalny",
-        "icon": "💎",
+        "icon": "",
         "color": "#e15f41",
         "description": "Ciężki, twardy fragment ożywionego golema lub gargulca.",
         "value": 75
@@ -90,40 +90,40 @@ RECIPES_DB = {
     "elixir_berserk": {
         "id": "elixir_berserk",
         "name": "Eliksir Berserkera",
-        "icon": "💥",
+        "icon": "",
         "color": "#e74c3c",
-        "description": "+25% do całkowitych Obrażeń Bohatera na 10 kolejnych walk.",
+        "description": "+35% do całkowitych Obrażeń Bohatera na 10 kolejnych walk.",
         "ingredients": {"herb_amanita": 2, "ing_fang": 1},
         "duration_fights": 10,
         "buff_type": "atk_pct",
-        "buff_val": 25
+        "buff_val": 35
     },
     "elixir_stone_skin": {
         "id": "elixir_stone_skin",
         "name": "Mikstura Kamiennej Skóry",
-        "icon": "🛡️",
+        "icon": "",
         "color": "#7f8c8d",
-        "description": "+30% do Pancerza (DEF) na 10 kolejnych walk.",
+        "description": "+35% do Pancerza (DEF) na 10 kolejnych walk.",
         "ingredients": {"herb_moss": 2, "ing_core": 1},
         "duration_fights": 10,
         "buff_type": "def_pct",
-        "buff_val": 30
+        "buff_val": 35
     },
     "elixir_swiftness": {
         "id": "elixir_swiftness",
         "name": "Wywar Szybkich Stóp",
-        "icon": "⚡",
+        "icon": "",
         "color": "#3498db",
-        "description": "+12% Szansy na Podwójny Cios na 10 kolejnych walk.",
+        "description": "+15% Szansy na Podwójny Cios na 10 kolejnych walk.",
         "ingredients": {"herb_flower": 2, "ing_venom": 1},
         "duration_fights": 10,
         "buff_type": "double_strike_pct",
-        "buff_val": 12
+        "buff_val": 15
     },
     "elixir_fortune": {
         "id": "elixir_fortune",
         "name": "Napar Złotego Rogu",
-        "icon": "💰",
+        "icon": "",
         "color": "#f1c40f",
         "description": "+40% Złota z pokonanych potworów na 10 kolejnych walk.",
         "ingredients": {"herb_root": 1, "herb_moss": 2},
@@ -134,7 +134,7 @@ RECIPES_DB = {
     "elixir_full_heal": {
         "id": "elixir_full_heal",
         "name": "Mikstura Pełnego Zdrowia",
-        "icon": "🧪",
+        "icon": "",
         "color": "#2ecc71",
         "description": "Darmowa mikstura lecznicza (dodaje 1 szt. do ekwipunku).",
         "ingredients": {"herb_amanita": 1, "herb_moss": 1},
@@ -143,13 +143,13 @@ RECIPES_DB = {
     "elixir_psychedelic": {
         "id": "elixir_psychedelic",
         "name": "Ziółko (Mocny Wywar)",
-        "icon": "🌀",
+        "icon": "",
         "color": "#9b59b6",
-        "description": "Zażycie wywołuje 60-sekundową psychodeliczną falę deformacji świata i feerii barw, spowalniając czas i dając +35% Szansy na Trafienie Krytyczne!",
+        "description": "Zażycie wywołuje 60-sekundową psychodeliczną falę deformacji świata i feerii barw, dając +50% Szansy na Trafienie Krytyczne na 10 kolejnych walk!",
         "ingredients": {"herb_mystery": 1, "ing_ectoplasm": 1},
         "duration_fights": 10,
         "buff_type": "psychedelic_slowmo",
-        "buff_val": 35
+        "buff_val": 50
     }
 }
 

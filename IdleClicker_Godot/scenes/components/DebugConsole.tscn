@@ -1,0 +1,209 @@
+[gd_scene load_steps=2 format=3 uid="uid://d123456789008"]
+
+[ext_resource type="Script" path="res://scenes/components/DebugConsole.gd" id="1_debug"]
+
+[node name="DebugConsole" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_debug")
+
+[node name="DimBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WindowPanel" type="PanelContainer" parent="CenterContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 480)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/WindowPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/WindowPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="CenterContainer/WindowPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "KONSOLA DEBUGOWANIA I TESTÓW (F12 / ~)"
+
+[node name="BtnCloseTop" type="Button" parent="CenterContainer/WindowPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+text = "X"
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/WindowPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "Wybierz komendę debugowania, aby natychmiast przetestować mechanikę."
+
+[node name="HSeparator1" type="HSeparator" parent="CenterContainer/WindowPanel/VBox"]
+layout_mode = 2
+
+[node name="ConsoleScroll" type="ScrollContainer" parent="CenterContainer/WindowPanel/VBox"]
+custom_minimum_size = Vector2(700, 430)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ScrollContent" type="VBoxContainer" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Sec1Title" type="Label" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.7, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "1. ZASOBY I PROGRESJA BOHATERA:"
+
+[node name="Grid1" type="GridContainer" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="BtnAddGold10k" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+10,000 Złota"
+
+[node name="BtnAddGold1M" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+1,000,000 Złota"
+
+[node name="BtnHealFull" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Ulecz HP i Manę (100%)"
+
+[node name="BtnAddLevel1" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+1 Poziom Bohatera"
+
+[node name="BtnAddLevel10" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+10 Poziomów Bohatera"
+
+[node name="BtnAddStatPts" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+50 Punktów Rozwoju"
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+
+[node name="Sec2Title" type="Label" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.4, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "2. SZYBKA WALKA Z BOSSAMI (TESTY):"
+
+[node name="Grid2" type="GridContainer" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="BtnBossPtys" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Walcz: Giga Ork Ptyś"
+
+[node name="BtnBossKollman" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Walcz: Mag Kollman"
+
+[node name="BtnBossMorgar" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Walcz: Władca Morgar"
+
+[node name="HSeparator3" type="HSeparator" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+
+[node name="Sec3Title" type="Label" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "3. EKWIPUNEK, ALCHEMIA I OSIĄGNIĘCIA:"
+
+[node name="Grid3" type="GridContainer" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="BtnAddGems" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+Klejnoty (Komplet)"
+
+[node name="BtnAddSocketItem" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+Broń (2 Wolne Gniazda)"
+
+[node name="BtnAddAlchemy" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "+Składniki Alchemii"
+
+[node name="BtnGrowGarden" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Dojrzyj Ogród Ziół"
+
+[node name="BtnAllAchievements" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Ukończ Osiągnięcia"
+
+[node name="BtnCloseBottom" type="Button" parent="CenterContainer/WindowPanel/VBox/ConsoleScroll/ScrollContent/Grid3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+text = "Zamknij Konsolę"

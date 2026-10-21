@@ -12,6 +12,8 @@ import random
 import time
 import threading
 import traceback
+import shutil
+from collections import OrderedDict
 # --- PATCH CUSTOMTKINTER BUGS ---
 import customtkinter as ctk
 original_destroy = ctk.CTkButton.destroy
@@ -63,6 +65,7 @@ from bounties import generate_daily_bounties
 from gems import GEMS_DB, get_gem, get_random_gem_id, roll_gem_drop, ensure_item_sockets, get_sockets_summary
 from achievements import ACHIEVEMENTS_DB
 from alchemy import HERBS_DB, MONSTER_INGREDIENTS_DB, RECIPES_DB, roll_monster_ingredient_drop
+from reward_math import calculate_combat_rewards, calculate_dungeon_rewards
 
 # Ustawienie bezpiecznej ścieżki do plików zapisu (aby uniknąć ich nadpisania przy aktualizacji plików gry)
 APPDATA_DIR = os.path.join(os.getenv('APPDATA'), 'IdleClicker') if os.name == 'nt' else os.path.join(os.path.expanduser('~'), '.idleclicker')
@@ -83,10 +86,16 @@ def save_game(player, filepath):
     if not os.path.exists(SAVES_DIR):
         os.makedirs(SAVES_DIR)
     
-    # Podmiana katalogu na bezpieczny
+    # Podmiana katalogu na bezpieczny z zapisem atomowym (odporność na awarie i utratę danych)
     safe_filepath = os.path.join(SAVES_DIR, os.path.basename(filepath))
-    with open(safe_filepath, 'wb') as f:
+    temp_filepath = safe_filepath + ".tmp"
+    with open(temp_filepath, 'wb') as f:
         pickle.dump(player, f)
+        f.flush()
+        os.fsync(f.fileno())
+    if os.path.exists(safe_filepath):
+        shutil.copy2(safe_filepath, safe_filepath + ".bak")
+    os.replace(temp_filepath, safe_filepath)
 
 class ScrollableFrame(tk.Frame):
     def __init__(self, container, bg_color="#2c1a12", *args, **kwargs):
@@ -121,15 +130,22 @@ class ScrollableFrame(tk.Frame):
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
     def _unbind_mousewheel(self, event):
-        self.canvas.unbind_all("<MouseWheel>")
+        try:
+            self.canvas.unbind_all("<MouseWheel>")
+        except Exception:
+            pass
 
     def _on_mousewheel(self, event):
         # Sprawdzamy czy okno rzeczywiście potrzebuje scrolla
+        if not self.winfo_exists() or not self.canvas.winfo_exists(): return
         if self.canvas.yview() == (0.0, 1.0): return
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         
     def destroy(self):
-        self.canvas.unbind_all("<MouseWheel>")
+        try:
+            self.canvas.unbind_all("<MouseWheel>")
+        except Exception:
+            pass
         super().destroy()
 
 class IdleRPGApp:
@@ -174,6 +190,9 @@ class IdleRPGApp:
         self.combat_active = False
         self.combat_enemy = None
         self.combat_turn = 0
+        self.companion_ult_cooldown = 0
+        self.enemy_stunned = False
+        self.enemy_blinded = False
         self.current_view = "menu"
         
         self.root.bind("<F12>", lambda e: self.open_debug_console())
@@ -228,7 +247,8 @@ class IdleRPGApp:
             
         if getattr(self, 'save_timer_id', None):
             self.root.after_cancel(self.save_timer_id)
-        self.save_timer_id = self.root.after(60000, self.auto_save_timer)
+        interval = getattr(self.player, 'settings', {}).get('autosave_seconds', 60) if self.player else 60
+        self.save_timer_id = self.root.after(max(15, int(interval)) * 1000, self.auto_save_timer)
 
     def passive_gold_timer(self):
         if self.player:
@@ -290,60 +310,81 @@ class IdleRPGApp:
         
         btn_y = title_y + 36
         
-        # 1. Przycisk Tablicy Ogłoszeń (po lewej)
+        # 1. Przycisk Tablicy Ogłoszeń
         btn_board = ctk.CTkButton(
             self.tavern_canvas,
-            text="📋 TABLICA ZLECEŃ",
-            font=("Georgia", 11, "bold"),
+            text="TABLICA ZLECEŃ",
+            font=("Georgia", 10, "bold"),
             fg_color="#8b4513",
             hover_color="#a0522d",
             text_color="#f4d03f",
             corner_radius=8,
             border_width=2,
             border_color="#f4d03f",
-            width=210,
+            width=180,
             height=28,
             command=self.open_bounty_board
         )
-        self.tavern_canvas.create_window(title_x - 240, btn_y, window=btn_board)
+        self.tavern_canvas.create_window(title_x - 315, btn_y, window=btn_board)
+
+        # 2. Przycisk Wypraw Drużyny (Companion Expeditions)
+        ready_exp = sum(1 for et in getattr(self.player, 'expeditions', {}).keys() if self.player.is_expedition_ready(et))
+        exp_txt = f"WYPRAWY ({ready_exp} GOTOWE!)" if ready_exp > 0 else " WYPRAWY DRUŻYNY"
+        exp_col = "#d35400" if ready_exp > 0 else "#6c3483"
+        exp_hover = "#e67e22" if ready_exp > 0 else "#8e44ad"
+        btn_expeditions = ctk.CTkButton(
+            self.tavern_canvas,
+            text=exp_txt,
+            font=("Georgia", 10, "bold"),
+            fg_color=exp_col,
+            hover_color=exp_hover,
+            text_color="#ffffff" if ready_exp > 0 else "#f4d03f",
+            corner_radius=8,
+            border_width=2,
+            border_color="#f4d03f",
+            width=180,
+            height=28,
+            command=self.open_companion_expeditions
+        )
+        self.tavern_canvas.create_window(title_x - 105, btn_y, window=btn_expeditions)
         
-        # 2. Przycisk Odpoczynku i Regeneracji Zdrowia (na środku)
+        # 3. Przycisk Odpoczynku i Regeneracji Zdrowia
         btn_rest = ctk.CTkButton(
             self.tavern_canvas,
-            text="🛏️ ODPOCZYNEK (REGENERACJA HP)",
-            font=("Georgia", 11, "bold"),
+            text="ODPOCZYNEK",
+            font=("Georgia", 10, "bold"),
             fg_color="#1e7e34",
             hover_color="#28a745",
             text_color="#ffffff",
             corner_radius=8,
             border_width=2,
             border_color="#2ecc71",
-            width=250,
+            width=180,
             height=28,
             command=self.open_tavern_rest
         )
-        self.tavern_canvas.create_window(title_x, btn_y, window=btn_rest)
+        self.tavern_canvas.create_window(title_x + 105, btn_y, window=btn_rest)
         
-        # 3. Przycisk Depozytu Nagród u Karczmarza Barnaby (po prawej)
+        # 4. Przycisk Depozytu Nagród u Karczmarza Barnaby
         stash_count = len(getattr(self.player, 'inventory_stash', []))
-        stash_text = f"🎁 DEPOZYT ({stash_count} SZT.)" if stash_count > 0 else "🎁 DEPOZYT NAGRÓD"
+        stash_text = f"DEPOZYT ({stash_count})" if stash_count > 0 else " DEPOZYT NAGRÓD"
         stash_col = "#27ae60" if stash_count > 0 else "#3e2723"
         stash_hover = "#2ecc71" if stash_count > 0 else "#4e342e"
         btn_stash = ctk.CTkButton(
             self.tavern_canvas,
             text=stash_text,
-            font=("Georgia", 11, "bold"),
+            font=("Georgia", 10, "bold"),
             fg_color=stash_col,
             hover_color=stash_hover,
             text_color="#ffffff" if stash_count > 0 else "#f4d03f",
             corner_radius=8,
             border_width=2,
             border_color="#f4d03f",
-            width=210,
+            width=180,
             height=28,
             command=self.claim_barnaby_stash
         )
-        self.tavern_canvas.create_window(title_x + 240, btn_y, window=btn_stash)
+        self.tavern_canvas.create_window(title_x + 315, btn_y, window=btn_stash)
         
         positions = {
             "maslak": (start_x, start_y),
@@ -470,7 +511,7 @@ class IdleRPGApp:
         head_y = max(30, int(0.30 * sh - (sh - vp_h) / 2))
         self.tavern_canvas.create_text(
             head_x, head_y, 
-            text="✨ Karczmarz Barnaba (Kliknij)", 
+            text="Karczmarz Barnaba (Kliknij)", 
             fill="#f4d03f", 
             font=("Georgia", 15, "bold"), 
             tags=("innkeeper_name", "npc_innkeeper"), 
@@ -565,7 +606,7 @@ class IdleRPGApp:
             avatar_frame = tk.Frame(top_frame, bg="#2c1a12", bd=3, relief=tk.RIDGE, width=120, height=120)
             avatar_frame.pack(side=tk.LEFT, padx=25)
             avatar_frame.pack_propagate(False)
-            icon_char = "🍺" if npc_id == "innkeeper" else "👤"
+            icon_char = ""
             tk.Label(avatar_frame, text=icon_char, font=("Georgia", 44), bg="#2c1a12", fg="#f4d03f").pack(expand=True)
             
         info_frame = tk.Frame(top_frame, bg="#1a100b")
@@ -575,7 +616,7 @@ class IdleRPGApp:
         if "passive_name" in npc:
             p_frame = tk.Frame(info_frame, bg="#2c1a12", bd=2, relief=tk.RIDGE)
             p_frame.pack(fill=tk.X, pady=(6, 2), padx=5)
-            tk.Label(p_frame, text=f"⚡ Zdolność Pasywna: {npc['passive_name']}", font=("Georgia", 11, "bold"), fg="#f1c40f", bg="#2c1a12").pack(anchor="w", padx=8, pady=(4, 1))
+            tk.Label(p_frame, text=f"Zdolność Pasywna: {npc['passive_name']}", font=("Georgia", 11, "bold"), fg="#f1c40f", bg="#2c1a12").pack(anchor="w", padx=8, pady=(4, 1))
             tk.Label(p_frame, text=npc["passive_desc"], font=("Georgia", 10, "italic"), fg="#ecf0f1", bg="#2c1a12", wraplength=520, justify=tk.LEFT).pack(anchor="w", padx=8, pady=(1, 4))
         
         dialog_box = scrolledtext.ScrolledText(win, bg="#2c1a12", fg="#ddd", font=("Georgia", 11), wrap=tk.WORD, height=10, bd=4, relief=tk.SUNKEN)
@@ -602,7 +643,7 @@ class IdleRPGApp:
             if stash_count > 0:
                 btn_stash = ctk.CTkButton(
                     btn_frame,
-                    text=f"🎁 [DEPOZYT NAGRÓD] Odbierz nagrody ({stash_count} szt.)",
+                    text=f"[DEPOZYT NAGRÓD] Odbierz nagrody ({stash_count} szt.)",
                     font=("Georgia", 12, "bold"),
                     fg_color="#27ae60",
                     hover_color="#2ecc71",
@@ -613,7 +654,7 @@ class IdleRPGApp:
             else:
                 btn_stash = ctk.CTkButton(
                     btn_frame,
-                    text="🎁 [DEPOZYT NAGRÓD] Skrytka na nagrody (Pusto: 0 szt.)",
+                    text="[DEPOZYT NAGRÓD] Skrytka na nagrody (Pusto: 0 szt.)",
                     font=("Georgia", 11, "bold"),
                     fg_color="#3e2723",
                     hover_color="#4e342e",
@@ -624,7 +665,7 @@ class IdleRPGApp:
                 
             btn_rest_dialog = ctk.CTkButton(
                 btn_frame,
-                text="🛏️ [ODPOCZYNEK] Wynajmij pokój i zregeneruj siły witalne (HP)",
+                text="[ODPOCZYNEK] Wynajmij pokój i zregeneruj siły witalne (HP)",
                 font=("Georgia", 12, "bold"),
                 fg_color="#1e7e34",
                 hover_color="#28a745",
@@ -635,7 +676,7 @@ class IdleRPGApp:
             
             btn_bounties = ctk.CTkButton(
                 btn_frame,
-                text="📋 [TABLICA OGŁOSZEŃ] Zobacz dzisiejsze zlecenia",
+                text="[TABLICA OGŁOSZEŃ] Zobacz dzisiejsze zlecenia",
                 font=("Georgia", 12, "bold"),
                 fg_color="#d35400",
                 hover_color="#e67e22",
@@ -643,6 +684,52 @@ class IdleRPGApp:
                 command=lambda: (win.destroy(), self.open_bounty_board())
             )
             btn_bounties.pack(fill=tk.X, padx=30, pady=5)
+
+            # Dzierżawa Grządki #1 w Ogrodzie Ziół u Barnaby
+            if not self.player.is_plot_unlocked(0):
+                def buy_garden_lease():
+                    LEASE_COST = 150
+                    if self.player.gold < LEASE_COST:
+                        say(f"Przykro mi, wędrowcze, ale brakuje ci złota! Dzierżawa ziemi i przygotowanie grządki pod uprawę to koszt {LEASE_COST} sztuk złota. Wróć, gdy uzbierasz odpowiednią sumę.")
+                        return
+                    self.player.gold -= LEASE_COST
+                    self.player.unlock_garden_plot(0)
+                    sounds.play_coin()
+                    self.log_msg(f"Wydzierżawiono Grządkę #1 przed Tawerną u Barnaby za {LEASE_COST} złota! Ogród ziół został otwarty.")
+                    self.update_sidebar()
+                    say(
+                        "*Gładzi się z uśmiechem po siwej brodzie i chowa sakiewkę z monetami za ladę*\n\n"
+                        "Umowa stoi! Ten żyzny kawałek ziemi tuż przy wejściu do tawerny jest twój. "
+                        "Leżał odłogiem, odkąd Maślak próbował sadzić tam cukierki... Przygotowałem już grządkę pod pierwsze nasiona Amanity Lasu. "
+                        "Zajrzyj do Ogrodu i Kociołka, a Domcia na pewno podpowie ci, jak z wyhodowanych ziół uwarzyć porządne wywary!"
+                    )
+                    btn_lease.configure(
+                        text="[OGRÓD ZIÓŁ] Grządka #1 wydzierżawiona (Aktywna)",
+                        state=tk.DISABLED,
+                        fg_color="#2c3e50"
+                    )
+                
+                btn_lease = ctk.CTkButton(
+                    btn_frame,
+                    text="[DZIERŻAWA ZIEMI] Wydzierżaw kawałek pola pod uprawę ziół (150 złota)",
+                    font=("Georgia", 12, "bold"),
+                    fg_color="#27ae60",
+                    hover_color="#2ecc71",
+                    text_color="#ffffff",
+                    command=buy_garden_lease
+                )
+                btn_lease.pack(fill=tk.X, padx=30, pady=4)
+            else:
+                btn_lease_owned = ctk.CTkButton(
+                    btn_frame,
+                    text="[OGRÓD ZIÓŁ] Grządka przed karczmą jest już w twojej dzierżawie",
+                    font=("Georgia", 11, "bold"),
+                    fg_color="#1a252f",
+                    hover_color="#2c3e50",
+                    text_color="#2ecc71",
+                    command=lambda: say("Pamiętaj, by regularnie doglądać swoich ziół na polu przed karczmą! Kolejne nasiona i zagonki zdobędziesz, pomagając moim bywalcom w ich zadaniach.")
+                )
+                btn_lease_owned.pack(fill=tk.X, padx=30, pady=4)
             
         # ----- SEKCJA ZADAŃ (QUESTS) -----
         for q in self.player.quests:
@@ -653,7 +740,7 @@ class IdleRPGApp:
                     def open_offer(quest=q):
                         self.open_quest_offer_dialog(quest, parent_win=win, on_accepted=lambda: (self.show_tavern(), self.open_npc_dialog(npc_id)))
                         
-                    btn_q = ctk.CTkButton(btn_frame, text=f"📜 [NOWE ZADANIE] Porozmawiaj: {q.name}", font=("Georgia", 11, "bold"), fg_color="#f1c40f", text_color="black", hover_color="#f39c12", command=open_offer)
+                    btn_q = ctk.CTkButton(btn_frame, text=f"[NOWE ZADANIE] Porozmawiaj: {q.name}", font=("Georgia", 11, "bold"), fg_color="#f1c40f", text_color="black", hover_color="#f39c12", command=open_offer)
                     btn_q.pack(fill=tk.X, padx=30, pady=5)
                     
                 elif q.status == 'IN_PROGRESS':
@@ -667,7 +754,7 @@ class IdleRPGApp:
                     def remind_q(quest=q):
                         say(f"Pamiętaj o naszej umowie: {quest.description}\nPostęp: {quest.get_progress_str()}")
                         
-                    btn_q = ctk.CTkButton(btn_frame, text=f"⏳ [W TRAKCIE] {q.name} ({q.get_progress_str()})", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#f4d03f", hover_color="#3e2723", command=remind_q)
+                    btn_q = ctk.CTkButton(btn_frame, text=f"[W TRAKCIE] {q.name} ({q.get_progress_str()})", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#f4d03f", hover_color="#3e2723", command=remind_q)
                     btn_q.pack(fill=tk.X, padx=30, pady=5)
                     
                 elif q.status == 'COMPLETED':
@@ -679,7 +766,7 @@ class IdleRPGApp:
                             self.show_tavern()
                             self.open_npc_dialog(npc_id)
                             
-                    btn_q = ctk.CTkButton(btn_frame, text=f"🎁 [ZADANIE UKOŃCZONE] Odbierz Nagrodę: {q.name}", font=("Georgia", 11, "bold"), fg_color="#2ecc71", text_color="white", hover_color="#27ae60", command=claim_q)
+                    btn_q = ctk.CTkButton(btn_frame, text=f"[ZADANIE UKOŃCZONE] Odbierz Nagrodę: {q.name}", font=("Georgia", 11, "bold"), fg_color="#2ecc71", text_color="white", hover_color="#27ae60", command=claim_q)
                     btn_q.pack(fill=tk.X, padx=30, pady=5)
         # ---------------------------------
         
@@ -699,10 +786,10 @@ class IdleRPGApp:
                     btn_p = ctk.CTkButton(btn_frame, text="[Wyrusz ze mną do lochu!]", font=("Georgia", 11, "bold"), fg_color="#27ae60", text_color="white", command=recruit_action)
                     btn_p.pack(fill=tk.X, padx=30, pady=3)
                 else:
-                    btn_p = ctk.CTkButton(btn_frame, text="✅ Towarzyszy ci w walce", font=("Georgia", 11, "bold"), fg_color="#1a100b", text_color="#2ecc71", state=tk.DISABLED)
+                    btn_p = ctk.CTkButton(btn_frame, text="[AKTYWNY] Towarzyszy ci w walce", font=("Georgia", 11, "bold"), fg_color="#1a100b", text_color="#2ecc71", state=tk.DISABLED)
                     btn_p.pack(fill=tk.X, padx=30, pady=3)
             else:
-                btn_locked = ctk.CTkButton(btn_frame, text="🔒 [Zwerbuj] (Ukończ zadanie postaci)", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#888", state=tk.DISABLED)
+                btn_locked = ctk.CTkButton(btn_frame, text="[ZABLOKOWANE] Zwerbuj (Ukończ zadanie postaci)", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#888", state=tk.DISABLED)
                 btn_locked.pack(fill=tk.X, padx=30, pady=3)
 
         btn_close = ctk.CTkButton(btn_frame, text="(Odejdź)", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#aaa", command=win.destroy)
@@ -743,17 +830,17 @@ class IdleRPGApp:
             for file in os.listdir(portraits_dir):
                 if file.endswith(".jpg") or file.endswith(".png"):
                     key = file.split('.')[0]
-                    img = Image.open(os.path.join(portraits_dir, file))
-                    width, height = img.size
-                    if width != height:
-                        min_dim = min(width, height)
-                        left = (width - min_dim) // 2
-                        top = 0 # Ucina od góry dla zachowania twarzy
-                        right = (width + min_dim) // 2
-                        bottom = min_dim
-                        img = img.crop((left, top, right, bottom))
-                    self.portraits[key] = ImageTk.PhotoImage(img.resize((240, 240), Image.NEAREST))
-                    self.companion_portraits[key] = ImageTk.PhotoImage(img.resize((120, 120), Image.NEAREST))
+                    with Image.open(os.path.join(portraits_dir, file)) as img:
+                        width, height = img.size
+                        if width != height:
+                            min_dim = min(width, height)
+                            left = (width - min_dim) // 2
+                            top = 0 # Ucina od góry dla zachowania twarzy
+                            right = (width + min_dim) // 2
+                            bottom = min_dim
+                            img = img.crop((left, top, right, bottom))
+                        self.portraits[key] = ImageTk.PhotoImage(img.resize((240, 240), Image.NEAREST))
+                        self.companion_portraits[key] = ImageTk.PhotoImage(img.resize((120, 120), Image.NEAREST))
         except Exception as e:
             print("Nie można załadować portretów:", e)
 
@@ -767,17 +854,17 @@ class IdleRPGApp:
             for file in os.listdir(items_dir):
                 if file.endswith(".jpg") or file.endswith(".png"):
                     key = file.split('.')[0]
-                    img = Image.open(os.path.join(items_dir, file))
-                    width, height = img.size
-                    if width != height:
-                        min_dim = min(width, height)
-                        left = (width - min_dim) // 2
-                        top = (height - min_dim) // 2
-                        right = (width + min_dim) // 2
-                        bottom = (height + min_dim) // 2
-                        img = img.crop((left, top, right, bottom))
-                    self.item_icons[key] = ImageTk.PhotoImage(img.resize((64, 64)))
-                    self.item_icons_large[key] = ImageTk.PhotoImage(img.resize((120, 120)))
+                    with Image.open(os.path.join(items_dir, file)) as img:
+                        width, height = img.size
+                        if width != height:
+                            min_dim = min(width, height)
+                            left = (width - min_dim) // 2
+                            top = (height - min_dim) // 2
+                            right = (width + min_dim) // 2
+                            bottom = (height + min_dim) // 2
+                            img = img.crop((left, top, right, bottom))
+                        self.item_icons[key] = ImageTk.PhotoImage(img.resize((64, 64)))
+                        self.item_icons_large[key] = ImageTk.PhotoImage(img.resize((120, 120)))
         except Exception as e:
             print("Błąd ładowania ikon przedmiotów:", e)
 
@@ -883,20 +970,34 @@ class IdleRPGApp:
         )
         listbox.pack(fill=tk.BOTH, expand=True, padx=20, pady=5)
         for s in saves:
-            listbox.insert(tk.END, f"  ⚔️  {s.replace('.pkl', '')}")
+            listbox.insert(tk.END, f"  {s.replace('.pkl', '')}")
             
         def load_selected(event=None):
             sel = listbox.curselection()
             if sel:
                 idx = sel[0]
                 filepath = os.path.join(SAVES_DIR, saves[idx])
-                with open(filepath, 'rb') as f:
-                    p = pickle.load(f)
-                    if getattr(p, 'version', '1.0') != '1.1':
-                        if not messagebox.askyesno("Ostrzeżenie", "Ten zapis pochodzi ze starszej wersji gry.\nMoże to skutkować błędami. Czy na pewno chcesz wczytać?"):
-                            return
-                    p.migrate()
-                    p.update_offline_progress()
+                try:
+                    with open(filepath, 'rb') as f:
+                        p = pickle.load(f)
+                except Exception as primary_error:
+                    backup_path = filepath + ".bak"
+                    if not os.path.isfile(backup_path):
+                        messagebox.showerror("Błąd zapisu", f"Nie udało się wczytać zapisu:\n{primary_error}")
+                        return
+                    if not messagebox.askyesno("Uszkodzony zapis", "Główny zapis jest uszkodzony. Czy wczytać ostatnią kopię zapasową?"):
+                        return
+                    try:
+                        with open(backup_path, 'rb') as f:
+                            p = pickle.load(f)
+                    except Exception as backup_error:
+                        messagebox.showerror("Błąd kopii", f"Nie udało się wczytać kopii zapasowej:\n{backup_error}")
+                        return
+                if getattr(p, 'version', '1.0') != '1.1':
+                    if not messagebox.askyesno("Ostrzeżenie", "Ten zapis pochodzi ze starszej wersji gry.\nMoże to skutkować błędami. Czy na pewno chcesz wczytać?"):
+                        return
+                p.migrate()
+                p.update_offline_progress()
                 self.player = p
                 self.current_save_path = filepath
                 sounds.play_ui_click()
@@ -1011,9 +1112,9 @@ class IdleRPGApp:
         ctk.CTkButton(nav_frame, text="Alchemia (Ogród Domci)", command=self.show_alchemy).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Osiągnięcia (Trofea)", command=self.show_achievements).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Miasto (Tawerna)", command=self.show_tavern).pack(fill=tk.X, padx=10, pady=3)
-        self.btn_audio = ctk.CTkButton(nav_frame, text="🔊 Dźwięki: WŁ" if sounds.enabled else "🔇 Dźwięki: WYŁ", fg_color="#3e2723", hover_color="#5d4037", text_color="#f4d03f", command=self.toggle_audio_sfx)
+        self.btn_audio = ctk.CTkButton(nav_frame, text="Dźwięki: WŁ" if sounds.enabled else "Dźwięki: WYŁ", fg_color="#3e2723", hover_color="#5d4037", text_color="#f4d03f", command=self.toggle_audio_sfx)
         self.btn_audio.pack(fill=tk.X, padx=10, pady=3)
-        ctk.CTkButton(nav_frame, text="🛠 DEBUG KONSOLA", fg_color="#c0392b", hover_color="#e74c3c", text_color="white", command=self.open_debug_console).pack(fill=tk.X, padx=10, pady=3)
+        ctk.CTkButton(nav_frame, text="DEBUG KONSOLA", fg_color="#c0392b", hover_color="#e74c3c", text_color="white", command=self.open_debug_console).pack(fill=tk.X, padx=10, pady=3)
         ctk.CTkButton(nav_frame, text="Zapisz i Wyjdź", command=self.save_and_quit).pack(fill=tk.X, padx=10, pady=15)
         
         main_area = tk.Frame(self.container, bg="#000000")
@@ -1035,7 +1136,7 @@ class IdleRPGApp:
     def toggle_audio_sfx(self):
         is_on = sounds.toggle_sound()
         if hasattr(self, 'btn_audio') and self.btn_audio.winfo_exists():
-            self.btn_audio.configure(text="🔊 Dźwięki: WŁ" if is_on else "🔇 Dźwięki: WYŁ")
+            self.btn_audio.configure(text="Dźwięki: WŁ" if is_on else "Dźwięki: WYŁ")
         if is_on:
             sounds.play_ui_click()
 
@@ -1057,9 +1158,9 @@ class IdleRPGApp:
         if active_c and active_c in NPC_DB and "passive_name" in NPC_DB[active_c]:
             p_name = NPC_DB[active_c].get('passive_name', '')
             p_short = NPC_DB[active_c].get('passive_short', '')
-            comp_line += f"\n⚡ {p_name}:\n  {p_short}"
+            comp_line += f"\n{p_name}:\n  {p_short}"
         
-        stats_top = f"""✦ BOHATER ✦
+        stats_top = f"""=== BOHATER ===
 Imię: {self.player.name}
 Poz: {self.player.level}
 EXP: {self.player.exp} / {self.player.get_exp_required()}
@@ -1092,7 +1193,7 @@ Pasywne: {self.player.stats['gold_per_sec']}/s"""
                 self.sidebar_hp_canvas.create_rectangle(3, 3, 3 + fill_w, h - 3, fill=bar_color, outline="")
                 
             # Tekst na środku paska
-            hp_text = f"❤ HP: {cur_hp} / {t_hp}"
+            hp_text = f"HP: {cur_hp} / {t_hp}"
             self.sidebar_hp_canvas.create_text(w // 2, h // 2, text=hp_text, fill="white", font=("Georgia", 9, "bold"))
 
         buff_str = ""
@@ -1100,18 +1201,18 @@ Pasywne: {self.player.stats['gold_per_sec']}/s"""
             from alchemy import RECIPES_DB
             b_list = []
             for b_id, f_count in self.player.active_buffs.items():
-                r_icon = RECIPES_DB.get(b_id, {}).get("icon", "✨")
+                r_icon = RECIPES_DB.get(b_id, {}).get("icon", "")
                 r_name = RECIPES_DB.get(b_id, {}).get("name", b_id).replace("Eliksir ", "").replace("Mikstura ", "")
                 b_list.append(f"{r_icon} {r_name} ({f_count}w)")
-            buff_str = "\n\n✦ AKTYWNE ELIKSIRY ✦\n" + "\n".join(b_list)
+            buff_str = "\n\n=== AKTYWNE ELIKSIRY ===\n" + "\n".join(b_list)
 
-        stats_bot = f"""✦ WALKA ✦
+        stats_bot = f"""=== WALKA ===
 ATK: {t_atk}
 DEF: {t_def}
 CRIT: {t_crit}%
 Stat-PKT: {self.player.stat_points}
 
-✦ DRUŻYNA (Limit 1) ✦
+=== DRUŻYNA (Limit 1) ===
 {comp_line}
 Zrekrutowano: {unlocked_count}/6{buff_str}"""
 
@@ -1120,6 +1221,10 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
     def log_msg(self, msg):
         if not hasattr(self, "log_text") or not self.log_text.winfo_exists(): return
         self.log_text.configure(state=tk.NORMAL)
+        # Ograniczenie bufora historii logów do ostatnich 400 linii (zapobiega spadkom FPS w długich sesjach)
+        line_count = int(self.log_text.index('end-1c').split('.')[0])
+        if line_count > 500:
+            self.log_text.delete('1.0', f'{line_count - 350}.0')
         self.log_text.insert(tk.END, msg + "\n")
         self.log_text.see(tk.END)
         self.log_text.configure(state=tk.DISABLED)
@@ -1171,7 +1276,9 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.current_view = "expedition"
         self.set_background(self.view_panel, "combat")
         
-        choices = combat.get_expedition_choices(self.player.level, 3)
+        if not hasattr(self, 'expedition_choices') or not self.expedition_choices:
+            self.expedition_choices = combat.get_expedition_choices(self.player.level, 3)
+        choices = self.expedition_choices
 
         lbl = tk.Label(self.view_panel, text="Wybierz cel swojej wyprawy:", font=("Georgia", 26, "bold"), bg="#1a100b", fg="#f4d03f")
         lbl.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
@@ -1196,9 +1303,54 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             command=lambda e=enemy: self.select_enemy(e))
             btn.pack(side=tk.BOTTOM, pady=20, ipadx=40, ipady=10)
 
-        refresh_btn = ctk.CTkButton(self.view_panel, text="🔄 Odśwież Przeciwników", font=("Georgia", 16, "bold"), fg_color="#3e2723", text_color="#f4d03f",
-                        command=self.show_expedition, )
-        refresh_btn.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
+        now = time.time()
+        last_rf = getattr(self, 'last_expedition_refresh_time', 0)
+        cooldown_rem = max(0, int(30 - (now - last_rf)))
+        btn_text = f"Odśwież Przeciwników ({cooldown_rem}s)" if cooldown_rem > 0 else "Odśwież Przeciwników"
+        btn_state = tk.DISABLED if cooldown_rem > 0 else tk.NORMAL
+        btn_fg = "#2c1a12" if cooldown_rem > 0 else "#3e2723"
+        btn_tc = "#888888" if cooldown_rem > 0 else "#f4d03f"
+
+        self.btn_refresh_expedition = ctk.CTkButton(
+            self.view_panel, text=btn_text, font=("Georgia", 16, "bold"),
+            fg_color=btn_fg, text_color=btn_tc, state=btn_state,
+            command=self.manual_refresh_expedition
+        )
+        self.btn_refresh_expedition.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
+        
+        if cooldown_rem > 0:
+            self.update_expedition_refresh_timer()
+
+    def manual_refresh_expedition(self):
+        now = time.time()
+        last_rf = getattr(self, 'last_expedition_refresh_time', 0)
+        if now - last_rf < 30:
+            rem = int(30 - (now - last_rf))
+            messagebox.showinfo("Odświeżenie Przeciwników", f"Musisz odczekać jeszcze {rem} sek. przed kolejnym odświeżeniem listy przeciwników.")
+            return
+        self.last_expedition_refresh_time = now
+        self.expedition_choices = combat.get_expedition_choices(self.player.level, 3)
+        self.show_expedition()
+
+    def update_expedition_refresh_timer(self):
+        if getattr(self, 'current_view', '') != "expedition":
+            return
+        if not hasattr(self, 'btn_refresh_expedition') or not self.btn_refresh_expedition.winfo_exists():
+            return
+        now = time.time()
+        last_rf = getattr(self, 'last_expedition_refresh_time', 0)
+        rem = max(0, int(30 - (now - last_rf)))
+        if rem > 0:
+            self.btn_refresh_expedition.configure(
+                text=f"Odśwież Przeciwników ({rem}s)",
+                state=tk.DISABLED, fg_color="#2c1a12", text_color="#888888"
+            )
+            self.root.after(1000, self.update_expedition_refresh_timer)
+        else:
+            self.btn_refresh_expedition.configure(
+                text="Odśwież Przeciwników",
+                state=tk.NORMAL, fg_color="#3e2723", text_color="#f4d03f"
+            )
 
     def select_enemy(self, enemy):
         self.cancel_all_combat_timers()
@@ -1244,6 +1396,122 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.btn_attack.pack(side=tk.LEFT, padx=10, ipadx=40, ipady=10)
         
         self.btn_potion = ctk.CTkButton(btn_frame, text="Wypij Miksturę", font=("Georgia", 14, "bold"), fg_color="#27ae60", text_color="white", command=self.drink_potion)
+
+        self.btn_companion_ult = ctk.CTkButton(btn_frame, text="UMIEJĘTNOŚĆ", font=("Georgia", 14, "bold"), fg_color="#6c3483", hover_color="#8e44ad", text_color="#f4d03f", command=self.trigger_companion_ultimate)
+
+    def update_companion_ult_button(self):
+        if not hasattr(self, 'btn_companion_ult') or not self.btn_companion_ult or not self.btn_companion_ult.winfo_exists():
+            return
+        ac_id = getattr(self.player, 'active_companion', None)
+        if not ac_id:
+            self.btn_companion_ult.pack_forget()
+            return
+
+        ult_info = self.player.get_companion_ultimate_info()
+        if not ult_info:
+            self.btn_companion_ult.pack_forget()
+            return
+
+        self.btn_companion_ult.pack(side=tk.LEFT, padx=10, ipadx=15, ipady=10)
+        cd = getattr(self, 'companion_ult_cooldown', 0)
+        if cd > 0:
+            self.btn_companion_ult.configure(text=f"{ult_info['name']} ({cd} tur)", state=tk.DISABLED, fg_color="#3e2723")
+        else:
+            self.btn_companion_ult.configure(text=f"{ult_info['name']} [GOTOWE]", state=tk.NORMAL, fg_color="#6c3483")
+
+    def trigger_companion_ultimate(self):
+        if not self.combat_active or getattr(self, 'companion_ult_cooldown', 0) > 0:
+            return
+        ult_info = self.player.get_companion_ultimate_info()
+        if not ult_info:
+            return
+
+        ac_id = getattr(self.player, 'active_companion', None)
+        base_atk = self.player.get_total_atk()
+        ult_name = ult_info["name"]
+
+        if ac_id == "eczme":
+            dmg = int(base_atk * 2.2)
+            self.enemy_cur_hp -= dmg
+            self.enemy_stunned = True
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_crit()
+            self.float_text(920, 160, f"{dmg} ŚCINA! OGŁUSZENIE!", "#e74c3c")
+            self.log_msg(f"Eczme posyła {ult_name}! Skórzana Kula Przeznaczenia uderza z impetem za {dmg} dmg i OGŁUSZA wroga!")
+        elif ac_id == "pianek":
+            dmg = int(base_atk * 1.8)
+            self.enemy_cur_hp -= dmg
+            shield_val = int(self.player.get_max_hp() * 0.30)
+            self.player.combat_shield += shield_val
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_crit()
+            self.float_text(920, 160, f"{dmg} KOWADŁO!", "#e67e22")
+            self.float_text(270, 160, f"+{shield_val} TARCZA BICEPSA!", "#2ecc71")
+            self.log_msg(f"Pianek pręży muskuły i odpala {ult_name}! Ciska kowadłem za {dmg} dmg i osłania Cię barierą ze stali (+{shield_val} tarczy)!")
+        elif ac_id == "domcia":
+            heal = int(self.player.get_max_hp() * 0.30)
+            self.player.hp = min(self.player.get_max_hp(), self.player.hp + heal)
+            self.enemy_blinded = True
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_potion()
+            self.float_text(270, 160, f"+{heal} HP!", "#2ecc71")
+            self.float_text(920, 160, "OŚLEPIENIE / TRANS!", "#9b59b6")
+            self.log_msg(f"Domcia zapala fajkę i uwalnia {ult_name}! Leczysz {heal} HP, a wróg widzi kolory i pudłuje w następnej turze!")
+        elif ac_id == "damian":
+            dmg = int(base_atk * 2.0)
+            self.enemy_cur_hp -= dmg
+            shield_val = int(self.player.get_max_hp() * 0.20)
+            self.player.combat_shield += shield_val
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_sword()
+            self.float_text(920, 160, f"{dmg} TOAST!", "#f39c12")
+            self.float_text(270, 160, f"+{shield_val} NIEZŁOMNOŚĆ!", "#3498db")
+            self.log_msg(f"Damian wznosi {ult_name}! Opróżnia kufel, rąbie za {dmg} dmg i aktywuje Niezłomną Tarczę (+{shield_val} tarczy)!")
+        elif ac_id == "maslak":
+            heal = int(self.player.get_max_hp() * 0.35)
+            self.player.hp = min(self.player.get_max_hp(), self.player.hp + heal)
+            bonus_gold = max(10, int(self.enemy.level * 6 + 15))
+            self.player.add_gold(bonus_gold, source="Lukrowany Pączek Maślaka")
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_potion()
+            sounds.play_coin()
+            self.float_text(270, 160, f"+{heal} HP!", "#e91e63")
+            self.float_text(920, 160, f"+{bonus_gold} G!", "#f1c40f")
+            self.log_msg(f"Maślak częstuje Cię {ult_name}! Pyszny cukier przywraca {heal} HP, a w kieszeni znajdujesz +{bonus_gold} złota!")
+        elif ac_id == "yomen":
+            dmg = int(base_atk * 2.6)
+            self.enemy_cur_hp -= dmg
+            self.companion_ult_cooldown = ult_info["cooldown"]
+            sounds.play_crit()
+            self.float_text(920, 160, f"{dmg} KRYTYK CZTERNASTKĄ!", "#e74c3c")
+            self.log_msg(f"Yomen wykonuje {ult_name}! Zardzewiały klucz z olejem silnikowym trafia czysto za {dmg} KRYTYCZNYCH obrażeń!")
+
+        self.update_companion_ult_button()
+        self.draw_health_bars()
+        self.update_sidebar()
+
+        if self.enemy_cur_hp <= 0:
+            self.enemy_cur_hp = 0
+            self.draw_health_bars()
+            self.schedule_combat_task(800, lambda: self.end_combat(True))
+
+    def on_combat_enemy_click(self, event=None):
+        if not self.combat_active or self.enemy_cur_hp <= 0:
+            return
+        click_dmg = self.player.get_combat_click_dmg()
+        self.enemy_cur_hp -= click_dmg
+        sounds.play_hit()
+        # Wyświetlenie pływającego tekstu z kliknięciem w miejscu kliknięcia lub na wrogu
+        cx = event.x if event else 920
+        cy = event.y if event else 190
+        self.float_text(cx, cy, f"-{click_dmg}", "#ffcc00")
+
+        if self.enemy_cur_hp <= 0:
+            self.enemy_cur_hp = 0
+            self.draw_health_bars()
+            self.schedule_combat_task(800, lambda: self.end_combat(True))
+        else:
+            self.draw_health_bars()
 
     def drink_potion(self):
         if not self.combat_active: return
@@ -1333,7 +1601,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         e_x2 = int(e_center_x + e_bar_w / 2)
         
         # Ramka i tło wroga
-        border_col = "#cd853f" if is_boss else "#8b5a2b"
+        border_col = "#cd853f" if is_boss else ("#e74c3c" if getattr(self.enemy, 'is_elite', False) else "#8b5a2b")
         self.combat_canvas.create_rectangle(e_x1 - 2, 68, e_x2 + 2, 102, fill="#1a100b", outline=border_col, width=2, tags="ui")
         self.combat_canvas.create_rectangle(e_x1, 70, e_x2, 100, fill="#7f1d1d", tags="ui")
         
@@ -1343,17 +1611,47 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.combat_canvas.create_rectangle(e_x1, 70, e_x1 + e_fill_w, 100, fill="#22c55e", tags="ui")
         self.combat_canvas.create_text(e_center_x, 85, text=e_text, fill="white", font=("Georgia", 11, "bold"), tags="ui")
 
-    def float_text(self, x, y, text, color):
+        # Baner afiksu elitarnego potwora (umieszczony estetycznie tuż nad paskiem zdrowia)
+        if getattr(self.enemy, 'is_elite', False):
+            affix_lbl = getattr(self.enemy, 'affix_label', 'ELITA')
+            b_text = f"ELITA: {affix_lbl}"
+            b_text_w = ui_font.measure(b_text) if ui_font else len(b_text) * 8
+            b_w = max(220, b_text_w + 24)
+            bx1 = int(e_center_x - b_w / 2)
+            bx2 = int(e_center_x + b_w / 2)
+            self.combat_canvas.create_rectangle(bx1, 38, bx2, 64, fill="#2c1a12", outline="#e74c3c", width=2, tags="ui")
+            self.combat_canvas.create_text(e_center_x, 51, text=b_text, fill="#ff9999", font=("Georgia", 10, "bold"), tags="ui")
+
+    def float_text(self, x, y, text, color, font_size=22):
+        if not hasattr(self, 'combat_canvas') or not self.combat_canvas.winfo_exists():
+            return
+        if not hasattr(self, '_active_float_positions'):
+            self._active_float_positions = []
+        now = time.time()
+        # Wyczyść pozycje starsze niż 0.7 sekundy
+        self._active_float_positions = [p for p in self._active_float_positions if now - p[2] < 0.7]
+        
+        # Jeśli na zbliżonej pozycji X (w promieniu 120px) niedawno pojawił się napis, przesuń Y w dół
+        offset_y = 0
+        for px, py, pt in self._active_float_positions:
+            if abs(px - x) < 120 and abs((py + offset_y) - y) < 30:
+                offset_y += 32
+        
+        final_y = y + offset_y
+        self._active_float_positions.append((x, final_y, now))
+        
         tag = f"float_{random.randint(1000,99999)}"
-        self.combat_canvas.create_text(x, y, text=text, font=("Georgia", 26, "bold"), fill=color, tags=tag)
-        self.animate_float(tag, x, y, 0)
+        # Cień pod napisem dla perfekcyjnej czytelności i kontrastu
+        self.combat_canvas.create_text(x+1, final_y+1, text=text, font=("Georgia", font_size, "bold"), fill="#1a100b", tags=tag)
+        self.combat_canvas.create_text(x, final_y, text=text, font=("Georgia", font_size, "bold"), fill=color, tags=tag)
+        self.animate_float(tag, x, final_y, 0)
 
     def animate_float(self, tag, x, y, step):
         if not hasattr(self, 'combat_canvas') or not self.combat_canvas.winfo_exists():
             return
             
         if step < 20:
-            self.combat_canvas.move(tag, 0, -3)
+            self.combat_canvas.move(tag, 0, -2)
             self.root.after(40, lambda: self.animate_float(tag, x, y, step+1))
         else:
             self.combat_canvas.delete(tag)
@@ -1389,9 +1687,14 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.combat_active = True
         self.enemy_cur_hp = self.enemy.max_hp
         self.combat_turn = 0
+        self.companion_ult_cooldown = 0
+        self.enemy_stunned = False
+        self.enemy_blinded = False
+        self.update_companion_ult_button()
         
         if hasattr(self, 'combat_canvas') and self.combat_canvas and self.combat_canvas.winfo_exists():
             self.combat_canvas.delete("portrait")
+            self.combat_canvas.delete("elite_banner")
         if hasattr(self, 'portraits'):
             if "hero" in self.portraits:
                 # Obramowanie na portret (240x240 img w 150, 120)
@@ -1408,7 +1711,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     self.combat_canvas.create_image(390, 270, image=self.companion_portraits[ac_id], anchor=tk.NW, tags=("portrait", "player_p", "companion_p"))
                 else:
                     self.combat_canvas.create_image(390, 270, image=self.portraits[ac_id], anchor=tk.NW, tags=("portrait", "player_p", "companion_p"))
-                self.combat_canvas.create_text(450, 405, text=f"👥 {ac_name}", fill="#f4d03f", font=("Georgia", 11, "bold"), tags=("portrait", "player_p", "companion_p"))
+                self.combat_canvas.create_text(450, 405, text=f"{ac_name}", fill="#f4d03f", font=("Georgia", 11, "bold"), tags=("portrait", "player_p", "companion_p"))
 
             e_id = self.enemy.e_id
             
@@ -1439,9 +1742,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill="#f4d03f", tags=("portrait", "enemy_p"))
                     self.combat_canvas.create_image(800, 120, image=self.portraits[e_id], anchor=tk.NW, tags=("portrait", "enemy_p"))
             else:
+                border_col = "#e74c3c" if getattr(self.enemy, 'is_elite', False) else "#f4d03f"
                 if e_id in self.portraits:
-                    self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill="#f4d03f", tags=("portrait", "enemy_p"))
+                    self.combat_canvas.create_rectangle(798, 118, 1042, 362, fill=border_col, width=3 if getattr(self.enemy, 'is_elite', False) else 1, tags=("portrait", "enemy_p"))
                     self.combat_canvas.create_image(800, 120, image=self.portraits[e_id], anchor=tk.NW, tags=("portrait", "enemy_p"))
+
+            # Interaktywne klikanie wroga (Combat Click)
+            self.combat_canvas.tag_bind("enemy_p", "<Button-1>", self.on_combat_enemy_click)
                 
         self.draw_health_bars()
         self.log_msg(f"--- ROZPOCZYNASZ WALKĘ Z: {self.enemy.name} ---")
@@ -1452,9 +1759,27 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             return
             
         if self.combat_turn % 2 == 0:
-            # Gracz atakuje - zacznij animację miecza
+            # Gracz atakuje - zmniejsz cooldown towarzysza jeśli minęła runda gracza
+            if getattr(self, 'companion_ult_cooldown', 0) > 0:
+                self.companion_ult_cooldown -= 1
+                self.update_companion_ult_button()
             self.animate_player_attack()
         else:
+            # Sprawdź statusy wroga (Ogłuszenie / Oślepienie)
+            if getattr(self, 'enemy_stunned', False):
+                self.enemy_stunned = False
+                self.log_msg(f"{self.enemy.name} jest OGŁUSZONY i traci turę!")
+                self.float_text(920, 160, "OGŁUSZONY!", "#e74c3c")
+                self.combat_turn += 1
+                self.schedule_combat_task(350, self.combat_tick)
+                return
+            if getattr(self, 'enemy_blinded', False):
+                self.enemy_blinded = False
+                self.log_msg(f"{self.enemy.name} jest OŚLEPIONY i pudłuje atak!")
+                self.float_text(920, 160, "PUDŁO (OŚLEPIENIE)!", "#9b59b6")
+                self.combat_turn += 1
+                self.schedule_combat_task(350, self.combat_tick)
+                return
             # Wróg atakuje - zacznij animację zadrapań
             self.animate_enemy_attack()
 
@@ -1548,18 +1873,34 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.enemy_cur_hp -= dmg
         
         if is_first and getattr(self.player, 'active_companion', None) == 'eczme':
-            self.log_msg("🏐 Pasywka Eczmego: Serwis z wyskoku zadaje +25% obrażeń w 1. rundzie!")
+            self.log_msg("Pasywka Eczmego: Serwis z wyskoku zadaje +25% obrażeń w 1. rundzie!")
         
         if is_crit:
             sounds.play_crit()
             self.player.record_achievement_stat("total_crits", 1, mode="add")
             self.float_text(920, 190, f"-{dmg} KRYT!", "#ff3333")
             if getattr(self.player, 'active_buffs', None) and self.player.active_buffs.get("elixir_psychedelic", 0) > 0:
-                self.float_text(450, 120, "🌀 PSYCHODELICZNY TRANS!", "#a29bfe")
+                self.float_text(450, 120, "PSYCHODELICZNY TRANS!", "#a29bfe")
         else:
             sounds.play_hit()
             self.float_text(920, 190, f"-{dmg}", "orange")
-        
+
+        # Kradzież Życia (Awanturnik / Berserker / Ekwipunek)
+        try:
+            lifesteal_pct = 0.0
+            if hasattr(self.player, 'get_talent_bonus'):
+                lifesteal_pct = self.player.get_talent_bonus("berserker", "lifesteal_pct")
+                if not lifesteal_pct:
+                    lifesteal_pct = self.player.get_talent_bonus("lifesteal_pct")
+            if lifesteal_pct > 0:
+                mult = lifesteal_pct if lifesteal_pct <= 1.0 else (lifesteal_pct / 100.0)
+                heal_amt = max(1, int(dmg * mult))
+                self.player.hp = min(self.player.get_max_hp(), self.player.hp + heal_amt)
+                self.float_text(270, 160, f"+{heal_amt} HP", "#e74c3c")
+                self.update_sidebar()
+        except Exception as e:
+            print(f"[Combat Warning - lifesteal]: {e}")
+
         if self.enemy_cur_hp <= 0:
             self.enemy_cur_hp = 0
             self.draw_health_bars()
@@ -1568,10 +1909,17 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             
         self.draw_health_bars()
         
-        # Pasywka Domci: "Mistyczna Prędkość" (+8% szybkości ataku -> 8% szansy na natychmiastowy dodatkowy cios)
-        if getattr(self.player, 'active_companion', None) == 'domcia' and random.random() < 0.08:
-            self.log_msg("🍄 Pasywka Domci: Wyostrzona szybkość ataku pozwala na natychmiastowy dodatkowy cios!")
-            self.float_text(450, 150, "SZYBKI ATAK!", "#1abc9c")
+        # Podwójny Cios (Double Strike): Klejnot Szafiru + Wywar Szybkich Stóp + Pasywka Domci (+8%)
+        ds_chance = self.player.get_double_strike_chance()
+        domcia_bonus = 8 if getattr(self.player, 'active_companion', None) == 'domcia' else 0
+        total_ds_chance = ds_chance + domcia_bonus
+        if total_ds_chance > 0 and random.randint(1, 100) <= total_ds_chance:
+            if domcia_bonus > 0 and random.random() < (domcia_bonus / total_ds_chance):
+                self.log_msg("Pasywka Domci: Wyostrzona szybkość ataku pozwala na natychmiastowy dodatkowy cios!")
+                self.float_text(450, 150, "SZYBKI ATAK!", "#1abc9c")
+            else:
+                self.log_msg("PODWÓJNY CIOS! Błyskawiczny drugi atak dosięga wroga!")
+                self.float_text(450, 150, "PODWÓJNY CIOS!", "#3498db")
             self.schedule_combat_task(220, self.animate_player_attack)
             return
 
@@ -1595,8 +1943,16 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         if getattr(self, '_ptys_mace_pil', None):
             try:
                 from PIL import Image, ImageTk
-                rotated = self._ptys_mace_pil.rotate(angle_deg, resample=Image.BICUBIC, expand=True)
-                tk_mace = ImageTk.PhotoImage(rotated)
+                if not hasattr(self, '_mace_rot_cache'):
+                    self._mace_rot_cache = OrderedDict()
+                key = round(angle_deg, 1)
+                if key not in self._mace_rot_cache:
+                    rotated = self._ptys_mace_pil.rotate(angle_deg, resample=Image.BICUBIC, expand=True)
+                    self._mace_rot_cache[key] = ImageTk.PhotoImage(rotated)
+                    if len(self._mace_rot_cache) > 24:
+                        self._mace_rot_cache.popitem(last=False)
+                self._mace_rot_cache.move_to_end(key)
+                tk_mace = self._mace_rot_cache[key]
                 self._cur_mace_tk = tk_mace
                 self.combat_canvas.create_image(x, y, image=tk_mace, tags="boss_mace", anchor=tk.CENTER)
                 return
@@ -1648,8 +2004,16 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         if getattr(self, '_kollman_fb_pil', None):
             try:
                 from PIL import Image, ImageTk
-                rotated = self._kollman_fb_pil.rotate(angle_deg, resample=Image.BICUBIC, expand=True)
-                tk_fb = ImageTk.PhotoImage(rotated)
+                if not hasattr(self, '_fb_rot_cache'):
+                    self._fb_rot_cache = OrderedDict()
+                key = round(angle_deg, 1)
+                if key not in self._fb_rot_cache:
+                    rotated = self._kollman_fb_pil.rotate(angle_deg, resample=Image.BICUBIC, expand=True)
+                    self._fb_rot_cache[key] = ImageTk.PhotoImage(rotated)
+                    if len(self._fb_rot_cache) > 24:
+                        self._fb_rot_cache.popitem(last=False)
+                self._fb_rot_cache.move_to_end(key)
+                tk_fb = self._fb_rot_cache[key]
                 self._cur_fb_tk = tk_fb
                 self.combat_canvas.create_image(x, y, image=tk_fb, tags="boss_fireball", anchor=tk.CENTER)
                 return
@@ -1756,10 +2120,70 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         if not self.combat_active:
             return
             
-        dmg = combat.calculate_enemy_dmg(self.enemy, self.player)
-        self.player.hp -= dmg
-        sounds.play_enemy_hit()
-        self.float_text(270, 190, f"-{dmg}", "red")
+        raw_dmg = combat.calculate_enemy_dmg(self.enemy, self.player)
+        
+        # Unik Łotrzyka (Rogue Talent)
+        dodge_chance = 0.0
+        try:
+            if hasattr(self.player, 'get_talent_bonus'):
+                dodge_chance = self.player.get_talent_bonus("rogue", "dodge_pct")
+                if not dodge_chance:
+                    dodge_chance = self.player.get_talent_bonus("dodge_pct")
+        except Exception as e:
+            print(f"[Combat Warning - dodge]: {e}")
+
+        dodge_pct = int(dodge_chance * 100) if (0 < dodge_chance <= 1.0) else int(dodge_chance)
+        if dodge_pct > 0 and random.randint(1, 100) <= dodge_pct:
+            sounds.play_miss()
+            self.float_text(270, 190, "UNIK!", "#3498db")
+            self.log_msg(f"Zwinny unik! Całkowicie unikasz ataku przeciwnika!")
+            actual_dmg = 0
+        else:
+            actual_dmg = self.player.absorb_shield_hit(raw_dmg)
+            if actual_dmg < raw_dmg:
+                absorbed = raw_dmg - actual_dmg
+                self.float_text(270, 160, f"POCHŁONIĘTO {absorbed}!", "#3498db")
+                self.log_msg(f"Tarcza bojowa pochłania {absorbed} pkt obrażeń!")
+            
+            if actual_dmg > 0:
+                self.player.hp -= actual_dmg
+                sounds.play_enemy_hit()
+                self.float_text(270, 190, f"-{actual_dmg}", "red")
+
+                # Kolce Obrońcy (Defender Thorns)
+                try:
+                    thorns_pct = self.player.get_talent_bonus("defender", "thorns_pct") if hasattr(self.player, 'get_talent_bonus') else 0.0
+                    if not thorns_pct:
+                        thorns_pct = self.player.get_talent_bonus("thorns_pct") if hasattr(self.player, 'get_talent_bonus') else 0.0
+                    if thorns_pct > 0:
+                        thorns_mult = thorns_pct if thorns_pct <= 1.0 else (thorns_pct / 100.0)
+                        thorns_dmg = max(1, int(actual_dmg * thorns_mult))
+                        self.enemy_cur_hp -= thorns_dmg
+                        self.float_text(920, 160, f"-{thorns_dmg} KOLCE!", "#27ae60")
+                        self.log_msg(f"Kolce pancerza odbijają {thorns_dmg} pkt obrażeń we wroga!")
+                except Exception as e:
+                    print(f"[Combat Warning - thorns]: {e}")
+            else:
+                sounds.play_block()
+
+        # Regeneracja Obrońcy na turę
+        try:
+            regen_pct = self.player.get_talent_bonus("defender", "regen_turn_pct") if hasattr(self.player, 'get_talent_bonus') else 0.0
+            if not regen_pct:
+                regen_pct = self.player.get_talent_bonus("regen_turn_pct") if hasattr(self.player, 'get_talent_bonus') else 0.0
+            if regen_pct > 0 and self.player.hp > 0:
+                regen_mult = regen_pct if regen_pct <= 1.0 else (regen_pct / 100.0)
+                regen_hp = max(1, int(self.player.get_max_hp() * regen_mult))
+                self.player.hp = min(self.player.get_max_hp(), self.player.hp + regen_hp)
+                self.float_text(270, 130, f"+{regen_hp} REGEN", "#2ecc71")
+        except Exception as e:
+            print(f"[Combat Warning - regen]: {e}")
+
+        if self.enemy_cur_hp <= 0:
+            self.enemy_cur_hp = 0
+            self.draw_health_bars()
+            self.schedule_combat_task(800, lambda: self.end_combat(True))
+            return
         
         if self.player.hp <= 0:
             self.player.hp = 0
@@ -1797,11 +2221,9 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             else:
                 self.show_expedition()
         else:
-            bonus_pct = getattr(self.player, 'stats', {}).get('bonus_loot_pct', 0)
-            mult = 1.0 + (bonus_pct / 100.0) if bonus_pct > 0 else 1.0
-            
-            exp_gain = int(self.enemy.exp_reward * mult)
-            gold_gain = int(self.enemy.gold_reward * mult)
+            reward = calculate_combat_rewards(self.player, self.enemy)
+            exp_gain = reward["exp"]
+            gold_gain = reward["gold"]
             
             # Krok 2 (Bestiariusz) - Zliczanie zabójstw
             e_name = self.enemy.name.replace("[BOSS] ", "")
@@ -1824,36 +2246,36 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             current = q.progress['kills'][e_name]
                             target = q.requirements['kills'][e_name]
                             if current <= target:
-                                self.log_msg(f"📝 Postęp zadania '{q.name}': {e_name} {current}/{target}")
+                                self.log_msg(f"Postęp zadania '{q.name}': {e_name} {current}/{target}")
                         
                         # Złoto i level śledzimy dyskretniej, ale gdy wpadnie komplet - informujemy o ukończeniu
                         if q.check_completion(self.player):
-                            self.log_msg(f"✅ ZADANIE GOTOWE: {q.name}! Odbierz nagrodę w Dzienniku Zadań.")
+                            self.log_msg(f"ZADANIE GOTOWE: {q.name}! Odbierz nagrodę w Dzienniku Zadań.")
             
             
             # Pasywka Maślaka: "Słodki Łup" (+15% na podwójne złoto, +5% na miksturę)
             if getattr(self.player, 'active_companion', None) == "maslak":
                 if random.random() < 0.15:
                     gold_gain *= 2
-                    self.log_msg("🍩 Pasywka Maślaka: Wywęszyłeś podwójną sakiewkę złota!")
+                    self.log_msg("Pasywka Maślaka: Wywęszyłeś podwójną sakiewkę złota!")
                 if random.random() < 0.05:
                     succ, st = self.player.add_to_inventory("pot_hp", is_reward=True)
+                    self.player.record_reward("Łup z walki", item="pot_hp")
                     if st == "stashed":
-                        self.log_msg("🍩 Pasywka Maślaka: Mikstura Zdrowia trafiła do depozytu Barnaby (pełny ekwipunek)!")
+                        self.log_msg("Pasywka Maślaka: Mikstura Zdrowia trafiła do depozytu Barnaby (pełny ekwipunek)!")
                     else:
-                        self.log_msg("🍩 Pasywka Maślaka: Znalazłeś dodatkową Miksturę Zdrowia!")
+                        self.log_msg("Pasywka Maślaka: Znalazłeś dodatkową Miksturę Zdrowia!")
             
             # Postęp w zleceniach z Tablicy Ogłoszeń
             for b in getattr(self.player, 'bounties', []):
                 if b.status == 'IN_PROGRESS' and b.target_type == 'kill' and b.target_name == e_name:
                     if b.add_progress(1):
-                        self.log_msg(f"📋 Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
+                        self.log_msg(f"Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
                     else:
-                        self.log_msg(f"📋 Postęp zlecenia '{b.title}': {b.current_count}/{b.target_count}")
+                        self.log_msg(f"Postęp zlecenia '{b.title}': {b.current_count}/{b.target_count}")
             
             # Zliczanie statystyk do osiągnięć
             self.player.record_achievement_stat("total_kills", 1, mode="add")
-            self.player.record_achievement_stat("total_gold_earned", gold_gain, mode="add")
             if getattr(self, 'is_dungeon_boss', False):
                 self.player.record_achievement_stat("dungeons_cleared", 1, mode="add")
                 if "ptyś" in e_name.lower() or "ptys" in e_name.lower():
@@ -1861,36 +2283,31 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 elif "kollman" in e_name.lower():
                     self.player.record_achievement_stat("boss_kollman_kills", 1, mode="add")
 
-            # Konsumpcja aktywnych eliksirów (1 walka)
-            expired_buffs = self.player.tick_active_buffs()
-            if expired_buffs:
-                for b_id in expired_buffs:
-                    r_name = RECIPES_DB.get(b_id, {}).get("name", b_id)
-                    self.log_msg(f"⏳ Działanie eliksiru '{r_name}' dobiegło końca.")
-
             # Drop Magicznych Klejnotów (3% ze zwykłych potworów od 15 lvl, 10% z bossa lochu od 1 lvl)
             gem_drop_id = roll_gem_drop(is_boss=getattr(self, 'is_dungeon_boss', False), player_level=self.player.level)
             if gem_drop_id:
                 gem_data = GEMS_DB[gem_drop_id]
                 succ, st = self.player.add_to_inventory(gem_drop_id, is_reward=True)
+                self.player.record_reward("Łup z walki", item=gem_drop_id)
                 sounds.play_quest_complete()
                 if st == "stashed":
-                    self.log_msg(f"🔮 {gem_data.icon} DROP KLEJNOTU! {gem_data.name} trafił do depozytu Barnaby (pełny ekwipunek)!")
+                    self.log_msg(f"DROP KLEJNOTU! {gem_data.name} trafił do depozytu Barnaby (pełny ekwipunek)!")
                 else:
-                    self.log_msg(f"🔮 {gem_data.icon} RZADKI DROP KLEJNOTU! Zdobyłeś {gem_data.name} ({gem_data.get_stat_summary()})!")
+                    self.log_msg(f"RZADKI DROP KLEJNOTU! Zdobyłeś {gem_data.name} ({gem_data.get_stat_summary()})!")
 
             # Drop Składników Alchemicznych z potworów
             ing_drop_id = roll_monster_ingredient_drop(e_name)
             if ing_drop_id:
                 ing_data = MONSTER_INGREDIENTS_DB[ing_drop_id]
                 succ, st = self.player.add_to_inventory(ing_drop_id, is_reward=True)
+                self.player.record_reward("Łup z walki", item=ing_drop_id)
                 if st == "stashed":
-                    self.log_msg(f"🧪 {ing_data.icon} Składnik Alchemiczny: {ing_data.name} trafił do depozytu Barnaby!")
+                    self.log_msg(f"Składnik Alchemiczny: {ing_data.name} trafił do depozytu Barnaby!")
                 else:
-                    self.log_msg(f"🧪 {ing_data.icon} Składnik Alchemiczny: Zdobyto {ing_data.name}!")
+                    self.log_msg(f"Składnik Alchemiczny: Zdobyto {ing_data.name}!")
 
             self.log_msg(f"ZWYCIĘSTWO! Otrzymujesz {exp_gain} EXP i {gold_gain} Złota. (HP: {int(self.player.hp)}/{t_hp})")
-            self.player.gold += gold_gain
+            self.player.add_gold(gold_gain, "Walka", apply_greed=False, exp=exp_gain)
             
             old_lvl = self.player.level
             self.player.add_exp(exp_gain)
@@ -1903,18 +2320,15 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 for b in getattr(self.player, 'bounties', []):
                     if b.status == 'IN_PROGRESS' and b.target_type == 'dungeon':
                         if b.add_progress(1):
-                            self.log_msg(f"📋 Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
+                            self.log_msg(f"Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
                 d = self.current_dungeon
-                d_exp = d.exp_reward
-                d_gold = d.gold_reward
-                
-                if bonus_pct > 0:
-                    d_exp = int(d_exp * mult)
-                    d_gold = int(d_gold * mult)
+                d_exp, d_gold = calculate_dungeon_rewards(
+                    self.player, d, reward["loot_pct"], reward["gems_bonus"]
+                )
                     
                 self.log_msg(f"--- UKOŃCZONO LOCH: {d.name} ---")
                 self.log_msg(f"Nagroda Dodatkowa: {d_exp} EXP oraz {d_gold} Złota.")
-                self.player.gold += d_gold
+                self.player.add_gold(d_gold, "Loch", apply_greed=False, exp=d_exp)
                 self.player.add_exp(d_exp)
                 
                 if random.random() < 0.25 and d.drop_pool:
@@ -1934,21 +2348,22 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             
                     drop_item_dict = {"id": drop_id, "lvl": 0, "modifier": chosen_mod_id, "sockets": [None, None]}
                     succ, st = self.player.add_to_inventory(drop_item_dict, is_reward=True)
+                    self.player.record_reward("Łup z lochu", item=drop_id)
                     item = get_item({"id": drop_id, "modifier": chosen_mod_id})
                     
                     if item:
                         rarity = getattr(item, 'rarity', 'Zwykły')
-                        rarity_prefix = "🌟 [LEGENDARDNY] " if rarity == "Legendarny" else ("🌌 [MITYCZNY] " if rarity == "Mityczny" else "")
+                        rarity_prefix = "[LEGENDARNY] " if rarity == "Legendarny" else ("[MITYCZNY] " if rarity == "Mityczny" else "")
                         if st == "stashed":
                             self.log_msg(f"*** {rarity_prefix}DROP Z LOCHU! {item.name} trafił do depozytu Barnaby (pełny ekwipunek)! ***")
                             messagebox.showinfo(
-                                "🌟 ARTEFAKT Z LOCHU! (DEPOZYT) 🌟", 
-                                f"Po pokonaniu bossa w lochu {d.name} odnalazłeś niezwykły artefakt!\n\nPrzedmiot: {item.name} [{rarity.upper()}]\n\n⚠️ Twój ekwipunek jest pełny! Przedmiot został bezpiecznie złożony w depozycie u Karczmarza Barnaby w Tawernie."
+                                "ARTEFAKT Z LOCHU! (DEPOZYT)", 
+                                f"Po pokonaniu bossa w lochu {d.name} odnalazłeś niezwykły artefakt!\n\nPrzedmiot: {item.name} [{rarity.upper()}]\n\n[UWAGA] Twój ekwipunek jest pełny! Przedmiot został bezpiecznie złożony w depozycie u Karczmarza Barnaby w Tawernie."
                             )
                         else:
                             self.log_msg(f"*** {rarity_prefix}DROP Z LOCHU! Znalazłeś: {item.name} ***")
                             messagebox.showinfo(
-                                "🌟 ARTEFAKT Z LOCHU! 🌟", 
+                                "ARTEFAKT Z LOCHU!", 
                                 f"Po pokonaniu bossa w lochu {d.name} odnalazłeś niezwykły artefakt!\n\nPrzedmiot: {item.name} [{rarity.upper()}]\n\n{item.description}"
                             )
                 self.is_dungeon_boss = False
@@ -1958,10 +2373,18 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 # Zwykłe potwory - szansa 5% na drop mikstury życia
                 if random.random() < 0.05:
                     succ, st = self.player.add_to_inventory("pot_hp", is_reward=True)
+                    self.player.record_reward("Łup z walki", item="pot_hp")
                     if st == "stashed":
                         self.log_msg("*** DROP Z POTWORA! Mikstura Życia trafiła do depozytu u Karczmarza (pełny ekwipunek) ***")
                     else:
                         self.log_msg("*** DROP Z POTWORA! Znalazłeś: Mikstura Życia ***")
+
+            # Eliksiry obejmują całą wyprawę, w tym dodatkową nagrodę za ukończenie lochu.
+            expired_buffs = self.player.tick_active_buffs()
+            if expired_buffs:
+                for b_id in expired_buffs:
+                    r_name = RECIPES_DB.get(b_id, {}).get("name", b_id)
+                    self.log_msg(f"Działanie eliksiru '{r_name}' dobiegło końca.")
                 
             if self.player.level > old_lvl:
                 self.log_msg(f"*** AWANS NA {self.player.level} POZIOM! Otrzymujesz pasywnie bonusy do statystyk! ***")
@@ -1973,10 +2396,18 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.player.stats["total_clicks"] += 1
             
             if getattr(self, 'loop_combat', False) and not getattr(self, 'is_dungeon_boss', False) and self.current_view in ("expedition", "dungeon"):
-                # Generujemy tego samego potwora ponownie
-                from combat import Enemy
-                import copy
-                
+                # Jeśli pokonany potwór był elitarny, kolejny w pętli musi być zwykłym przeciwnikiem!
+                if getattr(self.enemy, 'is_elite', False):
+                    from combat import TEMPLATES
+                    tmpl = next((t for t in TEMPLATES if t.e_id == self.enemy.e_id), None)
+                    if tmpl:
+                        self.enemy = tmpl.generate(self.enemy.level, force_elite=False)
+                    else:
+                        self.enemy.is_elite = False
+                        self.enemy.affix = None
+                        self.enemy.affix_label = ""
+                        if "]" in self.enemy.name:
+                            self.enemy.name = self.enemy.name.split("]", 1)[1].strip()
                 # Odtwarzamy potwora z pełnym HP
                 self.enemy.hp = self.enemy.max_hp
                 
@@ -2021,7 +2452,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             }
             d_color = theme_colors.get(d.d_id, "#f4d03f")
             
-            tk.Label(card, text=f"⚔️ {d.name.upper()} ⚔️", font=("Georgia", 22, "bold"), fg=d_color, bg="#1a100b").pack(pady=20)
+            tk.Label(card, text=f"{d.name.upper()}", font=("Georgia", 22, "bold"), fg=d_color, bg="#1a100b").pack(pady=20)
             
             # Główny napis "W PODRÓŻY" umieszczony na samym środku
             self.lbl_journey_status = tk.Label(card, text="W PODRÓŻY...", font=("Georgia", 32, "bold"), fg="#f4d03f", bg="#1a100b")
@@ -2292,7 +2723,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             # Monit przejścia do walki po kliknięciu
             cinematic_canvas.create_text(
                 canvas_width // 2, canvas_height - 50,
-                text="⚔️ [ KLIKNIJ W DOWOLNYM MIEJSCU, ABY ROZPOCZĄĆ POJEDYNEK ] ⚔️",
+                text="[ KLIKNIJ W DOWOLNYM MIEJSCU, ABY ROZPOCZĄĆ POJEDYNEK ]",
                 fill="#2ecc71", font=("Georgia", 13, "bold"), justify=tk.CENTER, anchor=tk.CENTER
             )
             
@@ -2345,36 +2776,192 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.clear_view()
         self.current_view = "stats"
         self.set_background(self.view_panel, "menu")
-        frame = tk.Frame(self.view_panel, bg="#2c1a12")
-        frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER, width=500, height=350)
         
-        tk.Label(frame, text="Ołtarz Bohaterów", font=("Georgia", 22, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=15)
-        lbl_pts = tk.Label(frame, text=f"Punkty do rozdania: {self.player.stat_points}", bg="#2c1a12", fg="white", font=("Georgia", 16))
-        lbl_pts.pack(pady=10)
+        main_box = tk.Frame(self.view_panel, bg="#2c1a12", bd=4, relief=tk.RIDGE)
+        main_box.place(relx=0.5, rely=0.5, anchor=tk.CENTER, width=880, height=720)
         
-        def add_stat(stat_name):
-            if self.player.stat_points > 0:
-                if stat_name == 'bonus_loot_pct':
-                    current = self.player.stats.get('bonus_loot_pct', 0)
-                    if current >= 50:
-                        messagebox.showinfo("Limit Osiągnięty", "Maksymalny bonus do zdobyczy z walki wynosi 50%!")
-                        return
+        tk.Label(main_box, text="OŁTARZ BOHATERÓW & DRZEWKO TALENTÓW", font=("Georgia", 18, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(10, 2))
+        tk.Label(main_box, text="Rozwijaj atrybuty herosa oraz odblokowuj potężne specjalizacje bojowe!", font=("Georgia", 9, "italic"), bg="#2c1a12", fg="#cccccc").pack(pady=(0, 6))
+        
+        # Pasek punktów rozwoju i punktów talentów
+        points_bar = tk.Frame(main_box, bg="#1a100b", bd=2, relief=tk.SUNKEN)
+        points_bar.pack(fill=tk.X, padx=15, pady=(2, 8), ipady=3)
+
+        pts = self.player.stat_points
+        pts_fg = "#2ecc71" if pts > 0 else "#888888"
+        tk.Label(points_bar, text=f"Punkty Rozwoju: {pts}", bg="#1a100b", fg=pts_fg, font=("Georgia", 11, "bold")).pack(side=tk.LEFT, padx=25)
+
+        t_pts = getattr(self.player, 'talent_points', 0)
+        t_fg = "#f39c12" if t_pts > 0 else "#888888"
+        tk.Label(points_bar, text=f"Punkty Talentów: {t_pts} (1 pkt co 5 poziomów od poz. 10)", bg="#1a100b", fg=t_fg, font=("Georgia", 11, "bold")).pack(side=tk.RIGHT, padx=25)
+        
+        def add_stat(stat_name, amount=1):
+            if self.player.stat_points <= 0:
+                messagebox.showinfo("Brak Punktów", "Nie posiadasz wolnych punktów rozwoju!\nAwanse na wyższe poziomy zapewniają +3 punkty.")
+                return
+            amount = min(amount, self.player.stat_points)
+            if amount <= 0: return
+            
+            if stat_name == 'bonus_loot_pct':
+                current = self.player.stats.get('bonus_loot_pct', 0)
+                allowed = max(0, 50 - current)
+                if allowed <= 0:
+                    messagebox.showinfo("Limit Osiągnięty", "Maksymalny bonus do zdobyczy z walki wynosi 50%!")
+                    return
+                amount = min(amount, allowed)
+            elif stat_name == 'crit_chance':
+                current = self.player.stats.get('crit_chance', 0)
+                allowed = max(0, 30 - current)
+                if allowed <= 0:
+                    messagebox.showinfo("Limit Osiągnięty", "Maksymalnie możesz zainwestować 30% bazowej szansy na krytyk!")
+                    return
+                amount = min(amount, allowed)
                 
-                if stat_name == 'crit_chance':
-                    current = self.player.stats.get('crit_chance', 0)
-                    if current >= 30:
-                        messagebox.showinfo("Limit Osiągnięty", "Maksymalnie możesz zainwestować 30% bazowej szansy na krytyk!")
-                        return
-                        
-                self.player.stats[stat_name] = self.player.stats.get(stat_name, 0) + 1
-                self.player.stat_points -= 1
-                lbl_pts.configure(text=f"Punkty do rozdania: {self.player.stat_points}")
+            if stat_name == 'max_hp':
+                self.player.max_hp += (amount * 8)
+                self.player.hp = min(self.player.get_max_hp(), self.player.hp + amount * 8)
+                self.log_msg(f"Wzmocniono Zdrowie o +{amount * 8} HP!")
+            else:
+                self.player.stats[stat_name] = self.player.stats.get(stat_name, 0) + amount
+                stat_labels = {"base_atk": "Atak", "base_def": "Obronę", "crit_chance": "Szansę na Krytyk", "bonus_loot_pct": "Szansę na Łup"}
+                self.log_msg(f"Wzmocniono {stat_labels.get(stat_name, stat_name)} o +{amount}!")
+                
+            self.player.stat_points -= amount
+            sounds.play_ui_click()
+            self.update_sidebar()
+            self.show_stats()
+
+        def buy_talent(tree_name):
+            from player import TALENT_DEFINITIONS
+            res = self.player.invest_talent(tree_name)
+            if isinstance(res, tuple):
+                ok, msg = res
+            elif res:
+                tree_label = TALENT_DEFINITIONS.get(tree_name, {}).get("name", tree_name)
+                ok, msg = True, f"Zainwestowano punkt w: {tree_label}!"
+            else:
+                ok, msg = False, "Brak wolnych punktów talentów lub osiągnięto maksymalny poziom (10/10)!"
+            if ok:
+                sounds.play_ui_click()
+                self.log_msg(f"{msg}")
                 self.update_sidebar()
+                self.show_stats()
+            else:
+                messagebox.showinfo("Talenty", msg)
+            
+        stats_to_display = [
+            ("base_atk", "Atak (ATK)", f"+{self.player.stats.get('base_atk', 8)}", None),
+            ("base_def", "Pancerz (DEF)", f"+{self.player.stats.get('base_def', 4)}", None),
+            ("max_hp", "Zdrowie", f"+{self.player.max_hp} HP (+8/pkt)", None),
+            ("crit_chance", "Krytyk", f"{self.player.stats.get('crit_chance', 0)}% (Max 30%)", 30),
+            ("bonus_loot_pct", "Szansa na Łup", f"{self.player.stats.get('bonus_loot_pct', 0)}% (Max 50%)", 50),
+        ]
+        
+        # SEKCJA 1: STATYSTYKI BAZOWE
+        sec1_lbl = tk.Label(main_box, text="━━ PODSTAWOWE STATYSTYKI ━━", font=("Georgia", 10, "bold"), fg="#f4d03f", bg="#2c1a12")
+        sec1_lbl.pack(anchor=tk.W, padx=15, pady=(2, 2))
+
+        stat_container = tk.Frame(main_box, bg="#2c1a12")
+        stat_container.pack(fill=tk.X, padx=15, pady=2)
+        
+        for s_key, s_name, s_val, s_cap in stats_to_display:
+            row = tk.Frame(stat_container, bg="#1a100b", bd=1, relief=tk.RAISED)
+            row.pack(fill=tk.X, pady=2)
+            
+            info_f = tk.Frame(row, bg="#1a100b")
+            info_f.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=8, pady=3)
+            tk.Label(info_f, text=f"{s_name}: {s_val}", font=("Georgia", 10, "bold"), fg="#f4d03f", bg="#1a100b").pack(side=tk.LEFT)
+            
+            btn_f = tk.Frame(row, bg="#1a100b")
+            btn_f.pack(side=tk.RIGHT, padx=6, pady=2)
+            
+            is_capped = False
+            if s_cap is not None:
+                cur_v = self.player.stats.get(s_key, 0)
+                is_capped = (cur_v >= s_cap)
                 
-        ctk.CTkButton(frame, text="+1 Baza ATK", command=lambda: add_stat('base_atk')).pack(fill=tk.X, padx=80, pady=10)
-        ctk.CTkButton(frame, text="+1 Baza DEF", command=lambda: add_stat('base_def')).pack(fill=tk.X, padx=80, pady=10)
-        ctk.CTkButton(frame, text="+1% Szansy na Kryt (Max 30%)", command=lambda: add_stat('crit_chance')).pack(fill=tk.X, padx=80, pady=10)
-        ctk.CTkButton(frame, text="+1% Zdobyczy z Walki (Max 50%)", command=lambda: add_stat('bonus_loot_pct')).pack(fill=tk.X, padx=80, pady=10)
+            for step_amt in (1, 5, 10):
+                can_buy = (pts >= 1 and not is_capped)
+                btn_txt = f"+{step_amt}"
+                b = ctk.CTkButton(
+                    btn_f, 
+                    text=btn_txt, 
+                    width=44, 
+                    height=24, 
+                    font=("Georgia", 9, "bold"),
+                    fg_color="#8b4513" if can_buy else "#2a1610",
+                    hover_color="#a0522d",
+                    text_color="#f4d03f" if can_buy else "#666666",
+                    state=tk.NORMAL if can_buy else tk.DISABLED,
+                    command=lambda sk=s_key, sa=step_amt: add_stat(sk, sa)
+                )
+                b.pack(side=tk.LEFT, padx=2)
+
+        # SEKCJA 2: SPECJALIZACJE & DRZEWKO TALENTÓW
+        sec2_lbl = tk.Label(main_box, text="━━ SPECJALIZACJE BOJOWE & TALENTY ━━", font=("Georgia", 10, "bold"), fg="#f4d03f", bg="#2c1a12")
+        sec2_lbl.pack(anchor=tk.W, padx=15, pady=(8, 2))
+
+        talent_container = tk.Frame(main_box, bg="#2c1a12")
+        talent_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=2)
+
+        talents_info = [
+            ("berserker", "Ścieżka Berserkera", "#c0392b", [
+                "1 pkt: Krwiożerczość (+4% kradzieży życia)",
+                "2 pkt: Gniew Wojownika (+25% obrażeń krytycznych)",
+                "3 pkt: Ostatni Bastion (+35% ataku gdy HP < 50%)"
+            ]),
+            ("defender", "Ścieżka Obrońcy", "#2980b9", [
+                "1 pkt: Pancerz Cierni (Odbija 12% obrażeń we wroga)",
+                "2 pkt: Hart Ciała (+3% regeneracji HP co turę walki)",
+                "3 pkt: Twierdza Nieugięta (Bariera tarczy +25% Max HP)"
+            ]),
+            ("rogue", "Ścieżka Łotrzyka", "#27ae60", [
+                "1 pkt: Zwinność Kota (+6% szansy na całkowity unik)",
+                "2 pkt: Sokoli Wzrok (+8% szansy na podwójny cios)",
+                "3 pkt: Chciwe Palce (+30% złota i szansy na rzadki łup)"
+            ])
+        ]
+
+        for tree_id, tree_title, tree_color, tiers_desc in talents_info:
+            cur_rank = self.player.talents.get(tree_id, 0)
+            t_row = tk.Frame(talent_container, bg="#1a100b", bd=1, relief=tk.RAISED)
+            t_row.pack(fill=tk.X, pady=3)
+
+            t_left = tk.Frame(t_row, bg="#1a100b")
+            t_left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=4)
+
+            # Nagłówek ścieżki i obecny poziom
+            header_f = tk.Frame(t_left, bg="#1a100b")
+            header_f.pack(fill=tk.X)
+            tk.Label(header_f, text=tree_title, font=("Georgia", 11, "bold"), fg=tree_color, bg="#1a100b").pack(side=tk.LEFT)
+            tk.Label(header_f, text=f"  [Poziom: {cur_rank}/3]", font=("Georgia", 10, "bold"), fg="#f4d03f" if cur_rank > 0 else "#777777", bg="#1a100b").pack(side=tk.LEFT)
+
+            # Opisy rang
+            desc_f = tk.Frame(t_left, bg="#1a100b")
+            desc_f.pack(fill=tk.X, pady=(2, 0))
+            for i, desc in enumerate(tiers_desc, start=1):
+                clr = "#2ecc71" if cur_rank >= i else "#888888"
+                tk.Label(desc_f, text=f"• {desc}", font=("Georgia", 8, "normal"), fg=clr, bg="#1a100b").pack(anchor=tk.W)
+
+            # Przycisk awansu talentu
+            t_right = tk.Frame(t_row, bg="#1a100b")
+            t_right.pack(side=tk.RIGHT, padx=12, pady=4)
+
+            can_invest = (t_pts > 0 and cur_rank < 3)
+            btn_txt = "ODBLOKUJ" if cur_rank == 0 else ("ULEPSZ" if cur_rank < 3 else "MAX")
+            b_tal = ctk.CTkButton(
+                t_right,
+                text=btn_txt,
+                width=80,
+                height=32,
+                font=("Georgia", 10, "bold"),
+                fg_color=tree_color if can_invest else "#2a1610",
+                hover_color="#d35400" if can_invest else "#2a1610",
+                text_color="#ffffff" if can_invest else "#666666",
+                state=tk.NORMAL if can_invest else tk.DISABLED,
+                command=lambda tid=tree_id: buy_talent(tid)
+            )
+            b_tal.pack()
 
     def show_equipment(self, selected_item_dict=None, is_equipped_slot=None, current_page=None):
         if self.is_busy(): return
@@ -2578,6 +3165,17 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             fg=count_color
         )
         lbl_inv_title.pack(side=tk.LEFT)
+
+        sort_mode = self.player.settings.get("inventory_sort", "recent")
+        def sort_inventory():
+            descending = self.player.settings.get("inventory_sort") == "name_asc"
+            self.player.inventory.sort(
+                key=lambda value: getattr(get_item(value), "name", value.get("id", "")).casefold(),
+                reverse=descending,
+            )
+            self.player.settings["inventory_sort"] = "name_asc" if descending else "name_desc"
+            self.show_equipment(current_page=1)
+        ctk.CTkButton(inv_header_frame, text="Sortuj Z–A" if sort_mode == "name_asc" else "Sortuj A–Z", width=85, height=24, command=sort_inventory).pack(side=tk.LEFT, padx=8)
         
         # Paginacja: Strony 1 - 4
         pages_nav_frame = tk.Frame(inv_header_frame, bg="#2c1a12")
@@ -2625,7 +3223,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             stash_bar.pack(fill=tk.X, pady=(2, 4))
             tk.Label(
                 stash_bar, 
-                text=f"🎁 Depozyt u Karczmarza: {stash_count} nagród czeka na odbiór!", 
+                text=f"Depozyt u Karczmarza: {stash_count} nagród czeka na odbiór!", 
                 font=("Georgia", 9, "bold"), 
                 fg="#f4d03f", 
                 bg="#4a1515"
@@ -2644,7 +3242,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             full_bar.pack(fill=tk.X, pady=(2, 4))
             tk.Label(
                 full_bar, 
-                text="⚠️ Ekwipunek jest pełny (4/4 strony)! Nowe nagrody trafią do depozytu u Karczmarza.", 
+                text="[UWAGA] Ekwipunek jest pełny (4/4 strony)! Nowe nagrody trafią do depozytu u Karczmarza.", 
                 font=("Georgia", 8, "italic"), 
                 fg="#ff8888", 
                 bg="#3a1010"
@@ -2722,7 +3320,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             item = get_item(selected_item_dict)
             lvl = selected_item_dict.get('lvl', 0)
             is_leg = getattr(item, 'rarity', 'Zwykły') == "Legendarny"
-            rarity_text = "🌟 LEGENDARDNY ARTEFAKT" if is_leg else "PRZEDMIOT PODSTAWOWY"
+            rarity_text = "LEGENDARNY ARTEFAKT" if is_leg else "PRZEDMIOT PODSTAWOWY"
             rarity_color = "#f4d03f" if is_leg else "#aaa"
             
             tk.Label(right_panel, text=rarity_text, font=("Georgia", 10, "bold"), fg=rarity_color, bg="#1a100b").pack(pady=(12, 2))
@@ -2819,7 +3417,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             
                         gained = int(self.player.hp - old_hp)
                         sounds.play_potion()
-                        self.log_msg(f"🧪 Wypito {item.name}! Odzyskano +{gained} HP. (HP: {int(self.player.hp)}/{t_hp})")
+                        self.log_msg(f"Wypito {item.name}! Odzyskano +{gained} HP. (HP: {int(self.player.hp)}/{t_hp})")
                         self.player.inventory.remove(selected_item_dict)
                         save_game(self.player, self.current_save_path)
                         self.update_sidebar()
@@ -2828,7 +3426,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 def sell_action():
                     if selected_item_dict in self.player.inventory:
                         self.player.inventory.remove(selected_item_dict)
-                        self.player.gold += sell_price
+                        self.player.add_gold(sell_price, "Sprzedaż przedmiotu")
                         self.log_msg(f"Sprzedano {item.name} za {sell_price} złota.")
                         self.update_sidebar()
                         self.show_equipment()
@@ -2841,11 +3439,11 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                         self.start_psychedelic_trip(60)
                         self.update_sidebar()
                         self.show_equipment()
-                    ctk.CTkButton(btn_box, text="🌀 Zażyj Ziółko (60s)", fg_color="#8e44ad", hover_color="#9b59b6", font=("Georgia", 10, "bold"), command=consume_ziolko).pack(fill=tk.X, pady=2)
+                    ctk.CTkButton(btn_box, text="Zażyj Ziółko (60s)", fg_color="#8e44ad", hover_color="#9b59b6", font=("Georgia", 10, "bold"), command=consume_ziolko).pack(fill=tk.X, pady=2)
                 elif hasattr(item, 'effect'):
                     ctk.CTkButton(btn_box, text="Użyj Przedmiotu", command=use_action).pack(fill=tk.X, pady=2)
                     
-                ctk.CTkButton(btn_box, text=f"💰 Sprzedaj ({sell_price}g)", command=sell_action).pack(fill=tk.X, pady=2)
+                ctk.CTkButton(btn_box, text=f"Sprzedaj ({sell_price}g)", command=sell_action).pack(fill=tk.X, pady=2)
         else:
             tk.Label(right_panel, text="Brak Wyboru", font=("Georgia", 14, "bold"), fg="#aaa", bg="#1a100b").pack(pady=40)
             tk.Label(right_panel, text="Kliknij dowolny przedmiot w plecaku lub założonym ekwipunku, aby wyświetlić szczegóły i historię.", font=("Georgia", 10, "italic"), fg="#888", bg="#1a100b", wraplength=250, justify=tk.CENTER).pack(padx=15)
@@ -2866,7 +3464,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER, relwidth=0.85, relheight=0.85)
             self.shop_main_frame = frame
         
-        tk.Label(frame, text="⚔️ SKLEP FANTASY ⚔️", font=("Georgia", 22, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(12, 2))
+        tk.Label(frame, text="SKLEP FANTASY", font=("Georgia", 22, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(12, 2))
         tk.Label(frame, text=f"Twoje złoto: {self.player.gold}g | Twój Poziom: {self.player.level}", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="white").pack(pady=2)
         
         # Pasek wyboru kategorii / stron poziomowych (Tiers Tabs)
@@ -2888,7 +3486,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 bg_col = "#3e2723"
                 fg_col = "#f4d03f"
                 
-            btn_text = f"🔒 {t_data['label']}" if is_locked else t_data['label']
+            btn_text = f"[ZABLOKOWANE] {t_data['label']}" if is_locked else t_data['label']
             
             btn = tk.Button(
                 tabs_frame, 
@@ -2912,9 +3510,9 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         tk.Label(sub_info, text=f"Kategoria: {tier_title}", font=("Georgia", 13, "bold"), bg="#2c1a12", fg="#f4d03f").pack(side=tk.LEFT)
         
         if self.player.level < req_lvl:
-            tk.Label(sub_info, text=f"🔒 Wymagany {req_lvl} poziom bohatera", font=("Georgia", 11, "bold"), bg="#2c1a12", fg="#ff6666").pack(side=tk.RIGHT)
+            tk.Label(sub_info, text=f"Wymagany {req_lvl} poziom bohatera", font=("Georgia", 11, "bold"), bg="#2c1a12", fg="#ff6666").pack(side=tk.RIGHT)
         else:
-            tk.Label(sub_info, text="✅ Odblokowano", font=("Georgia", 11, "bold"), bg="#2c1a12", fg="#2ecc71").pack(side=tk.RIGHT)
+            tk.Label(sub_info, text="Odblokowano", font=("Georgia", 11, "bold"), bg="#2c1a12", fg="#2ecc71").pack(side=tk.RIGHT)
 
         sf = ScrollableFrame(frame, bg_color="#1a100b")
         sf.pack(fill=tk.BOTH, expand=True, padx=20, pady=8)
@@ -2962,7 +3560,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     command=lambda i=item_id, s_tier=selected_tier, p=price: self.buy_fantasy_item(i, s_tier, p)
                 ).pack(side=tk.RIGHT, padx=15, pady=10)
             else:
-                tk.Label(row, text=f"🔒 Poz. {req_lvl}", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#ff6666").pack(side=tk.RIGHT, padx=15, pady=10)
+                tk.Label(row, text=f"Poz. {req_lvl}", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#ff6666").pack(side=tk.RIGHT, padx=15, pady=10)
 
     def buy_fantasy_item(self, item_id, selected_tier=1, override_price=None):
         from items import get_item
@@ -2971,7 +3569,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         
         if self.player.is_inventory_full():
             messagebox.showwarning("Pełny Ekwipunek", "Twój ekwipunek jest pełny (maksymalnie 4 strony / 80 slotów)!\nNie możesz kupić nowego przedmiotu, dopóki nie zwolnisz miejsca (np. sprzedając zbędne przedmioty w ekwipunku).")
-            self.log_msg("❌ Ekwipunek pełny! Nie możesz kupić przedmiotu.")
+            self.log_msg("Ekwipunek pełny! Nie możesz kupić przedmiotu.")
             return
             
         req_lvl = getattr(item, 'level_req', 1)
@@ -3011,7 +3609,11 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             
             info = tk.Frame(row, bg="#3e2723")
             info.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-            tk.Label(info, text=f"{b.name} (Złoto/s: +{b.gold_per_sec})", font=("Georgia", 14, "bold"), bg="#3e2723", fg="white").pack(anchor=tk.W)
+            from market import get_building_synergy_multiplier
+            m_syn = get_building_synergy_multiplier(self.player, b_id)
+            gps_eff = int(b.gold_per_sec * m_syn)
+            syn_txt = " [+40% Aktywny]" if m_syn >= 1.40 else (" [+25% Drużyna]" if m_syn >= 1.25 else "")
+            tk.Label(info, text=f"{b.name} (Złoto/s: +{gps_eff}{syn_txt})", font=("Georgia", 13, "bold"), bg="#3e2723", fg="#a8ff9e" if m_syn > 1.0 else "white").pack(anchor=tk.W)
             self.make_wrapping_label(info, b.description, font=("Georgia", 10), bg="#3e2723", fg="#aaaaaa")
             tk.Label(info, text=f"Posiadasz: {owned}", font=("Georgia", 10, "italic"), bg="#3e2723", fg="gold").pack(anchor=tk.W)
             
@@ -3020,6 +3622,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
     def buy_building(self, b_id):
         if self.market.buy_building(self.player, b_id):
             self.log_msg(f"Wzniesiono nową budowlę: {self.market.buildings[b_id].name}")
+            self.update_sidebar()
             self.show_buildings_shop()
         else:
             messagebox.showwarning("Brak Złota", "Skarbiec świeci pustkami!")
@@ -3058,7 +3661,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             elif npc_id in self.portraits:
                 tk.Label(npc_frame, image=self.portraits[npc_id], bg="#2c1a12", bd=2, relief=tk.SOLID).pack()
             else:
-                icon_char = "🍺" if npc_id == "innkeeper" else "📜"
+                icon_char = ""
                 tk.Label(npc_frame, text=icon_char, font=("Georgia", 36), bg="#3e2723", fg="#f4d03f", width=3, height=2, bd=2, relief=tk.SOLID).pack()
                 
             tk.Label(npc_frame, text=npc_name, font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=4)
@@ -3069,38 +3672,38 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             # Formatowanie czytelnego opisu nagród
             reward_parts = []
             if 'gold' in q.rewards:
-                reward_parts.append(f"💰 +{q.rewards['gold']}g Złota")
+                reward_parts.append(f"+{q.rewards['gold']}g Złota")
             if 'item' in q.rewards:
                 item = get_item(q.rewards['item'])
                 if item:
                     is_leg = getattr(item, 'rarity', 'Zwykły') == "Legendarny"
-                    icon = "🌟 " if is_leg else "🛡️ "
+                    icon = " " if is_leg else " "
                     reward_parts.append(f"{icon}Przedmiot: {item.name}")
             if 'party' in q.rewards:
                 member_id = q.rewards['party']
                 member_name = npc_lore.NPC_DB.get(member_id, {}).get('name', member_id).split(',')[0]
-                reward_parts.append(f"👥 Towarzysz: Dołącza {member_name}")
+                reward_parts.append(f"Towarzysz: Dołącza {member_name}")
             reward_str = " | ".join(reward_parts) if reward_parts else "Brak"
             
             if q.status == 'LOCKED':
-                self.make_wrapping_label(info, f"🔒 [Wymaga Poz. {q.unlock_level}] {q.name}", font=("Georgia", 13, "bold"), bg="#2c1a12", fg="#888888")
+                self.make_wrapping_label(info, f"[Wymaga Poz. {q.unlock_level}] {q.name}", font=("Georgia", 13, "bold"), bg="#2c1a12", fg="#888888")
                 self.make_wrapping_label(info, f"Zadanie zablokowane do osiągnięcia {q.unlock_level} poziomu bohatera.", font=("Georgia", 9, "italic"), bg="#2c1a12", fg="#777777")
-                self.make_wrapping_label(info, f"🎁 Nagroda: {reward_str}", font=("Georgia", 9), bg="#2c1a12", fg="#888888")
+                self.make_wrapping_label(info, f"Nagroda: {reward_str}", font=("Georgia", 9), bg="#2c1a12", fg="#888888")
             else:
                 title_color = "#2ecc71" if q.status == 'COMPLETED' else ("#f4d03f" if q.status == 'IN_PROGRESS' else "white")
-                self.make_wrapping_label(info, f"📜 [Poz. {q.unlock_level}] {q.name}", font=("Georgia", 14, "bold"), bg="#2c1a12", fg=title_color)
+                self.make_wrapping_label(info, f"[Poz. {q.unlock_level}] {q.name}", font=("Georgia", 14, "bold"), bg="#2c1a12", fg=title_color)
                 
                 # Dialog / cytat fabularny od NPC
                 if getattr(q, 'dialog_offer', ''):
                     quote_text = q.dialog_offer[:150] + ("..." if len(q.dialog_offer) > 150 else "")
-                    self.make_wrapping_label(info, f'💬 {npc_name}: "{quote_text}"', font=("Georgia", 10, "italic"), bg="#2c1a12", fg="#f9e79f")
+                    self.make_wrapping_label(info, f'{npc_name}: "{quote_text}"', font=("Georgia", 10, "italic"), bg="#2c1a12", fg="#f9e79f")
                     
                 self.make_wrapping_label(info, q.description, font=("Georgia", 10), bg="#2c1a12", fg="#cccccc")
                 
                 # Licznik postępu
                 prog_color = "#2ecc71" if q.status == 'COMPLETED' else "#f1c40f"
-                self.make_wrapping_label(info, f"🎯 Postęp: {q.get_progress_str()}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg=prog_color)
-                self.make_wrapping_label(info, f"🎁 Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#f4d03f")
+                self.make_wrapping_label(info, f"Postęp: {q.get_progress_str()}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg=prog_color)
+                self.make_wrapping_label(info, f"Nagroda: {reward_str}", font=("Georgia", 10, "bold"), bg="#2c1a12", fg="#f4d03f")
                 
                 btn_frame = tk.Frame(row, bg="#2c1a12")
                 btn_frame.pack(side=tk.RIGHT, padx=15, pady=10)
@@ -3110,9 +3713,9 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 elif q.status == 'IN_PROGRESS':
                     ctk.CTkButton(btn_frame, text="W trakcie...", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#888888", state=tk.DISABLED).pack(pady=5)
                 elif q.status == 'COMPLETED':
-                    ctk.CTkButton(btn_frame, text="🎁 ODBIERZ NAGRODĘ", font=("Georgia", 12, "bold"), fg_color="#27ae60", hover_color="#2ecc71", text_color="white", command=lambda quest=q: self.claim_quest(quest)).pack(pady=5)
+                    ctk.CTkButton(btn_frame, text="ODBIERZ NAGRODĘ", font=("Georgia", 12, "bold"), fg_color="#27ae60", hover_color="#2ecc71", text_color="white", command=lambda quest=q: self.claim_quest(quest)).pack(pady=5)
                 elif q.status == 'CLAIMED':
-                    tk.Label(btn_frame, text="✔ UKOŃCZONE", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#2ecc71").pack(pady=5)
+                    tk.Label(btn_frame, text="UKOŃCZONE", font=("Georgia", 12, "bold"), bg="#2c1a12", fg="#2ecc71").pack(pady=5)
 
     def open_quest_offer_dialog(self, quest, parent_win=None, on_accepted=None):
         npc_id = getattr(quest, 'npc_id', 'innkeeper')
@@ -3123,7 +3726,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         })
         
         dialog_win = tk.Toplevel(self.root)
-        dialog_win.title(f"📜 Zlecenie: {quest.name}")
+        dialog_win.title(f"Zlecenie: {quest.name}")
         dialog_win.geometry("900x780")
         dialog_win.configure(bg="#1a100b")
         dialog_win.transient(self.root)
@@ -3146,21 +3749,21 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             avatar_frame = tk.Frame(header, bg="#2c1a12", bd=3, relief=tk.RIDGE, width=100, height=100)
             avatar_frame.pack(side=tk.LEFT, padx=15, pady=10)
             avatar_frame.pack_propagate(False)
-            icon_char = "🍺" if npc_id == "innkeeper" else "👤"
+            icon_char = ""
             tk.Label(avatar_frame, text=icon_char, font=("Georgia", 40), bg="#2c1a12", fg="#f4d03f").pack(expand=True)
             
         header_text = tk.Frame(header, bg="#1a100b")
         header_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         tk.Label(header_text, text=npc["name"], font=("Georgia", 16, "bold"), fg="#f4d03f", bg="#1a100b").pack(anchor="w")
-        tk.Label(header_text, text=f"📜 Zadanie: {quest.name} [Wymagany Poz. {quest.unlock_level}]", font=("Georgia", 13, "bold"), fg="#2ecc71", bg="#1a100b").pack(anchor="w", pady=(2, 4))
+        tk.Label(header_text, text=f"Zadanie: {quest.name} [Wymagany Poz. {quest.unlock_level}]", font=("Georgia", 13, "bold"), fg="#2ecc71", bg="#1a100b").pack(anchor="w", pady=(2, 4))
         tk.Label(header_text, text=quest.description, font=("Georgia", 10, "italic"), fg="#cccccc", bg="#1a100b", wraplength=580, justify=tk.LEFT).pack(anchor="w")
         
         # Główny obszar narracji i monologu NPC
         body_frame = tk.Frame(dialog_win, bg="#1a100b")
         body_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=5)
         
-        tk.Label(body_frame, text="💬 Rozmowa z postacią:", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#1a100b").pack(anchor="w", padx=5, pady=(0, 4))
+        tk.Label(body_frame, text="Rozmowa z postacią:", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#1a100b").pack(anchor="w", padx=5, pady=(0, 4))
         
         dialog_box = scrolledtext.ScrolledText(body_frame, bg="#24140e", fg="#f5e6cb", font=("Georgia", 11), wrap=tk.WORD, height=10, bd=3, relief=tk.SUNKEN)
         dialog_box.pack(fill=tk.BOTH, expand=True, padx=5, pady=2)
@@ -3176,7 +3779,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         # Kolumna Lewa: Cele
         req_frame = tk.Frame(details_frame, bg="#2c1a12")
         req_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=15, pady=8)
-        tk.Label(req_frame, text="🎯 Cele do wykonania:", font=("Georgia", 11, "bold"), fg="#e67e22", bg="#2c1a12").pack(anchor="w")
+        tk.Label(req_frame, text="Cele do wykonania:", font=("Georgia", 11, "bold"), fg="#e67e22", bg="#2c1a12").pack(anchor="w")
         
         if 'kills' in quest.requirements:
             for mon_name, count in quest.requirements['kills'].items():
@@ -3187,19 +3790,19 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         # Kolumna Prawa: Nagrody
         rew_frame = tk.Frame(details_frame, bg="#2c1a12")
         rew_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=15, pady=8)
-        tk.Label(rew_frame, text="🎁 Nagroda za ukończenie:", font=("Georgia", 11, "bold"), fg="#f4d03f", bg="#2c1a12").pack(anchor="w")
+        tk.Label(rew_frame, text="Nagroda za ukończenie:", font=("Georgia", 11, "bold"), fg="#f4d03f", bg="#2c1a12").pack(anchor="w")
         
         if 'gold' in quest.rewards:
-            tk.Label(rew_frame, text=f"  • 💰 Złoto: +{quest.rewards['gold']}g", font=("Georgia", 10, "bold"), fg="#f1c40f", bg="#2c1a12").pack(anchor="w")
+            tk.Label(rew_frame, text=f"  • Złoto: +{quest.rewards['gold']}g", font=("Georgia", 10, "bold"), fg="#f1c40f", bg="#2c1a12").pack(anchor="w")
         if 'item' in quest.rewards:
             item = get_item(quest.rewards['item'])
             if item:
                 rarity = getattr(item, 'rarity', 'Zwykły')
-                rarity_prefix = "🌟 [LEGENDARNY] " if rarity == "Legendarny" else "🛡️ "
+                rarity_prefix = "[LEGENDARNY] " if rarity == "Legendarny" else " "
                 tk.Label(rew_frame, text=f"  • {rarity_prefix}{item.name}", font=("Georgia", 10, "bold"), fg="#2ecc71", bg="#2c1a12").pack(anchor="w")
         if 'party' in quest.rewards:
             p_name = npc_lore.NPC_DB.get(quest.rewards['party'], {}).get('name', 'Towarzysz').split(',')[0]
-            tk.Label(rew_frame, text=f"  • 👥 Nowy Kompan: {p_name} dołącza do drużyny!", font=("Georgia", 10, "bold"), fg="#3498db", bg="#2c1a12").pack(anchor="w")
+            tk.Label(rew_frame, text=f"  • Nowy Kompan: {p_name} dołącza do drużyny!", font=("Georgia", 10, "bold"), fg="#3498db", bg="#2c1a12").pack(anchor="w")
             
         # Stopka z interaktywnymi przyciskami gracza
         action_frame = tk.Frame(dialog_win, bg="#1a100b")
@@ -3208,7 +3811,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         def confirm_accept():
             if quest.accept():
                 sounds.play_quest_accept()
-                self.log_msg(f"📜 Przyjęto zadanie od {npc['name'].split(',')[0]}: '{quest.name}'!")
+                self.log_msg(f"Przyjęto zadanie od {npc['name'].split(',')[0]}: '{quest.name}'!")
                 
                 # Wyświetlenie reakcji postaci w oknie dialogowym
                 reaction = getattr(quest, 'dialog_accept_reaction', '') or "*Kiwając głową z uznaniem życzy ci powodzenia w walce.*"
@@ -3233,7 +3836,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                         
                 ctk.CTkButton(
                     action_frame, 
-                    text="🚀 [RUSZAJMY DO WALKI!]", 
+                    text="[RUSZAJMY DO WALKI!]", 
                     font=("Georgia", 13, "bold"), 
                     fg_color="#27ae60", 
                     hover_color="#2ecc71", 
@@ -3243,7 +3846,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 
         btn_accept = ctk.CTkButton(
             action_frame, 
-            text=f"⚔️ PRZYJMUJĘ ZLECENIE: {quest.name.upper()}!", 
+            text=f"PRZYJMUJĘ ZLECENIE: {quest.name.upper()}!", 
             font=("Georgia", 13, "bold"), 
             fg_color="#f1c40f", 
             hover_color="#f39c12", 
@@ -3255,7 +3858,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         
         btn_decline = ctk.CTkButton(
             action_frame, 
-            text="⏳ Muszę się jeszcze przygotować (Odejdź)", 
+            text="Muszę się jeszcze przygotować (Odejdź)", 
             font=("Georgia", 11, "italic"), 
             fg_color="#2a1610", 
             hover_color="#3e2723", 
@@ -3275,13 +3878,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             npc_name = npc_lore.NPC_DB.get(npc_id, {}).get('name', 'Zleceniodawca').split(',')[0]
             dialog_complete = getattr(quest, 'dialog_complete', 'Wspaniała robota! Zasłużyłeś na tę nagrodę.')
             
-            self.log_msg(f"✅ Ukończono zadanie: '{quest.name}'! Odebrano nagrodę.")
+            self.log_msg(f"Ukończono zadanie: '{quest.name}'! Odebrano nagrodę.")
             self.update_sidebar()
             self.show_quests()
             
             messagebox.showinfo(
-                f"🌟 ZADANIE UKOŃCZONE: {quest.name} 🌟",
-                f"Wspaniały sukces!\n\n💬 {npc_name}:\n\"{dialog_complete}\"\n\nOtrzymano nagrody za ukończenie zlecenia!"
+                f"ZADANIE UKOŃCZONE: {quest.name} ",
+                f"Wspaniały sukces!\n\n{npc_name}:\n\"{dialog_complete}\"\n\nOtrzymano nagrody za ukończenie zlecenia!"
             )
 
     def show_bestiary(self):
@@ -3339,17 +3942,17 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         title_box = tk.Frame(header_frame, bg="#1a100b")
         title_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=6)
         
-        tk.Label(title_box, text="⚒️ MISTRZOWSKA KUŹNIA KOWALA ⚒️", font=("Georgia", 18, "bold"), bg="#1a100b", fg="#f4d03f", anchor="w").pack(fill=tk.X)
+        tk.Label(title_box, text="MISTRZOWSKA KUŹNIA KOWALA", font=("Georgia", 18, "bold"), bg="#1a100b", fg="#f4d03f", anchor="w").pack(fill=tk.X)
         tk.Label(title_box, text="\"Rozgrzany młot i czysta stal nie kłamią. Ulepsz swój oręż lub wpraw magiczne klejnoty w gniazda!\"", font=("Georgia", 10, "italic"), bg="#1a100b", fg="#cccccc", anchor="w").pack(fill=tk.X)
         tk.Label(title_box, text=f"Twoje złoto: {self.player.gold}g", font=("Georgia", 12, "bold"), bg="#1a100b", fg="#f1c40f", anchor="w").pack(fill=tk.X, pady=(2, 0))
         
-        # Przełącznik zakładek: [🔨 ULEPSZANIE (+1 do +9)] | [🔮 MAGICZNE GNIAZDA I KLEJNOTY]
+        # Przełącznik zakładek: [ ULEPSZANIE (+1 do +9)] | [ MAGICZNE GNIAZDA I KLEJNOTY]
         tab_box = tk.Frame(main_frame, bg="#2c1a12")
         tab_box.pack(fill=tk.X, padx=15, pady=(6, 4))
         
         btn_tab_upg = ctk.CTkButton(
             tab_box, 
-            text="🔨 ULEPSZANIE PRZEDMIOTÓW (+1 do +9)", 
+            text="ULEPSZANIE PRZEDMIOTÓW (+1 do +9)", 
             font=("Georgia", 11, "bold"),
             fg_color="#8b4513" if active_tab == "upgrade" else "#3e2723",
             text_color="#f4d03f" if active_tab == "upgrade" else "#aaaaaa",
@@ -3359,7 +3962,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         
         btn_tab_gems = ctk.CTkButton(
             tab_box, 
-            text="🔮 MAGICZNE GNIAZDA & KLEJNOTY", 
+            text="MAGICZNE GNIAZDA & KLEJNOTY", 
             font=("Georgia", 11, "bold"),
             fg_color="#8b4513" if active_tab == "sockets" else "#3e2723",
             text_color="#f4d03f" if active_tab == "sockets" else "#aaaaaa",
@@ -3415,7 +4018,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             for b in getattr(self.player, 'bounties', []):
                                 if b.status == 'IN_PROGRESS' and b.target_type == 'upgrade':
                                     if b.add_progress(1):
-                                        self.log_msg(f"📋 Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
+                                        self.log_msg(f"Zlecenie z tablicy ukończone: '{b.title}'! Odbierz nagrodę u Karczmarza.")
                                         
                             self.update_sidebar()
                             self.show_blacksmith("upgrade")
@@ -3490,7 +4093,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     req_ing_id = "ing_ectoplasm" if is_second else "ing_fang"
                     req_ing_name = "Ektoplazma Upiora" if is_second else "Kieł Bestii"
                     
-                    lbl_txt = f"⚒️ Wykuj Gniazdo #{len(sockets)+1} (Koszt: {forge_cost}g + 1x {req_ing_name})"
+                    lbl_txt = f"Wykuj Gniazdo #{len(sockets)+1} (Koszt: {forge_cost}g + 1x {req_ing_name})"
                     tk.Label(forge_frame, text=lbl_txt, font=("Georgia", 10, "bold"), fg="#f39c12", bg="#1a100b").pack(side=tk.LEFT, padx=10, pady=6)
                     
                     def do_forge_socket(i_d=item_dict, cost=forge_cost, ing_id=req_ing_id):
@@ -3596,6 +4199,87 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                             
                         ctk.CTkButton(s_row, text="+ Wpraw Klejnot", width=130, height=26, fg_color="#27ae60", hover_color="#2ecc71", text_color="white", font=("Georgia", 9, "bold"), command=open_gem_picker).pack(side=tk.RIGHT, padx=8, pady=4)
 
+    def _make_journal_frame(self, title):
+        self.clear_view()
+        self.current_view = "journal"
+        self.set_background(self.view_panel, "menu")
+        frame = tk.Frame(self.view_panel, bg="#2c1a12", bd=5, relief=tk.RIDGE)
+        frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER, relwidth=0.86, relheight=0.86)
+        tk.Label(frame, text=title, font=("Georgia", 19, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=12)
+        return frame
+
+    def show_reward_history(self):
+        if self.is_busy(): return
+        frame = self._make_journal_frame("Dziennik Nagród")
+        history = list(reversed(getattr(self.player, "reward_history", [])))
+        if not history:
+            tk.Label(frame, text="Nagrody pojawią się tu po pierwszej walce lub zdobyciu złota.", bg="#2c1a12", fg="#ddd", font=("Georgia", 11)).pack(pady=20)
+        else:
+            sf = ScrollableFrame(frame, bg_color="#1a100b")
+            sf.pack(fill=tk.BOTH, expand=True, padx=15, pady=8)
+            for entry in history:
+                stamp = datetime.fromtimestamp(entry.get("time", time.time())).strftime("%Y-%m-%d %H:%M")
+                parts = [f"+{entry.get('gold', 0)} złota", f"+{entry.get('exp', 0)} EXP"]
+                if entry.get("item"):
+                    parts.append(f"Przedmiot: {entry['item']}")
+                tk.Label(sf.scrollable_frame, text=f"{stamp} · {entry.get('source', 'Nagroda')} · {' · '.join(parts)}", bg="#2a1610", fg="#eee", font=("Georgia", 10), anchor="w", justify=tk.LEFT).pack(fill=tk.X, padx=6, pady=3)
+        ctk.CTkButton(frame, text="Wróć do wyprawy", command=self.show_expedition).pack(pady=10)
+
+    def show_daily_challenges(self):
+        if self.is_busy(): return
+        frame = self._make_journal_frame("Wyzwania Dzienne")
+        challenges = self.player.ensure_daily_challenges()
+        tk.Label(frame, text=f"Nowe cele pojawią się jutro · {self.player.daily_challenges['date']}", bg="#2c1a12", fg="#bbb", font=("Georgia", 10, "italic")).pack()
+        for challenge in challenges:
+            row = tk.Frame(frame, bg="#1a100b", bd=2, relief=tk.GROOVE)
+            row.pack(fill=tk.X, padx=20, pady=7)
+            done = challenge["progress"] >= challenge["target"]
+            tk.Label(row, text=f"{challenge['label']} · {challenge['progress']}/{challenge['target']} · Nagroda {challenge['reward']} złota", bg="#1a100b", fg="#2ecc71" if done else "#eee", font=("Georgia", 11, "bold")).pack(side=tk.LEFT, padx=12, pady=12)
+            if challenge["claimed"]:
+                tk.Label(row, text="ODEBRANO", bg="#1a100b", fg="#2ecc71").pack(side=tk.RIGHT, padx=12)
+            elif done:
+                def claim_daily(c=challenge):
+                    if c["claimed"]: return
+                    c["claimed"] = True
+                    self.player.add_gold(c["reward"], "Wyzwanie dzienne")
+                    self.update_sidebar()
+                    self.show_daily_challenges()
+                ctk.CTkButton(row, text="Odbierz", command=claim_daily, width=90).pack(side=tk.RIGHT, padx=10)
+        ctk.CTkButton(frame, text="Wróć do wyprawy", command=self.show_expedition).pack(pady=12)
+
+    def show_settings(self):
+        if self.is_busy(): return
+        frame = self._make_journal_frame("Ustawienia Gry")
+        settings = self.player.settings
+        tk.Label(frame, text="Automatyczny zapis", bg="#2c1a12", fg="#eee", font=("Georgia", 12, "bold")).pack(pady=(12, 4))
+        save_row = tk.Frame(frame, bg="#2c1a12")
+        save_row.pack()
+        for seconds in (30, 60, 120):
+            ctk.CTkButton(save_row, text=f"Co {seconds} s", fg_color="#27ae60" if settings.get("autosave_seconds") == seconds else "#3e2723", command=lambda value=seconds: self._set_autosave_interval(value)).pack(side=tk.LEFT, padx=5)
+        reduced = tk.BooleanVar(value=bool(settings.get("reduced_effects", False)))
+        ctk.CTkCheckBox(frame, text="Ogranicz animacje efektów", variable=reduced, command=lambda: self._set_reduced_effects(reduced.get())).pack(pady=18)
+        tk.Label(frame, text="Dziennik przechowuje 100 ostatnich wpisów. Wyzwania odnawiają się codziennie.", bg="#2c1a12", fg="#aaa", font=("Georgia", 10, "italic")).pack(pady=8)
+        ctk.CTkButton(frame, text="Wróć do wyprawy", command=self.show_expedition).pack(pady=10)
+
+    def _set_autosave_interval(self, seconds):
+        self.player.settings["autosave_seconds"] = int(seconds)
+        if self.save_timer_id:
+            try: self.root.after_cancel(self.save_timer_id)
+            except tk.TclError: pass
+        self.save_timer_id = self.root.after(int(seconds) * 1000, self.auto_save_timer)
+        self.show_settings()
+
+    def _set_reduced_effects(self, enabled):
+        self.player.settings["reduced_effects"] = bool(enabled)
+        if enabled and hasattr(self, "trip_bg_canvas") and self.trip_bg_canvas.winfo_exists():
+            self.trip_bg_canvas.delete("all")
+        if enabled:
+            self.container.place(x=0, y=0, relwidth=1.0, relheight=1.0)
+            for name in ("trip_border_top", "trip_border_bot", "trip_border_left", "trip_border_right"):
+                widget = getattr(self, name, None)
+                if widget is not None and widget.winfo_exists():
+                    widget.destroy()
+
     def show_achievements(self, selected_category="all"):
         if self.is_busy(): return
         self.clear_view()
@@ -3605,7 +4289,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         main_frame = tk.Frame(self.view_panel, bg="#2c1a12", bd=5, relief=tk.RIDGE)
         main_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER, relwidth=0.88, relheight=0.88)
         
-        tk.Label(main_frame, text="🏆 KSIĘGA OSIĄGNIĘĆ I TROFEÓW 🏆", font=("Georgia", 20, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(10, 2))
+        tk.Label(main_frame, text="KSIĘGA OSIĄGNIĘĆ I TROFEÓW", font=("Georgia", 20, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(10, 2))
         
         # Obliczenie statystyk ukończenia
         unlocked_count = 0
@@ -3622,12 +4306,12 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         
         categories = [
             ("all", "Wszystkie"),
-            ("walka", "🗡️ Walka"),
-            ("lochy", "🏰 Lochy"),
-            ("rzemioslo", "🔨 Rzemiosło"),
-            ("alchemia", "🌿 Alchemia"),
-            ("druzyna", "👥 Drużyna"),
-            ("bogactwo", "💰 Bogactwo")
+            ("walka", "Walka"),
+            ("lochy", "Lochy"),
+            ("rzemioslo", "Rzemiosło"),
+            ("alchemia", "Alchemia"),
+            ("druzyna", "Drużyna"),
+            ("bogactwo", "Bogactwo")
         ]
         
         for c_id, c_label in categories:
@@ -3683,30 +4367,30 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             
             # Nagrody
             rew = a_data["rewards"]
-            rew_str = f"🎁 Nagroda: +{rew['gold']}g, +{rew['exp']} EXP"
+            rew_str = f"Nagroda: +{rew['gold']}g, +{rew['exp']} EXP"
             if "perk_desc" in rew:
                 rew_str += f" | {rew['perk_desc']}"
             tk.Label(info_box, text=rew_str, font=("Georgia", 9, "bold"), fg="#a8ff9e" if "perk_desc" in rew else "#f1c40f", bg="#2a1610", anchor="w", wraplength=450).pack(fill=tk.X)
             
             # Przycisk odbioru
             if is_claimed:
-                tk.Label(card, text="✅ ODEBRANO", font=("Georgia", 11, "bold"), fg="#2ecc71", bg="#2a1610").pack(side=tk.RIGHT, padx=15)
+                tk.Label(card, text="ODEBRANO", font=("Georgia", 11, "bold"), fg="#2ecc71", bg="#2a1610").pack(side=tk.RIGHT, padx=15)
             elif is_completed:
                 def claim_ach(aid=a_id, r=rew):
-                    self.player.gold += r["gold"]
+                    self.player.add_gold(r["gold"], "Osiągnięcie", exp=r["exp"])
                     self.player.add_exp(r["exp"])
                     if "perk_id" in r:
                         if r["perk_id"] not in self.player.permanent_perks:
                             self.player.permanent_perks.append(r["perk_id"])
                     self.player.achievements[aid] = {"completed": True, "claimed": True}
                     sounds.play_quest_complete()
-                    self.log_msg(f"🏆 ODEBRANO NAGRODĘ ZA OSIĄGNIĘCIE: '{ACHIEVEMENTS_DB[aid]['title']}'!")
+                    self.log_msg(f"ODEBRANO NAGRODĘ ZA OSIĄGNIĘCIE: '{ACHIEVEMENTS_DB[aid]['title']}'!")
                     self.update_sidebar()
                     self.show_achievements(selected_category)
                     
-                ctk.CTkButton(card, text="🎁 ODBIERZ NAGRODĘ", font=("Georgia", 11, "bold"), fg_color="#27ae60", hover_color="#2ecc71", command=claim_ach).pack(side=tk.RIGHT, padx=15)
+                ctk.CTkButton(card, text="ODBIERZ NAGRODĘ", font=("Georgia", 11, "bold"), fg_color="#27ae60", hover_color="#2ecc71", command=claim_ach).pack(side=tk.RIGHT, padx=15)
             else:
-                ctk.CTkButton(card, text="⏳ W trakcie...", font=("Georgia", 10, "italic"), fg_color="#2a1610", text_color="#888", state=tk.DISABLED).pack(side=tk.RIGHT, padx=15)
+                ctk.CTkButton(card, text="W trakcie...", font=("Georgia", 10, "italic"), fg_color="#2a1610", text_color="#888", state=tk.DISABLED).pack(side=tk.RIGHT, padx=15)
 
     # ---- PSYCHODELICZNY EFEKT ZIÓŁKA (60s DEFORMACJA, MIRAŻE I KOLORY) ----
 
@@ -3716,13 +4400,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.player.active_buffs = {}
         self.player.active_buffs["elixir_psychedelic"] = 10
         sounds.play_level_up()
-        self.log_msg("🌀 [ZIÓŁKO] Zażyłeś Ziółko! Rzeczywistość zaczyna falować, kolory pulsują, a przez środek ekranu płyną tęczowe miraże!")
+        self.log_msg("[ZIÓŁKO] Zażyłeś Ziółko! Rzeczywistość zaczyna falować, kolory pulsują, a przez środek ekranu płyną tęczowe miraże!")
         
         # Pływający baner stanu ziółka u góry ekranu
         if not hasattr(self, 'trip_banner') or not self.trip_banner.winfo_exists():
             self.trip_banner = tk.Label(
                 self.root, 
-                text="🌀 🌿 FAZA: ZIÓŁKO (60s) 🌿 🌀", 
+                text="FAZA: ZIÓŁKO (60s)", 
                 font=("Georgia", 11, "bold"), 
                 bg="#120024", 
                 fg="#00ffff", 
@@ -3747,17 +4431,27 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.trip_bg_canvas = tk.Canvas(self.view_panel, bg="#0d0414", highlightthickness=0)
             self.trip_bg_canvas.place(x=0, y=0, relwidth=1.0, relheight=1.0)
             tk.Misc.lower(self.trip_bg_canvas)
+
+        if getattr(self.player, "settings", {}).get("reduced_effects", False):
+            for name in ("trip_border_top", "trip_border_bot", "trip_border_left", "trip_border_right", "trip_bg_canvas"):
+                widget = getattr(self, name, None)
+                if widget is not None and widget.winfo_exists():
+                    widget.destroy()
             
-        self.tick_psychedelic_effect()
+        if not getattr(self, '_trip_loop_running', False):
+            self._trip_loop_running = True
+            self.tick_psychedelic_effect()
 
     def tick_psychedelic_effect(self):
         if not hasattr(self, 'psychedelic_end'):
+            self._trip_loop_running = False
             return
             
         now = time.time()
         rem = int(self.psychedelic_end - now)
         
         if rem <= 0:
+            self._trip_loop_running = False
             # Przywrócenie normalnej geometrii i usunięcie nakładek
             self.container.place(x=0, y=0, relwidth=1.0, relheight=1.0)
             if hasattr(self, 'trip_banner') and self.trip_banner.winfo_exists():
@@ -3771,8 +4465,15 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 self.trip_bg_canvas.destroy()
             if hasattr(self, 'combat_canvas') and self.combat_canvas.winfo_exists():
                 self.combat_canvas.delete("trip_mirage")
-            self.log_msg("🌀 Efekt ziółka minął. Wracasz do trzeźwej rzeczywistości.")
+            self.log_msg("Efekt ziółka minął. Wracasz do trzeźwej rzeczywistości.")
             self.update_sidebar()
+            return
+
+        if getattr(self.player, "settings", {}).get("reduced_effects", False):
+            self.container.place(x=0, y=0, relwidth=1.0, relheight=1.0)
+            if hasattr(self, "trip_banner") and self.trip_banner.winfo_exists():
+                self.trip_banner.configure(text=f"FAZA: ZIÓŁKO ({rem}s)")
+            self.root.after(250, self.tick_psychedelic_effect)
             return
             
         # 1. Delikatne, organiczne falowanie kontenera (Screen Breathing - 2-3px, bez przesuwania przycisków za ekran)
@@ -3799,7 +4500,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         if hasattr(self, 'trip_banner') and self.trip_banner.winfo_exists():
             wave_dots = "~" * (int(now * 5) % 4 + 1)
             self.trip_banner.configure(
-                text=f"🌀 {wave_dots} FAZA: ZIÓŁKO (Pozostało: {rem}s) {wave_dots} 🌀",
+                text=f"{wave_dots} FAZA: ZIÓŁKO (Pozostało: {rem}s) {wave_dots}",
                 fg=hex1,
                 bg="#120024"
             )
@@ -3883,7 +4584,8 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 pass
             
         # Kolejna klatka animacji za 40ms (~25 FPS)
-        self.root.after(40, self.tick_psychedelic_effect)
+        if getattr(self, '_trip_loop_running', False):
+            self.root.after(40, self.tick_psychedelic_effect)
 
 
     def show_alchemy(self):
@@ -3895,24 +4597,30 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         main_frame = tk.Frame(self.view_panel, bg="#2c1a12", bd=5, relief=tk.RIDGE)
         main_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER, relwidth=0.90, relheight=0.90)
         
-        tk.Label(main_frame, text="🧪 ALCHEMIA & OGRÓD ZIÓŁ U DOMCI 🧪", font=("Georgia", 20, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(8, 2))
+        tk.Label(main_frame, text="ALCHEMIA & OGRÓD ZIÓŁ U DOMCI", font=("Georgia", 20, "bold"), bg="#2c1a12", fg="#f4d03f").pack(pady=(8, 2))
         tk.Label(main_frame, text="Zbieraj wyhodowane zioła z grządek i warz w kociołku potężne eliksiry wzmacniające w walce!", font=("Georgia", 10, "italic"), bg="#2c1a12", fg="#ddd").pack(pady=(0, 6))
         
         # --- SEKCJA 1: OGRÓD ZIÓŁ ---
         garden_header = tk.Frame(main_frame, bg="#1a100b", bd=2, relief=tk.RAISED)
         garden_header.pack(fill=tk.X, padx=15, pady=(4, 2))
         
-        tk.Label(garden_header, text="🌿 OGRÓD ZIÓŁ DOMCI (4 GRZĄDKI)", font=("Georgia", 12, "bold"), fg="#a8ff9e", bg="#1a100b").pack(side=tk.LEFT, padx=10, pady=4)
+        unlocked_count = self.player.get_unlocked_plots_count()
+        tk.Label(garden_header, text=f"OGRÓD ZIÓŁ DOMCI ({unlocked_count}/4 GRZĄDKI ODBLOKOWANE)", font=("Georgia", 12, "bold"), fg="#a8ff9e", bg="#1a100b").pack(side=tk.LEFT, padx=10, pady=4)
         
         def harvest_all():
+            if self.player.get_unlocked_plots_count() == 0:
+                messagebox.showinfo("Ogród", "Twój ogród nie ma jeszcze żadnych odblokowanych grządek!\nWydzierżaw pole u Karczmarza Barnaby w Tawernie.")
+                return
             harvested = 0
             now = time.time()
             for plot in self.player.herb_garden:
+                if not plot.get("unlocked", False):
+                    continue
                 planted = plot.get("planted_at", 0)
                 g_time = plot.get("growth_time", 60)
                 h_type = plot.get("type", "herb_amanita")
                 if now - planted >= g_time:
-                    count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks else 1
+                    count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks and random.random() < 0.15 else 1
                     for _ in range(count):
                         self.player.add_to_inventory(h_type, is_reward=True)
                     plot["planted_at"] = now
@@ -3920,13 +4628,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     self.player.record_achievement_stat("herbs_harvested", count, mode="add")
             if harvested > 0:
                 sounds.play_coin()
-                self.log_msg(f"🌿 Zebrano {harvested} ziół z Ogrodu Domci! Posadzono nowe nasiona.")
+                self.log_msg(f"Zebrano {harvested} ziół z Ogrodu Domci! Posadzono nowe nasiona.")
                 self.update_sidebar()
                 self.show_alchemy()
             else:
-                messagebox.showinfo("Ogród", "Żadne zioło nie jest jeszcze w pełni dojrzałe!")
+                messagebox.showinfo("Ogród", "Żadne zioło na odblokowanych grządkach nie jest jeszcze w pełni dojrzałe!")
                 
-        ctk.CTkButton(garden_header, text="🌾 ZBIERZ WSZYSTKIE GOTOWE ZIOŁA", font=("Georgia", 10, "bold"), fg_color="#27ae60", hover_color="#2ecc71", command=harvest_all).pack(side=tk.RIGHT, padx=10, pady=3)
+        ctk.CTkButton(garden_header, text="ZBIERZ WSZYSTKIE GOTOWE ZIOŁA", font=("Georgia", 10, "bold"), fg_color="#27ae60", hover_color="#2ecc71", command=harvest_all).pack(side=tk.RIGHT, padx=10, pady=3)
         
         # 4 Grządki w rzędzie
         plots_frame = tk.Frame(main_frame, bg="#2c1a12")
@@ -3938,6 +4646,46 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         for idx, plot in enumerate(self.player.herb_garden):
             p_card = tk.Frame(plots_frame, bg="#1a100b", bd=2, relief=tk.GROOVE)
             p_card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=4, pady=2)
+            
+            # Grządka zablokowana
+            if not plot.get("unlocked", False):
+                tk.Label(p_card, text=f"Grządka #{idx+1} [Zablokowana]", font=("Georgia", 11, "bold"), fg="#e74c3c", bg="#1a100b").pack(pady=(6, 2))
+                tk.Label(p_card, text="[ZABLOKOWANA]", font=("Georgia", 9, "bold"), fg="#c0392b", bg="#1a100b").pack()
+                
+                if idx == 0:
+                    req_title = "Dzierżawa u Barnaby"
+                    req_desc = "Wydzierżaw pole przed gospodą u Karczmarza Barnaby w Tawernie (150 złota)."
+                    btn_text = "Idź do Tawerny"
+                    btn_cmd = self.show_tavern
+                elif idx == 1:
+                    req_title = "Zadanie Eczmego (Poz. 10+)"
+                    req_desc = "Ukończ zadanie fabularne 'Trening Szybkiej Zagrywki' u Eczmego w Tawernie."
+                    btn_text = "Dziennik Zadań"
+                    btn_cmd = self.show_quests
+                elif idx == 2:
+                    req_title = "Zadanie Pianka (Poz. 20+)"
+                    req_desc = "Ukończ zadanie fabularne 'Rozgrzewka na Czystą Masę' u Pianka w Tawernie."
+                    btn_text = "Dziennik Zadań"
+                    btn_cmd = self.show_quests
+                else:
+                    req_title = "Zadanie Domci (Poz. 40+)"
+                    req_desc = "Ukończ zadanie fabularne 'Oczyszczenie Czakr z Pnączy' u Domci w Tawernie."
+                    btn_text = "Dziennik Zadań"
+                    btn_cmd = self.show_quests
+
+                tk.Label(p_card, text=req_title, font=("Georgia", 9, "bold"), fg="#f39c12", bg="#1a100b", wraplength=170).pack(pady=(4, 1))
+                tk.Label(p_card, text=req_desc, font=("Georgia", 8, "italic"), fg="#888", bg="#1a100b", wraplength=170).pack(pady=(1, 4))
+                ctk.CTkButton(
+                    p_card, 
+                    text=btn_text, 
+                    height=24, 
+                    fg_color="#3e2723", 
+                    hover_color="#4e342e", 
+                    text_color="#f4d03f", 
+                    font=("Georgia", 9, "bold"), 
+                    command=btn_cmd
+                ).pack(pady=(2, 6))
+                continue
             
             h_type = plot.get("type", "herb_amanita")
             h_info = HERBS_DB.get(h_type, HERBS_DB["herb_amanita"])
@@ -3954,7 +4702,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             
             lbl_timer = tk.Label(
                 p_card, 
-                text="✅ GOTOWE DO ZBIORU!" if is_ready else f"🌱 Rośnie... ({rem_sec}s)", 
+                text="GOTOWE DO ZBIORU!" if is_ready else f"Rośnie... ({rem_sec}s)", 
                 font=("Georgia", 9, "bold" if is_ready else "italic"), 
                 fg="#2ecc71" if is_ready else "#f39c12", 
                 bg="#1a100b"
@@ -3962,13 +4710,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             lbl_timer.pack(pady=3)
             
             def harvest_single(p=plot, ht=h_type):
-                count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks else 1
+                count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks and random.random() < 0.15 else 1
                 for _ in range(count):
                     self.player.add_to_inventory(ht, is_reward=True)
                 p["planted_at"] = time.time()
                 self.player.record_achievement_stat("herbs_harvested", count, mode="add")
                 sounds.play_coin()
-                self.log_msg(f"🌿 Zebrano {count}x {HERBS_DB[ht]['name']}! Posadzono nowe nasiona.")
+                self.log_msg(f"Zebrano {count}x {HERBS_DB[ht]['name']}! Posadzono nowe nasiona.")
                 self.update_sidebar()
                 self.show_alchemy()
                 
@@ -3996,11 +4744,39 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         self.update_alchemy_timers()
                 
         # --- SEKCJA 2: KOCIOŁEK ALCHEMICZNY ---
-        cauldron_lbl = tk.Label(main_frame, text="⚗️ KOCIOŁEK ALCHEMICZNY (WARZENIE ELIKSIRÓW)", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#2c1a12")
+        cauldron_lbl = tk.Label(main_frame, text="KOCIOŁEK ALCHEMICZNY (WARZENIE ELIKSIRÓW)", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#2c1a12")
         cauldron_lbl.pack(pady=(8, 2))
         
         sf_recipes = ScrollableFrame(main_frame, bg_color="#1a100b")
         sf_recipes.pack(fill=tk.BOTH, expand=True, padx=15, pady=(2, 8))
+        
+        if unlocked_count == 0:
+            locked_cauldron_frame = tk.Frame(sf_recipes.scrollable_frame, bg="#2c1a12", bd=2, relief=tk.RIDGE)
+            locked_cauldron_frame.pack(fill=tk.X, padx=15, pady=10)
+            tk.Label(
+                locked_cauldron_frame,
+                text="KOCIOŁEK JEST WYGASZONY",
+                font=("Georgia", 12, "bold"),
+                fg="#e74c3c",
+                bg="#2c1a12"
+            ).pack(pady=(8, 2))
+            tk.Label(
+                locked_cauldron_frame,
+                text="Aby warzyć wywary i eliksiry, musisz najpierw posiadać składniki zielarskie.\nPorozmawiaj z Karczmarzem Barnabą w Tawernie i wydzierżaw pierwsze pole pod uprawę ziół za 150 złota!",
+                font=("Georgia", 10, "italic"),
+                fg="#f1c40f",
+                bg="#2c1a12",
+                justify=tk.CENTER
+            ).pack(pady=(2, 6))
+            ctk.CTkButton(
+                locked_cauldron_frame,
+                text="Przejdź do Tawerny (Karczmarz Barnaba)",
+                font=("Georgia", 11, "bold"),
+                fg_color="#27ae60",
+                hover_color="#2ecc71",
+                text_color="#ffffff",
+                command=self.show_tavern
+            ).pack(pady=(2, 10))
         
         inv_counts = {}
         for item_dict in self.player.inventory:
@@ -4024,35 +4800,39 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             for ing_k, ing_needed in r_data["ingredients"].items():
                 have_cnt = inv_counts.get(ing_k, 0)
                 ing_name = HERBS_DB.get(ing_k, {}).get("name", MONSTER_INGREDIENTS_DB.get(ing_k, {}).get("name", ing_k))
-                ing_icon = HERBS_DB.get(ing_k, {}).get("icon", MONSTER_INGREDIENTS_DB.get(ing_k, {}).get("icon", "📦"))
+                ing_icon = HERBS_DB.get(ing_k, {}).get("icon", MONSTER_INGREDIENTS_DB.get(ing_k, {}).get("icon", ""))
                 if have_cnt < ing_needed:
                     has_all = False
-                    req_parts.append(f"{ing_icon} {ing_name}: {have_cnt}/{ing_needed} ❌")
+                    req_parts.append(f"{ing_icon} {ing_name}: {have_cnt}/{ing_needed} [BRAK]")
                 else:
-                    req_parts.append(f"{ing_icon} {ing_name}: {have_cnt}/{ing_needed} ✅")
+                    req_parts.append(f"{ing_icon} {ing_name}: {have_cnt}/{ing_needed} [OK]")
             
             tk.Label(r_info, text="Wymagane: " + " | ".join(req_parts), font=("Georgia", 8, "bold"), fg="#f4d03f", bg="#2a1610", anchor="w").pack(fill=tk.X, pady=(2, 0))
             
-            if has_all:
-                def brew(rid=r_id, rinfo=r_data):
+            max_craft = min([inv_counts.get(ing_k, 0) // ing_needed for ing_k, ing_needed in r_data["ingredients"].items()])
+            if has_all and max_craft >= 1:
+                def brew(rid=r_id, rinfo=r_data, count_to_brew=1):
+                    count_to_brew = max(1, count_to_brew)
                     for ing_k, ing_needed in rinfo["ingredients"].items():
+                        total_needed = ing_needed * count_to_brew
                         removed = 0
                         for i_dict in list(self.player.inventory):
-                            if i_dict.get("id") == ing_k and removed < ing_needed:
+                            if i_dict.get("id") == ing_k and removed < total_needed:
                                 self.player.inventory.remove(i_dict)
                                 removed += 1
                                 
                     if "is_item_reward" in rinfo:
-                        self.player.add_to_inventory(rinfo["is_item_reward"], is_reward=True)
-                        self.log_msg(f"⚗️ Uwarzono: {rinfo['name']}! Dodano do plecaka.")
+                        for _ in range(count_to_brew):
+                            self.player.add_to_inventory(rinfo["is_item_reward"], is_reward=True)
+                        self.log_msg(f"Uwarzono {count_to_brew}x: {rinfo['name']}! Dodano do plecaka.")
                     else:
-                        dur = rinfo.get("duration_fights", 5)
+                        dur = rinfo.get("duration_fights", 10) * count_to_brew
                         self.player.active_buffs[rid] = self.player.active_buffs.get(rid, 0) + dur
-                        self.log_msg(f"⚗️ Wypito świeżo uwarzony {rinfo['name']}!")
+                        self.log_msg(f"Wypito {count_to_brew}x {rinfo['name']} (+{dur} walk buffa)!")
                         
-                    self.player.record_achievement_stat("potions_brewed", 1, mode="add")
+                    self.player.record_achievement_stat("potions_brewed", count_to_brew, mode="add")
                     if rid == "elixir_psychedelic":
-                        self.player.record_achievement_stat("psychedelic_brewed", 1, mode="add")
+                        self.player.record_achievement_stat("psychedelic_brewed", count_to_brew, mode="add")
                         self.start_psychedelic_trip(60)
                         
                     sounds.play_coin()
@@ -4060,7 +4840,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     self.update_sidebar()
                     self.show_alchemy()
                     
-                ctk.CTkButton(r_card, text="⚗️ Uwarz Eliksir", width=120, font=("Georgia", 10, "bold"), fg_color="#8e44ad", hover_color="#9b59b6", command=brew).pack(side=tk.RIGHT, padx=10, pady=8)
+                if max_craft > 1:
+                    btn_f_brew = tk.Frame(r_card, bg="#2a1610")
+                    btn_f_brew.pack(side=tk.RIGHT, padx=10, pady=6)
+                    ctk.CTkButton(btn_f_brew, text="1x", width=65, font=("Georgia", 10, "bold"), fg_color="#8e44ad", hover_color="#9b59b6", command=lambda: brew(r_id, r_data, 1)).pack(side=tk.LEFT, padx=3)
+                    ctk.CTkButton(btn_f_brew, text=f"Wszystkie ({max_craft}x)", width=120, font=("Georgia", 10, "bold"), fg_color="#27ae60", hover_color="#2ecc71", command=lambda: brew(r_id, r_data, max_craft)).pack(side=tk.LEFT, padx=3)
+                else:
+                    ctk.CTkButton(r_card, text="Uwarz Eliksir", width=120, font=("Georgia", 10, "bold"), fg_color="#8e44ad", hover_color="#9b59b6", command=lambda: brew(r_id, r_data, 1)).pack(side=tk.RIGHT, padx=10, pady=8)
             else:
                 ctk.CTkButton(r_card, text="Brak składników", width=120, font=("Georgia", 9, "italic"), fg_color="#2a1610", text_color="#888", state=tk.DISABLED).pack(side=tk.RIGHT, padx=10, pady=8)
 
@@ -4084,16 +4870,16 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             elapsed = now - planted
             
             if elapsed >= g_time:
-                lbl.configure(text="✅ GOTOWE DO ZBIORU!", font=("Georgia", 9, "bold"), fg="#2ecc71")
+                lbl.configure(text="GOTOWE DO ZBIORU!", font=("Georgia", 9, "bold"), fg="#2ecc71")
                 def make_harvest(p=plot, ht=h_type):
                     def do_h():
-                        count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks else 1
+                        count = 2 if getattr(self.player, 'permanent_perks', None) and "perk_alchemist_touch" in self.player.permanent_perks and random.random() < 0.15 else 1
                         for _ in range(count):
                             self.player.add_to_inventory(ht, is_reward=True)
                         p["planted_at"] = time.time()
                         self.player.record_achievement_stat("herbs_harvested", count, mode="add")
                         sounds.play_coin()
-                        self.log_msg(f"🌿 Zebrano {count}x {HERBS_DB[ht]['name']}! Posadzono nowe nasiona.")
+                        self.log_msg(f"Zebrano {count}x {HERBS_DB[ht]['name']}! Posadzono nowe nasiona.")
                         self.update_sidebar()
                         self.show_alchemy()
                     return do_h
@@ -4108,7 +4894,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 )
             else:
                 rem_sec = max(0, int(g_time - elapsed))
-                lbl.configure(text=f"🌱 Rośnie... ({rem_sec}s)", font=("Georgia", 9, "italic"), fg="#f39c12")
+                lbl.configure(text=f"Rośnie... ({rem_sec}s)", font=("Georgia", 9, "italic"), fg="#f39c12")
                 btn.configure(
                     text="Czekaj...",
                     state=tk.DISABLED,
@@ -4126,11 +4912,11 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             return
             
         win = tk.Toplevel(self.root)
-        win.title("🛠 Debug Konsola / Cheaty")
+        win.title("Debug Konsola / Cheaty")
         win.configure(bg="#2c1a12")
         win.transient(self.root)
         
-        tk.Label(win, text="🛠 KONSOLA DEBUGOWANIA (TESTY)", font=("Georgia", 16, "bold"), fg="#f4d03f", bg="#2c1a12").pack(pady=12)
+        tk.Label(win, text="KONSOLA DEBUGOWANIA (TESTY)", font=("Georgia", 16, "bold"), fg="#f4d03f", bg="#2c1a12").pack(pady=12)
         
         btn_frame = tk.Frame(win, bg="#2c1a12")
         btn_frame.pack(fill=tk.X, )
@@ -4178,18 +4964,18 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         f_boss = tk.Frame(win, bg="#1a100b", bd=2, relief=tk.GROOVE)
         f_boss.pack(fill=tk.X, padx=20, pady=8)
         
-        tk.Label(f_boss, text="👹 SZYBKA WALKA Z BOSSAMI (TESTY):", font=("Georgia", 11, "bold"), fg="#e74c3c", bg="#1a100b").pack(pady=4)
+        tk.Label(f_boss, text=" SZYBKA WALKA Z BOSSAMI (TESTY):", font=("Georgia", 11, "bold"), fg="#e74c3c", bg="#1a100b").pack(pady=4)
         
         b_box = tk.Frame(f_boss, bg="#1a100b")
         b_box.pack(fill=tk.X, padx=5, pady=4)
         
-        ctk.CTkButton(b_box, text="⚔️ Walcz: Giga Ork Ptyś (Loch 1)", fg_color="#7f1d1d", text_color="#f4d03f", font=("Georgia", 10, "bold"), 
+        ctk.CTkButton(b_box, text="Walcz: Giga Ork Ptyś (Loch 1)", fg_color="#7f1d1d", text_color="#f4d03f", font=("Georgia", 10, "bold"), 
                       command=lambda: (win.destroy(), self.debug_fight_boss("boss_ptys", skip_cinematic=True))).grid(row=0, column=0, padx=4, pady=3, sticky="ew")
         
-        ctk.CTkButton(b_box, text="⚔️ Walcz: Kollman (Loch 2)", fg_color="#7f1d1d", text_color="#f4d03f", font=("Georgia", 10, "bold"), 
+        ctk.CTkButton(b_box, text="Walcz: Kollman (Loch 2)", fg_color="#7f1d1d", text_color="#f4d03f", font=("Georgia", 10, "bold"), 
                       command=lambda: (win.destroy(), self.debug_fight_boss("boss_kollman", skip_cinematic=True))).grid(row=0, column=1, padx=4, pady=3, sticky="ew")
                       
-        ctk.CTkButton(b_box, text="🎬 Cutscenka + Walka: Ork Ptyś", fg_color="#3e2723", text_color="#a8ff9e", font=("Georgia", 10, "bold"), 
+        ctk.CTkButton(b_box, text="Cutscenka + Walka: Ork Ptyś", fg_color="#3e2723", text_color="#a8ff9e", font=("Georgia", 10, "bold"), 
                       command=lambda: (win.destroy(), self.debug_fight_boss("boss_ptys", skip_cinematic=False))).grid(row=1, column=0, columnspan=2, padx=4, pady=3, sticky="ew")
                       
         b_box.columnconfigure(0, weight=1)
@@ -4198,21 +4984,21 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         # Testy Ekwipunku, Klejnotów, Osiągnięć i Alchemii
         f_inv_test = tk.Frame(win, bg="#1a100b", bd=2, relief=tk.GROOVE)
         f_inv_test.pack(fill=tk.X, padx=20, pady=6)
-        tk.Label(f_inv_test, text="🔮 TESTY NOWYCH SYSTEMÓW (KLEJNOTY, ALCHEMIA, OSIĄGNIĘCIA):", font=("Georgia", 10, "bold"), fg="#f39c12", bg="#1a100b").pack(pady=3)
+        tk.Label(f_inv_test, text="TESTY NOWYCH SYSTEMÓW (KLEJNOTY, ALCHEMIA, OSIĄGNIĘCIA):", font=("Georgia", 10, "bold"), fg="#f39c12", bg="#1a100b").pack(pady=3)
         inv_box = tk.Frame(f_inv_test, bg="#1a100b")
         inv_box.pack(fill=tk.X, padx=5, pady=3)
         
         def debug_add_gems():
             for gid in GEMS_DB:
                 self.player.add_to_inventory(gid, is_reward=True)
-            self.log_msg("🔮 [DEBUG] Dodano po 1 szt. każdego Magicznego Klejnotu!")
+            self.log_msg("[DEBUG] Dodano po 1 szt. każdego Magicznego Klejnotu!")
             lbl_status.configure(text="Dodano komplet klejnotów do plecaka!")
             self.update_sidebar()
 
         def debug_add_socketed_item():
             item_d = {"id": "wep_mithril_blade", "lvl": 3, "sockets": [None, None]}
             self.player.add_to_inventory(item_d, is_reward=True)
-            self.log_msg("💎 [DEBUG] Dodano Mithrilowe Ostrze +3 z 2 wolnymi gniazdami!")
+            self.log_msg("[DEBUG] Dodano Mithrilowe Ostrze +3 z 2 wolnymi gniazdami!")
             lbl_status.configure(text="Dodano broń z 2 gniazdami!")
             self.update_sidebar()
 
@@ -4223,7 +5009,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             for mid in MONSTER_INGREDIENTS_DB:
                 self.player.add_to_inventory(mid, is_reward=True)
                 self.player.add_to_inventory(mid, is_reward=True)
-            self.log_msg("🧪 [DEBUG] Dodano komplet ziół i składników potworów (po 2 szt.)!")
+            self.log_msg("[DEBUG] Dodano komplet ziół i składników potworów (po 2 szt.)!")
             lbl_status.configure(text="Dodano składniki alchemiczne!")
             self.update_sidebar()
 
@@ -4231,13 +5017,13 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             now = time.time()
             for p in getattr(self.player, 'herb_garden', []):
                 p["planted_at"] = now - 9999
-            self.log_msg("🌱 [DEBUG] Wszystkie zioła w ogrodzie Domci natychmiast dojrzały!")
+            self.log_msg("[DEBUG] Wszystkie zioła w ogrodzie Domci natychmiast dojrzały!")
             lbl_status.configure(text="Zioła w ogrodzie gotowe do zbioru!")
             self.update_sidebar()
 
         def debug_psychedelic():
             self.start_psychedelic_trip(60)
-            self.log_msg("🌀 [DEBUG] Aktywowano Ziółko (60-sekundowa psychodela i deformacja świata)!")
+            self.log_msg("[DEBUG] Aktywowano Ziółko (60-sekundowa psychodela i deformacja świata)!")
             lbl_status.configure(text="Aktywowano Ziółko (60s)!")
             self.update_sidebar()
 
@@ -4253,17 +5039,17 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.player.achievement_stats["herbs_harvested"] = 50
             self.player.achievement_stats["potions_brewed"] = 25
             self.player.achievement_stats["total_gold_earned"] = 200000
-            self.log_msg("🏆 [DEBUG] Zaktualizowano statystyki: Wszystkie osiągnięcia gotowe do odbioru!")
+            self.log_msg("[DEBUG] Zaktualizowano statystyki: Wszystkie osiągnięcia gotowe do odbioru!")
             lbl_status.configure(text="Wszystkie osiągnięcia ukończone!")
             self.update_sidebar()
 
-        ctk.CTkButton(inv_box, text="🔮 +Klejnoty (Komplet)", fg_color="#27ae60", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_gems).grid(row=0, column=0, padx=2, pady=2, sticky="ew")
-        ctk.CTkButton(inv_box, text="💎 +Broń (2 Gniazda)", fg_color="#2980b9", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_socketed_item).grid(row=0, column=1, padx=2, pady=2, sticky="ew")
-        ctk.CTkButton(inv_box, text="🧪 +Składniki Alchemii", fg_color="#8e44ad", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_alchemy_items).grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="+Klejnoty (Komplet)", fg_color="#27ae60", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_gems).grid(row=0, column=0, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="+Broń (2 Gniazda)", fg_color="#2980b9", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_socketed_item).grid(row=0, column=1, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="+Składniki Alchemii", fg_color="#8e44ad", text_color="white", font=("Georgia", 9, "bold"), command=debug_add_alchemy_items).grid(row=0, column=2, padx=2, pady=2, sticky="ew")
         
-        ctk.CTkButton(inv_box, text="🌱 Dojrzyj Ogród Ziół", fg_color="#16a085", text_color="white", font=("Georgia", 9, "bold"), command=debug_grow_garden).grid(row=1, column=0, padx=2, pady=2, sticky="ew")
-        ctk.CTkButton(inv_box, text="🌀 Włącz Psychodelię", fg_color="#6c5ce7", text_color="white", font=("Georgia", 9, "bold"), command=debug_psychedelic).grid(row=1, column=1, padx=2, pady=2, sticky="ew")
-        ctk.CTkButton(inv_box, text="🏆 Odblokuj Osiągnięcia", fg_color="#d35400", text_color="white", font=("Georgia", 9, "bold"), command=debug_complete_achievements).grid(row=1, column=2, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="Dojrzyj Ogród Ziół", fg_color="#16a085", text_color="white", font=("Georgia", 9, "bold"), command=debug_grow_garden).grid(row=1, column=0, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="Włącz Psychodelię", fg_color="#6c5ce7", text_color="white", font=("Georgia", 9, "bold"), command=debug_psychedelic).grid(row=1, column=1, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(inv_box, text="Odblokuj Osiągnięcia", fg_color="#d35400", text_color="white", font=("Georgia", 9, "bold"), command=debug_complete_achievements).grid(row=1, column=2, padx=2, pady=2, sticky="ew")
 
         inv_box.columnconfigure(0, weight=1)
         inv_box.columnconfigure(1, weight=1)
@@ -4356,7 +5142,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.player.bounties = generate_daily_bounties(self.player.level)
             
         win = tk.Toplevel(self.root)
-        win.title("📋 TABLICA OGŁOSZEŃ - GOSPODA BARNABY")
+        win.title("TABLICA OGŁOSZEŃ - GOSPODA BARNABY")
         win.geometry("900x750")
         win.configure(bg="#1a100b")
         win.transient(self.root)
@@ -4371,7 +5157,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
         header = tk.Frame(win, bg="#2c1a12", bd=3, relief=tk.RIDGE)
         header.pack(fill=tk.X, padx=15, pady=12)
         
-        tk.Label(header, text="📋 TABLICA ZLECEŃ KARCZMARZA BARNABY 📋", font=("Georgia", 18, "bold"), fg="#f4d03f", bg="#2c1a12").pack(pady=(8, 2))
+        tk.Label(header, text="TABLICA ZLECEŃ KARCZMARZA BARNABY", font=("Georgia", 18, "bold"), fg="#f4d03f", bg="#2c1a12").pack(pady=(8, 2))
         tk.Label(header, text="Wypełniaj zlecenia na potwory, lochy i kowalstwo, by zdobywać złoto, doświadczenie oraz cenne eliksiry!", font=("Georgia", 11, "italic"), fg="#ddd", bg="#2c1a12").pack(pady=(0, 8))
         
         # Cards container
@@ -4390,22 +5176,22 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 info_f = tk.Frame(card, bg="#2c1a12")
                 info_f.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=15, pady=10)
                 
-                status_icon = "📜" if b.status == "AVAILABLE" else ("⏳" if b.status == "IN_PROGRESS" else ("🎁" if b.status == "COMPLETED" else "✅"))
+                status_icon = "[DOSTĘPNE]" if b.status == "AVAILABLE" else ("[W TOKU]" if b.status == "IN_PROGRESS" else ("[GOTOWE]" if b.status == "COMPLETED" else "[ODEBRANO]"))
                 tk.Label(info_f, text=f"{status_icon} {b.title}", font=("Georgia", 14, "bold"), fg="#f4d03f", bg="#2c1a12").pack(anchor="w")
                 tk.Label(info_f, text=b.description, font=("Georgia", 10, "italic"), fg="#ccc", bg="#2c1a12", wraplength=520, justify=tk.LEFT).pack(anchor="w", pady=(2, 6))
                 
                 # Postęp
-                prog_text = f"🎯 Cel: {b.current_count} / {b.target_count}"
+                prog_text = f"Cel: {b.current_count} / {b.target_count}"
                 if b.status == "CLAIMED":
                     prog_text += " [ZREALIZOWANO]"
                 prog_color = "#2ecc71" if b.status in ["COMPLETED", "CLAIMED"] else "#f39c12"
                 tk.Label(info_f, text=prog_text, font=("Georgia", 11, "bold"), fg=prog_color, bg="#2c1a12").pack(anchor="w")
                 
                 # Nagrody
-                rew_text = f"💰 +{b.gold_reward}g  |  ⭐ +{b.exp_reward} EXP"
+                rew_text = f"+{b.gold_reward}g  |  +{b.exp_reward} EXP"
                 if b.item_reward:
-                    rew_text += "  |  🧪 +1 Mikstura Zdrowia"
-                tk.Label(info_f, text=f"🎁 Nagroda: {rew_text}", font=("Georgia", 10, "bold"), fg="#e67e22", bg="#2c1a12").pack(anchor="w", pady=(2, 0))
+                    rew_text += "  |  +1 Mikstura Zdrowia"
+                tk.Label(info_f, text=f"Nagroda: {rew_text}", font=("Georgia", 10, "bold"), fg="#e67e22", bg="#2c1a12").pack(anchor="w", pady=(2, 0))
                 
                 # Right action button
                 act_f = tk.Frame(card, bg="#2c1a12")
@@ -4415,7 +5201,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                     def do_accept(bounty=b):
                         bounty.accept()
                         sounds.play_quest_accept()
-                        self.log_msg(f"📋 Przyjęto zlecenie z tablicy: '{bounty.title}'!")
+                        self.log_msg(f"Przyjęto zlecenie z tablicy: '{bounty.title}'!")
                         refresh_board_ui()
                     ctk.CTkButton(act_f, text="Przyjmij Zlecenie", font=("Georgia", 12, "bold"), fg_color="#f1c40f", text_color="black", hover_color="#f39c12", command=do_accept).pack(pady=10)
                 elif b.status == "IN_PROGRESS":
@@ -4425,12 +5211,12 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                         if bounty.claim_reward(self.player):
                             sounds.play_quest_complete()
                             sounds.play_coin()
-                            self.log_msg(f"🎁 Odebrano nagrodę za zlecenie '{bounty.title}' (+{bounty.gold_reward}g, +{bounty.exp_reward} EXP)!")
+                            self.log_msg(f"Odebrano nagrodę za zlecenie '{bounty.title}' (+{bounty.gold_reward}g, +{bounty.exp_reward} EXP)!")
                             self.update_sidebar()
                             refresh_board_ui()
-                    ctk.CTkButton(act_f, text="🎁 ODBIERZ NAGRODĘ!", font=("Georgia", 12, "bold"), fg_color="#27ae60", hover_color="#2ecc71", text_color="white", command=do_claim).pack(pady=10)
+                    ctk.CTkButton(act_f, text="ODBIERZ NAGRODĘ!", font=("Georgia", 12, "bold"), fg_color="#27ae60", hover_color="#2ecc71", text_color="white", command=do_claim).pack(pady=10)
                 elif b.status == "CLAIMED":
-                    tk.Label(act_f, text="✅ Odebrano", font=("Georgia", 12, "bold"), fg="#7f8c8d", bg="#2c1a12").pack(pady=10)
+                    tk.Label(act_f, text="Odebrano", font=("Georgia", 12, "bold"), fg="#7f8c8d", bg="#2c1a12").pack(pady=10)
                     
         refresh_board_ui()
         
@@ -4448,10 +5234,10 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
                 self.player.bounties = generate_daily_bounties(self.player.level)
                 sounds.play_coin()
                 self.update_sidebar()
-                self.log_msg("📋 Odświeżono Tablicę Ogłoszeń u Karczmarza Barnaby.")
+                self.log_msg("Odświeżono Tablicę Ogłoszeń u Karczmarza Barnaby.")
                 refresh_board_ui()
                 
-        ctk.CTkButton(footer, text="🔄 Nowe Zlecenia (Koszt: 50g)", font=("Georgia", 12, "bold"), fg_color="#34495e", hover_color="#415b76", command=reroll_bounties).pack(side=tk.LEFT, padx=10)
+        ctk.CTkButton(footer, text="Nowe Zlecenia (Koszt: 50g)", font=("Georgia", 12, "bold"), fg_color="#34495e", hover_color="#415b76", command=reroll_bounties).pack(side=tk.LEFT, padx=10)
         ctk.CTkButton(footer, text="Zamknij", font=("Georgia", 11, "italic"), fg_color="#2a1610", text_color="#aaa", command=win.destroy).pack(side=tk.RIGHT, padx=10)
 
     def open_tavern_rest(self):
@@ -4480,7 +5266,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
 
         tk.Label(
             rest_win, 
-            text="🛏️ ODPOCZYNEK PRZY CIEPŁYM KOMINKU 🛏️", 
+            text="ODPOCZYNEK PRZY CIEPŁYM KOMINKU", 
             font=("Georgia", 15, "bold"), 
             fg="#f4d03f", 
             bg="#1c100b"
@@ -4519,7 +5305,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
 
         lbl_hp_val = tk.Label(
             bar_bg, 
-            text=f"❤ HP: {int(self.player.hp)} / {max_hp} ({int(init_ratio * 100)}%)", 
+            text=f"HP: {int(self.player.hp)} / {max_hp} ({int(init_ratio * 100)}%)", 
             font=("Georgia", 11, "bold"), 
             fg="white", 
             bg="#0d0705"
@@ -4563,15 +5349,15 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             ratio = max(0.0, min(1.0, self.player.hp / cur_max))
             
             bar_fill.place(x=0, y=0, width=int(bar_w * ratio), relheight=1.0)
-            lbl_hp_val.configure(text=f"❤ HP: {int(self.player.hp)} / {cur_max} ({int(ratio * 100)}%)")
+            lbl_hp_val.configure(text=f"HP: {int(self.player.hp)} / {cur_max} ({int(ratio * 100)}%)")
             self.update_sidebar()
 
             if self.player.hp >= cur_max:
                 sounds.play_level_up()
-                lbl_hero.configure(text=f"✨ Gracz {self.player.name} w pełni zregenerował siły życiowe! ✨", fg="#2ecc71")
+                lbl_hero.configure(text=f"Gracz {self.player.name} w pełni zregenerował siły życiowe!", fg="#2ecc71")
                 lbl_desc.configure(text="Czujesz niesamowity przypływ energii i jesteś gotów do kolejnych wypraw oraz walk!")
-                btn_action.configure(text="✅ Wstań wypoczęty (Zamknij)", fg_color="#27ae60", hover_color="#2ecc71", text_color="#ffffff")
-                self.log_msg(f"🛏️ [TAWERNA] {self.player.name} odpoczął w tawernie i w pełni zregenerował zdrowie ({cur_max} HP)!")
+                btn_action.configure(text="Wstań wypoczęty (Zamknij)", fg_color="#27ae60", hover_color="#2ecc71", text_color="#ffffff")
+                self.log_msg(f"[TAWERNA] {self.player.name} odpoczął w tawernie i w pełni zregenerował zdrowie ({cur_max} HP)!")
                 rest_timer_id[0] = None
             else:
                 rest_timer_id[0] = self.root.after(100, tick_rest)
@@ -4600,7 +5386,7 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             
         sounds.play_quest_complete()
         names_str = ", ".join(claimed)
-        self.log_msg(f"🎁 Odebrano z depozytu Barnaby ({len(claimed)} szt.): {names_str}")
+        self.log_msg(f"Odebrano z depozytu Barnaby ({len(claimed)} szt.): {names_str}")
         self.update_sidebar()
         
         remaining = len(self.player.inventory_stash)
@@ -4613,6 +5399,183 @@ Zrekrutowano: {unlocked_count}/6{buff_str}"""
             self.show_equipment()
         elif self.current_view == "tavern":
             self.show_tavern()
+
+    def open_companion_expeditions(self):
+        """Okno zarządzania wyprawami drużyny (ekspedycje towarzyszy)."""
+        exp_win = tk.Toplevel(self.root)
+        exp_win.title("Wyprawy Towarzyszy - Tawerna")
+        exp_win.geometry("780x620")
+        exp_win.configure(bg="#1a100b")
+        exp_win.transient(self.root)
+        exp_win.grab_set()
+
+        exp_win.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() - 780) // 2
+        y = self.root.winfo_y() + (self.root.winfo_height() - 620) // 2
+        exp_win.geometry(f"+{x}+{y}")
+
+        tk.Label(exp_win, text="WYPRAWY TOWARZYSZY (ZWIADY)", font=("Georgia", 16, "bold"), fg="#f4d03f", bg="#1a100b").pack(pady=(15, 2))
+        tk.Label(
+            exp_win,
+            text="Wysyłaj wolnych towarzyszy na samodzielne ekspedycje, by zdobywali rzadkie zioła, klejnoty i surowce!\nTowarzysz aktualnie aktywny w drużynie nie może wyruszać na wyprawy.",
+            font=("Georgia", 9, "italic"),
+            fg="#cccccc",
+            bg="#1a100b",
+            justify=tk.CENTER
+        ).pack(pady=(0, 10))
+
+        content_f = tk.Frame(exp_win, bg="#1a100b")
+        content_f.pack(fill=tk.BOTH, expand=True, padx=20, pady=5)
+
+        # Pobierz wolnych towarzyszy (odblokowani, nie aktywni, nie na innej wyprawie)
+        all_unlocked = [cid for cid, unl in getattr(self.player, 'unlocked_companions', {}).items() if unl]
+        active_c = getattr(self.player, 'active_companion', None)
+        busy_c = [d.get("companion_id") for d in getattr(self.player, 'expeditions', {}).values()]
+
+        available_c = [cid for cid in all_unlocked if cid != active_c and cid not in busy_c]
+
+        # Lista dostępnych towarzyszy u góry
+        top_bar = tk.Frame(content_f, bg="#2c1a12", bd=2, relief=tk.RIDGE)
+        top_bar.pack(fill=tk.X, pady=(0, 10), ipady=5)
+        
+        comp_names = [npc_lore.NPC_DB.get(cid, {}).get("name", cid).split(",")[0] for cid in available_c]
+        names_str = ", ".join(comp_names) if comp_names else "Brak (wszyscy zajęci lub nieodblokowani)"
+        tk.Label(top_bar, text=f"Dostępni towarzysze ({len(available_c)}): {names_str}", font=("Georgia", 10, "bold"), fg="#2ecc71" if available_c else "#e74c3c", bg="#2c1a12").pack(padx=10)
+
+        # Renderowanie 3 typów wypraw
+        exp_container = tk.Frame(content_f, bg="#1a100b")
+        exp_container.pack(fill=tk.BOTH, expand=True)
+
+        timer_labels = {}
+
+        def refresh_exp_view():
+            exp_win.destroy()
+            self.open_companion_expeditions()
+
+        def try_claim(exp_type):
+            ok, msg = self.player.claim_expedition(exp_type)
+            if ok:
+                sounds.play_quest_complete()
+                self.log_msg(f"{msg}")
+                self.update_sidebar()
+                refresh_exp_view()
+            else:
+                messagebox.showinfo("Wyprawa", msg)
+
+        def try_start(exp_type, comp_id):
+            ok, msg = self.player.start_expedition(exp_type, comp_id)
+            if ok:
+                sounds.play_ui_click()
+                self.log_msg(f"{msg}")
+                refresh_exp_view()
+            else:
+                messagebox.showwarning("Wyprawa", msg)
+
+        for e_key, e_def in player_module.EXPEDITION_TYPES.items():
+            card = tk.Frame(exp_container, bg="#2c1a12", bd=2, relief=tk.RIDGE)
+            card.pack(fill=tk.X, pady=6, ipady=4)
+
+            left_box = tk.Frame(card, bg="#2c1a12")
+            left_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=12, pady=6)
+
+            tk.Label(left_box, text=f"{e_def['name']} ({e_def['duration_sec'] // 60} min)", font=("Georgia", 12, "bold"), fg="#f4d03f", bg="#2c1a12").pack(anchor=tk.W)
+            tk.Label(left_box, text=e_def['description'], font=("Georgia", 9, "italic"), fg="#cccccc", bg="#2c1a12").pack(anchor=tk.W)
+
+            right_box = tk.Frame(card, bg="#2c1a12")
+            right_box.pack(side=tk.RIGHT, padx=12, pady=6)
+
+            # Sprawdź stan obecnej wyprawy
+            cur_exp = getattr(self.player, 'expeditions', {}).get(e_key)
+            if cur_exp:
+                c_name = npc_lore.NPC_DB.get(cur_exp['companion_id'], {}).get("name", cur_exp['companion_id']).split(",")[0]
+                if self.player.is_expedition_ready(e_key):
+                    tk.Label(right_box, text=f"{c_name} powrócił!", font=("Georgia", 10, "bold"), fg="#2ecc71", bg="#2c1a12").pack(pady=2)
+                    btn_clm = ctk.CTkButton(
+                        right_box,
+                        text="ODBIERZ NAGRODY",
+                        font=("Georgia", 10, "bold"),
+                        fg_color="#27ae60",
+                        hover_color="#2ecc71",
+                        text_color="white",
+                        width=150,
+                        height=28,
+                        command=lambda ek=e_key: try_claim(ek)
+                    )
+                    btn_clm.pack()
+                else:
+                    rem_sec = self.player.get_expedition_remaining_sec(e_key)
+                    m = rem_sec // 60
+                    s = rem_sec % 60
+                    t_lbl = tk.Label(right_box, text=f"{c_name}: {m:02d}:{s:02d}", font=("Georgia", 10, "bold"), fg="#f39c12", bg="#2c1a12")
+                    t_lbl.pack(pady=4)
+                    timer_labels[e_key] = t_lbl
+            else:
+                # Opcja wysłania wolnego towarzysza
+                if available_c:
+                    sel_var = tk.StringVar(value=available_c[0])
+                    combo_opts = [f"{cid} ({npc_lore.NPC_DB.get(cid, {}).get('name', cid).split(',')[0]})" for cid in available_c]
+                    cid_map = {f"{cid} ({npc_lore.NPC_DB.get(cid, {}).get('name', cid).split(',')[0]})": cid for cid in available_c}
+                    sel_name = tk.StringVar(value=combo_opts[0])
+
+                    opt_menu = ctk.CTkOptionMenu(
+                        right_box,
+                        values=combo_opts,
+                        variable=sel_name,
+                        width=140,
+                        height=26,
+                        font=("Georgia", 9),
+                        fg_color="#3e2723",
+                        button_color="#5d4037"
+                    )
+                    opt_menu.pack(pady=2)
+
+                    btn_go = ctk.CTkButton(
+                        right_box,
+                        text="WYŚLIJ",
+                        font=("Georgia", 10, "bold"),
+                        fg_color="#8b4513",
+                        hover_color="#a0522d",
+                        text_color="#f4d03f",
+                        width=140,
+                        height=26,
+                        command=lambda ek=e_key, sn=sel_name, cm=cid_map: try_start(ek, cm[sn.get()])
+                    )
+                    btn_go.pack(pady=2)
+                else:
+                    tk.Label(right_box, text="Brak wolnych towarzyszy", font=("Georgia", 9, "italic"), fg="#888888", bg="#2c1a12").pack(pady=6)
+
+        # Dynamiczny timer odświeżania odliczania w oknie
+        active_timer_id = [None]
+        def tick_exp_timers():
+            if not exp_win.winfo_exists():
+                return
+            all_done = False
+            for ek, lbl in timer_labels.items():
+                if self.player.is_expedition_ready(ek):
+                    all_done = True
+                else:
+                    rem = self.player.get_expedition_remaining_sec(ek)
+                    m = rem // 60
+                    s = rem % 60
+                    cur_c = getattr(self.player, 'expeditions', {}).get(ek, {}).get('companion_id', '')
+                    c_n = npc_lore.NPC_DB.get(cur_c, {}).get("name", cur_c).split(",")[0]
+                    lbl.configure(text=f"{c_n}: {m:02d}:{s:02d}")
+            if all_done:
+                refresh_exp_view()
+            else:
+                active_timer_id[0] = self.root.after(1000, tick_exp_timers)
+
+        if timer_labels:
+            active_timer_id[0] = self.root.after(1000, tick_exp_timers)
+
+        def on_close():
+            if active_timer_id[0]:
+                self.root.after_cancel(active_timer_id[0])
+            exp_win.destroy()
+            if self.current_view == "tavern":
+                self.show_tavern()
+
+        exp_win.protocol("WM_DELETE_WINDOW", on_close)
 
     def save_and_quit(self):
         if self.player and self.current_save_path:

@@ -5,7 +5,7 @@ ACHIEVEMENTS_DB = {
     "kill_10": {
         "id": "kill_10",
         "category": "walka",
-        "icon": "🗡️",
+        "icon": "",
         "title": "Pierwsza Krew",
         "desc": "Pokonaj 10 dowolnych potworów w walce.",
         "stat_key": "total_kills",
@@ -15,7 +15,7 @@ ACHIEVEMENTS_DB = {
     "kill_50": {
         "id": "kill_50",
         "category": "walka",
-        "icon": "⚔️",
+        "icon": "",
         "title": "Pogromca Potworów",
         "desc": "Pokonaj 50 potworów w walce.",
         "stat_key": "total_kills",
@@ -25,7 +25,7 @@ ACHIEVEMENTS_DB = {
     "kill_250": {
         "id": "kill_250",
         "category": "walka",
-        "icon": "💀",
+        "icon": "",
         "title": "Żniwiarz Cienia",
         "desc": "Pokonaj 250 potworów w walce.",
         "stat_key": "total_kills",
@@ -34,13 +34,13 @@ ACHIEVEMENTS_DB = {
             "gold": 10000, 
             "exp": 5000,
             "perk_id": "perk_slayer",
-            "perk_desc": "⚡ Stały Perk: +5% do wszystkich Obrażeń Bohatera"
+            "perk_desc": "Stały Perk: +5% do wszystkich Obrażeń Bohatera"
         }
     },
     "crit_50": {
         "id": "crit_50",
         "category": "walka",
-        "icon": "🎯",
+        "icon": "",
         "title": "Precyzja Zabójcy",
         "desc": "Zadaj 50 trafień krytycznych wrogom.",
         "stat_key": "total_crits",
@@ -49,7 +49,7 @@ ACHIEVEMENTS_DB = {
             "gold": 5000, 
             "exp": 2500,
             "perk_id": "perk_crit_master",
-            "perk_desc": "⚡ Stały Perk: +3% Szansy na Trafienie Krytyczne"
+            "perk_desc": "Stały Perk: +3% Szansy na Trafienie Krytyczne"
         }
     },
 
@@ -57,7 +57,7 @@ ACHIEVEMENTS_DB = {
     "boss_ptys": {
         "id": "boss_ptys",
         "category": "lochy",
-        "icon": "👹",
+        "icon": "",
         "title": "Zguba Orków",
         "desc": "Pokonaj potężnego bossa Giga Orka Ptysia w 1. lochu.",
         "stat_key": "boss_ptys_kills",
@@ -67,7 +67,7 @@ ACHIEVEMENTS_DB = {
     "boss_kollman": {
         "id": "boss_kollman",
         "category": "lochy",
-        "icon": "🔥",
+        "icon": "",
         "title": "Ugaszony Płomień",
         "desc": "Pokonaj Wojowniczego Maga Kollmana w 2. lochu.",
         "stat_key": "boss_kollman_kills",
@@ -76,13 +76,13 @@ ACHIEVEMENTS_DB = {
             "gold": 8000, 
             "exp": 6000,
             "perk_id": "perk_boss_hunter",
-            "perk_desc": "⚡ Stały Perk: +5% Złota i EXP ze wszystkich lochów"
+            "perk_desc": "Stały Perk: +5% Złota i EXP ze wszystkich lochów"
         }
     },
     "dungeon_15": {
         "id": "dungeon_15",
         "category": "lochy",
-        "icon": "🏰",
+        "icon": "",
         "title": "Weteran Podziemi",
         "desc": "Ukończ 15 wypraw do lochów.",
         "stat_key": "dungeons_cleared",
@@ -91,7 +91,7 @@ ACHIEVEMENTS_DB = {
             "gold": 15000, 
             "exp": 10000,
             "perk_id": "perk_exp_master",
-            "perk_desc": "⚡ Stały Perk: +5% do całego zdobywanego Doświadczenia (EXP)"
+            "perk_desc": "Stały Perk: +5% do całego zdobywanego Doświadczenia (EXP)"
         }
     },
 
@@ -99,7 +99,7 @@ ACHIEVEMENTS_DB = {
     "upgrade_1": {
         "id": "upgrade_1",
         "category": "rzemioslo",
-        "icon": "🔨",
+        "icon": "",
         "title": "Młot i Kowadło",
         "desc": "Dokonaj pierwszego ulepszenia ekwipunku u Kowala.",
         "stat_key": "upgrades_done",
@@ -109,7 +109,7 @@ ACHIEVEMENTS_DB = {
     "upgrade_plus9": {
         "id": "upgrade_plus9",
         "category": "rzemioslo",
-        "icon": "🌟",
+        "icon": "",
         "title": "Mistrzowskie Dzieło",
         "desc": "Ulepsz dowolny przedmiot do maksymalnego poziomu +9.",
         "stat_key": "max_upgrade_level",
@@ -118,13 +118,13 @@ ACHIEVEMENTS_DB = {
             "gold": 25000, 
             "exp": 15000,
             "perk_id": "perk_master_smith",
-            "perk_desc": "⚡ Stały Perk: -10% Kosztu Kucia u miejskiego Kowala"
+            "perk_desc": "Stały Perk: -10% Kosztu Kucia u miejskiego Kowala"
         }
     },
     "socket_5": {
         "id": "socket_5",
         "category": "rzemioslo",
-        "icon": "🔮",
+        "icon": "",
         "title": "Jubiler Magii",
         "desc": "Wpraw łącznie 5 magicznych klejnotów w gniazda ekwipunku.",
         "stat_key": "gems_socketed",
@@ -133,7 +133,7 @@ ACHIEVEMENTS_DB = {
             "gold": 12000, 
             "exp": 8000,
             "perk_id": "perk_gem_resonance",
-            "perk_desc": "⚡ Stały Perk: +10% do statystyk wszystkich wprawionych klejnotów"
+            "perk_desc": "Stały Perk: +10% do statystyk wszystkich wprawionych klejnotów"
         }
     },
 
@@ -141,7 +141,7 @@ ACHIEVEMENTS_DB = {
     "harvest_10": {
         "id": "harvest_10",
         "category": "alchemia",
-        "icon": "🌿",
+        "icon": "",
         "title": "Młody Zielarz",
         "desc": "Zbierz 10 ziół z Ogrodu Domci.",
         "stat_key": "herbs_harvested",
@@ -151,7 +151,7 @@ ACHIEVEMENTS_DB = {
     "brew_10": {
         "id": "brew_10",
         "category": "alchemia",
-        "icon": "🧪",
+        "icon": "",
         "title": "Kociołek Magii",
         "desc": "Uwarz 10 eliksirów w Kociołku Alchemicznym.",
         "stat_key": "potions_brewed",
@@ -161,7 +161,7 @@ ACHIEVEMENTS_DB = {
     "brew_psychedelic": {
         "id": "brew_psychedelic",
         "category": "alchemia",
-        "icon": "🌀",
+        "icon": "",
         "title": "Podróżnik Świadomości",
         "desc": "Uwarz i wypij Ekstrakt Nieznanej Głębi u Domci.",
         "stat_key": "psychedelic_brewed",
@@ -170,7 +170,7 @@ ACHIEVEMENTS_DB = {
             "gold": 8000, 
             "exp": 5000,
             "perk_id": "perk_alchemist_touch",
-            "perk_desc": "⚡ Stały Perk: +15% Szansy na podwójny plon ziół z ogrodu"
+            "perk_desc": "Stały Perk: +15% Szansy na podwójny plon ziół z ogrodu"
         }
     },
 
@@ -178,7 +178,7 @@ ACHIEVEMENTS_DB = {
     "recruit_1": {
         "id": "recruit_1",
         "category": "druzyna",
-        "icon": "🤝",
+        "icon": "",
         "title": "Wierny Kompan",
         "desc": "Zwerbuj pierwszego towarzysza do swojej drużyny.",
         "stat_key": "party_count",
@@ -188,7 +188,7 @@ ACHIEVEMENTS_DB = {
     "recruit_6": {
         "id": "recruit_6",
         "category": "druzyna",
-        "icon": "👑",
+        "icon": "",
         "title": "Kompletna Kompania",
         "desc": "Zwerbuj wszystkich 6 towarzyszy w gospodzie Barnaby.",
         "stat_key": "party_count",
@@ -197,7 +197,7 @@ ACHIEVEMENTS_DB = {
             "gold": 30000, 
             "exp": 20000,
             "perk_id": "perk_party_synergy",
-            "perk_desc": "⚡ Stały Perk: +10% do siły wszystkich pasywek towarzyszy"
+            "perk_desc": "Stały Perk: +10% do siły wszystkich pasywek towarzyszy"
         }
     },
 
@@ -205,7 +205,7 @@ ACHIEVEMENTS_DB = {
     "gold_1000": {
         "id": "gold_1000",
         "category": "bogactwo",
-        "icon": "🪙",
+        "icon": "",
         "title": "Pełna Sakiewka",
         "desc": "Zgromadź łącznie 1 000 sztuk złota.",
         "stat_key": "total_gold_earned",
@@ -215,7 +215,7 @@ ACHIEVEMENTS_DB = {
     "gold_100000": {
         "id": "gold_100000",
         "category": "bogactwo",
-        "icon": "💰",
+        "icon": "",
         "title": "Magnez Złota",
         "desc": "Zgromadź łącznie 100 000 sztuk złota.",
         "stat_key": "total_gold_earned",
@@ -224,7 +224,7 @@ ACHIEVEMENTS_DB = {
             "gold": 25000, 
             "exp": 15000,
             "perk_id": "perk_greed",
-            "perk_desc": "⚡ Stały Perk: +10% więcej Złota ze wszystkich źródeł"
+            "perk_desc": "Stały Perk: +10% więcej Złota ze wszystkich źródeł"
         }
     }
 }

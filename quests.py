@@ -58,14 +58,14 @@ class Quest:
         if self.status == 'AVAILABLE':
             return "Zlecenie gotowe do przyjęcia w Tawernie lub Dzienniku"
         if self.status == 'CLAIMED':
-            return "✔ Zadanie ukończone i nagroda odebrana"
+            return "[UKOŃCZONE] Zadanie odebrane"
             
         prog = getattr(self, 'progress', {}).get('kills', {})
         if 'kills' in self.requirements:
             parts = []
             for monster, target in self.requirements['kills'].items():
                 cur = prog.get(monster, 0)
-                done_marker = "✓" if cur >= target else ""
+                done_marker = "[OK]" if cur >= target else ""
                 parts.append(f"{monster}: {min(cur, target)}/{target} {done_marker}".strip())
             return " | ".join(parts)
             
@@ -78,8 +78,12 @@ class Quest:
         if self.status == 'COMPLETED':
             self.status = 'CLAIMED'
             print(f"\n[!] Odebrano nagrodę za: {self.name}!")
+            if 'exp' in self.rewards:
+                player.add_exp(self.rewards['exp'])
             if 'gold' in self.rewards:
-                player.gold += self.rewards['gold']
+                player.add_gold(self.rewards['gold'], "Zadanie", exp=self.rewards.get('exp', 0), item=self.rewards.get('item'))
+            elif 'item' in self.rewards:
+                player.record_reward("Zadanie", item=self.rewards['item'], exp=self.rewards.get('exp', 0))
             if 'item' in self.rewards:
                 player.add_to_inventory(self.rewards['item'], is_reward=True)
             if 'party' in self.rewards:
@@ -88,6 +92,10 @@ class Quest:
                     player.party.append(member)
                 if getattr(player, 'active_companion', None) is None:
                     player.active_companion = member
+            if 'garden_plot' in self.rewards:
+                plot_idx = self.rewards['garden_plot']
+                if hasattr(player, 'unlock_garden_plot'):
+                    player.unlock_garden_plot(plot_idx)
             return True
         return False
 
@@ -132,7 +140,7 @@ QUESTS_DB = [
         "Trening Szybkiej Zagrywki",
         "Eczme potrzebuje ruchomych celów o wysokiej zwinności, aby doszlifować swój morderczy serwis z wyskoku. Pająki i bandyci nadadzą się idealnie.",
         {"kills": {"Wielki Pająk": 14, "Bandyta": 12}},
-        {"gold": 1200, "item": "acc_eczme", "party": "eczme"},
+        {"gold": 1200, "item": "acc_eczme", "party": "eczme", "garden_plot": 1},
         unlock_level=10,
         npc_id="eczme",
         dialog_offer=(
@@ -147,7 +155,7 @@ QUESTS_DB = [
         ),
         dialog_complete=(
             "*Klaszcze z zachwytu i kręci piłką na palcu*\n\n"
-            "Piękne uderzenie! Masz niesamowity timing na bloku! Bierz te owijki PowerKeeper i lecimy rozgromić lochy w mistrzowskim stylu!"
+            "Piękne uderzenie! Masz niesamowity timing na bloku! Bierz te owijki PowerKeeper i lecimy rozgromić lochy w mistrzowskim stylu! (Odblokowano Grządkę #2 w Ogrodzie Ziół!)"
         )
     ),
     Quest(
@@ -155,7 +163,7 @@ QUESTS_DB = [
         "Rozgrzewka na Czystą Masę",
         "Pianek uważa, że walka z twardymi nieumarłymi żołnierzami i biesami to najlepsze ćwiczenie wielostawowe na potężny rozrost mięśni.",
         {"kills": {"Nieumarły Żołnierz": 16, "Bies": 14}},
-        {"gold": 3000, "item": "helm_pianek", "party": "pianek"},
+        {"gold": 3000, "item": "helm_pianek", "party": "pianek", "garden_plot": 2},
         unlock_level=20,
         npc_id="pianek",
         dialog_offer=(
@@ -171,7 +179,7 @@ QUESTS_DB = [
         ),
         dialog_complete=(
             "*Śmieje się donośnie i napina bicepsy*\n\n"
-            "DOBRA POMPA! Widzę, że nie pękasz na robocie! Zakładaj tę opaskę, bierz białko i idziemy pakować żelastwo w najgłębszych czeluściach!"
+            "DOBRA POMPA! Widzę, że nie pękasz na robocie! Zakładaj tę opaskę, bierz białko i idziemy pakować żelastwo w najgłębszych czeluściach! (Odblokowano Grządkę #3 w Ogrodzie Ziół!)"
         )
     ),
     Quest(
@@ -179,7 +187,7 @@ QUESTS_DB = [
         "Krucjata w Stanie Wskazującym", 
         "Damian zauważył, że hordy orków i mściwe zjawy bezczeszczą pradawny trakt rycerski. Czas wymierzyć im honorową sprawiedliwość!", 
         {"kills": {"Ork Wojownik": 20, "Zjawa": 15}}, 
-        {"gold": 6000, "item": "arm_damian", "party": "damian"},
+        {"gold": 6000, "item": "arm_damian", "party": "damian"}, 
         unlock_level=30,
         npc_id="damian",
         dialog_offer=(
@@ -203,7 +211,7 @@ QUESTS_DB = [
         "Oczyszczenie Czakr z Pnączy",
         "Mroczne Enty i kamienne Gargulce zablokowały dostęp do pradawnych polan z leczniczymi ziołami i świętą Amanitą.",
         {"kills": {"Mroczny Ent": 22, "Gargulec": 18}},
-        {"gold": 12000, "item": "acc_domcia", "party": "domcia"},
+        {"gold": 12000, "item": "acc_domcia", "party": "domcia", "garden_plot": 3},
         unlock_level=40,
         npc_id="domcia",
         dialog_offer=(
@@ -219,7 +227,7 @@ QUESTS_DB = [
         ),
         dialog_complete=(
             "*Kłania się z mistycznym uśmiechem i wręcza ci lśniący talizman*\n\n"
-            "Czujesz to? Natura znowu oddycha. Masz piękną, złotą aurę. Zakładaj ten talizman, od teraz czuwam nad twoim zdrowiem na każdym szlaku."
+            "Czujesz to? Natura znowu oddycha. Masz piękną, złotą aurę. Zakładaj ten talizman, od teraz czuwam nad twoim zdrowiem na każdym szlaku. (Odblokowano Grządkę #4 z mistycznym Ziółkiem w Ogrodzie Ziół!)"
         )
     ),
     Quest(
@@ -251,4 +259,3 @@ QUESTS_DB = [
 def get_all_quests():
     import copy
     return copy.deepcopy(QUESTS_DB)
-

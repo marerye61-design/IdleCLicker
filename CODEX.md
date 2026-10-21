@@ -86,6 +86,7 @@ Projekt posiada dwa powiązane foldery robocze:
 | `main.py` | Główny kontroler gry, routing widoków (`view_panel`), okna dialogowe NPC, panel ekwipunku, kuźnia kowala, odpoczynek w tawernie, konsola debugowania. |
 | `player.py` | Model gracza: statystyki, ekwipunek, gniazda klejnotów, bestiariusz, perki, ogród alchemiczny, migracje stanu zapisu. |
 | `combat.py` | Silnik walki turowej: obliczanie obrażeń, ciosów krytycznych, podwójnego ataku, szansy na unik, generator potworów i animacje bossów. |
+| `reward_math.py` | Czyste formuły nagród z walk i lochów, oddzielone od obsługi interfejsu. |
 | `gems.py` | Baza danych 5 klejnotów (Rubin, Szmaragd, Szafir, Ametyst, Topaz) oraz formuły dynamicznego skalowania z poziomem przedmiotu (`level_req`). |
 | `alchemy.py` | Ogród ziół (Amanita, Mech, Kwiat, Korzeń, Ziółko), czasy wzrostu, warzenie eliksirów (czas trwania: 10 walk) oraz 60-sekundowy efekt psychodeliczny Ziółka. |
 | `achievements.py` | Baza 20+ osiągnięć i stałych pasywnych perków konta. |

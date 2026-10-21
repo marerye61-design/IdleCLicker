@@ -42,8 +42,8 @@ def simulate_exp_curve(max_level=100, battles_per_level=200):
         player.stat_points = (lvl - 1) * 3
         # Invest stat points realistically: 2 ATK, 1 DEF
         # Base stats already scale with level, stat_points add to stats dictionary
-        player.stats["base_atk"] = 12 + int((lvl - 1) * 2.0)
-        player.stats["base_def"] = 10 + int((lvl - 1) * 1.0)
+        player.stats["base_atk"] = 8 + int((lvl - 1) * 1.2)
+        player.stats["base_def"] = 4 + int((lvl - 1) * 0.6)
         
         # Equip best gear
         wep, arm, helm, acc = get_best_gear_for_level(lvl)

@@ -1,8 +1,51 @@
 import random
 import math
 
+ELITE_AFFIXES = {
+    "flame": {
+        "name": "Płonący",
+        "icon": "",
+        "hp_mult": 1.25,
+        "atk_mult": 1.35,
+        "def_mult": 1.0,
+        "gold_mult": 2.0,
+        "exp_mult": 2.0,
+        "desc": "+35% do ATK i podwójne nagrody!"
+    },
+    "armored": {
+        "name": "Pancerny",
+        "icon": "",
+        "hp_mult": 1.5,
+        "atk_mult": 1.0,
+        "def_mult": 1.8,
+        "gold_mult": 2.2,
+        "exp_mult": 2.0,
+        "desc": "+80% do DEF, +50% HP i potężny łup!"
+    },
+    "golden": {
+        "name": "Złocisty Złodziej",
+        "icon": "",
+        "hp_mult": 1.2,
+        "atk_mult": 1.1,
+        "def_mult": 1.0,
+        "gold_mult": 4.0,
+        "exp_mult": 1.5,
+        "desc": "Niesie ogromny skarb: 4x WIĘCEJ ZŁOTA!"
+    },
+    "ancient": {
+        "name": "Pradawny",
+        "icon": "",
+        "hp_mult": 1.6,
+        "atk_mult": 1.25,
+        "def_mult": 1.3,
+        "gold_mult": 2.5,
+        "exp_mult": 3.5,
+        "desc": "Mityczna bestia dająca 3.5x WIĘCEJ EXP!"
+    }
+}
+
 class Enemy:
-    def __init__(self, e_id, name, level, hp, atk, defence, exp_reward, gold_reward, img_key):
+    def __init__(self, e_id, name, level, hp, atk, defence, exp_reward, gold_reward, img_key, is_elite=False, affix=None, affix_label=""):
         self.e_id = e_id
         self.name = name
         self.level = level
@@ -13,6 +56,9 @@ class Enemy:
         self.exp_reward = exp_reward
         self.gold_reward = gold_reward
         self.img_key = img_key
+        self.is_elite = is_elite
+        self.affix = affix
+        self.affix_label = affix_label
 
 class EnemyTemplate:
     def __init__(self, e_id, name, base_hp, hp_per_lvl, base_atk, atk_per_lvl, base_def, def_per_lvl, img_key, min_level=1):
@@ -27,7 +73,7 @@ class EnemyTemplate:
         self.img_key = img_key
         self.min_level = min_level
 
-    def generate(self, level):
+    def generate(self, level, force_elite=None):
         # Mnożnik za bycie bossem / szczególnym wrogiem (tylko dla dedykowanych bossów)
         boss_mult = 1.0
         if "boss" in self.e_id:
@@ -46,33 +92,52 @@ class EnemyTemplate:
         exp = max(1, exp)
         gold = max(1, gold)
         
-        return Enemy(self.e_id, self.name, level, hp, atk, defence, exp, gold, self.img_key)
+        is_elite = False
+        affix = None
+        affix_label = ""
+        e_name = self.name
+        
+        # Sprawdzenie szansy na potwora elitarnego (20% szansy dla zwykłych mobów, nigdy dla bossów)
+        if "boss" not in self.e_id:
+            if force_elite is True or (force_elite is None and random.random() < 0.20):
+                is_elite = True
+                affix = random.choice(list(ELITE_AFFIXES.keys()))
+                aff_info = ELITE_AFFIXES[affix]
+                hp = int(hp * aff_info["hp_mult"])
+                atk = int(atk * aff_info["atk_mult"])
+                defence = int(defence * aff_info["def_mult"])
+                gold = int(gold * aff_info["gold_mult"])
+                exp = int(exp * aff_info["exp_mult"])
+                e_name = f"[{aff_info['name']}] {self.name}"
+                affix_label = aff_info["desc"]
+        
+        return Enemy(self.e_id, e_name, level, hp, atk, defence, exp, gold, self.img_key, is_elite=is_elite, affix=affix, affix_label=affix_label)
 
 TEMPLATES = [
     # Wczesna faza (Poziomy 1 - 10)
-    EnemyTemplate("e_goblin", "Słaby Goblin", 20, 3.5, 5.0, 1.2, 1, 0.3, "e_goblin", 1),
-    EnemyTemplate("e_wolf", "Leśny Wilk", 24, 4.0, 6.0, 1.3, 1, 0.3, "e_wolf", 1),
-    EnemyTemplate("e_bandit", "Bandyta", 30, 4.5, 7.0, 1.4, 2, 0.4, "e_bandit", 2),
-    EnemyTemplate("e_spider", "Wielki Pająk", 35, 5.0, 8.0, 1.5, 2, 0.5, "e_spider", 3),
+    EnemyTemplate("e_goblin", "Słaby Goblin", 34, 4.5, 7.0, 1.4, 2, 0.4, "e_goblin", 1),
+    EnemyTemplate("e_wolf", "Leśny Wilk", 42, 5.0, 8.0, 1.5, 2, 0.4, "e_wolf", 1),
+    EnemyTemplate("e_bandit", "Bandyta", 52, 5.5, 9.0, 1.6, 3, 0.5, "e_bandit", 2),
+    EnemyTemplate("e_spider", "Wielki Pająk", 62, 6.0, 10.0, 1.8, 3, 0.6, "e_spider", 3),
     
     # Środkowa faza (Poziomy 10 - 25)
-    EnemyTemplate("e_undead", "Nieumarły Żołnierz", 50, 7.0, 14.0, 2.0, 4, 0.8, "e_undead", 8),
-    EnemyTemplate("e_fiend", "Bies", 60, 8.0, 16.0, 2.2, 5, 0.9, "e_fiend", 12),
-    EnemyTemplate("e_orc", "Ork Wojownik", 75, 9.0, 19.0, 2.5, 6, 1.0, "e_orc", 15),
-    EnemyTemplate("e_wraith", "Zjawa", 70, 8.5, 22.0, 2.8, 5, 0.9, "e_wraith", 18),
+    EnemyTemplate("e_undead", "Nieumarły Żołnierz", 90, 8.5, 16.0, 2.2, 6, 1.0, "e_undead", 8),
+    EnemyTemplate("e_fiend", "Bies", 110, 9.5, 18.0, 2.4, 7, 1.1, "e_fiend", 12),
+    EnemyTemplate("e_orc", "Ork Wojownik", 135, 11.0, 22.0, 2.8, 8, 1.2, "e_orc", 15),
+    EnemyTemplate("e_wraith", "Zjawa", 125, 10.5, 25.0, 3.0, 7, 1.1, "e_wraith", 18),
     
     # Zaawansowana faza (Poziomy 25 - 50)
-    EnemyTemplate("e_gargoyle", "Gargulec", 130, 12.0, 35.0, 3.2, 10, 1.5, "e_gargoyle", 25),
-    EnemyTemplate("e_treant", "Mroczny Ent", 170, 15.0, 30.0, 3.0, 15, 1.8, "e_treant", 30),
-    EnemyTemplate("e_knight", "Przeklęty Rycerz", 150, 13.0, 40.0, 3.5, 16, 2.0, "e_knight", 35),
+    EnemyTemplate("e_gargoyle", "Gargulec", 240, 15.0, 42.0, 3.6, 14, 1.8, "e_gargoyle", 25),
+    EnemyTemplate("e_treant", "Mroczny Ent", 300, 18.0, 38.0, 3.4, 18, 2.0, "e_treant", 30),
+    EnemyTemplate("e_knight", "Przeklęty Rycerz", 280, 16.0, 48.0, 4.0, 20, 2.2, "e_knight", 35),
     
     # Pół-bossowie (Poziomy 50 - 75)
-    EnemyTemplate("e_ogre", "Ogr Miażdżyciel", 320, 20.0, 75.0, 4.5, 25, 2.5, "e_ogre", 45),
-    EnemyTemplate("e_cultist", "Mroczny Kultysta", 270, 18.0, 85.0, 5.0, 20, 2.2, "e_cultist", 50),
+    EnemyTemplate("e_ogre", "Ogr Miażdżyciel", 520, 24.0, 85.0, 5.0, 30, 2.8, "e_ogre", 45),
+    EnemyTemplate("e_cultist", "Mroczny Kultysta", 460, 22.0, 95.0, 5.5, 25, 2.5, "e_cultist", 50),
     
     # Bossowie End-game (Poziomy 75+)
-    EnemyTemplate("e_golem", "Golem Ziemi", 550, 30.0, 140.0, 6.5, 45, 3.5, "e_golem", 70),
-    EnemyTemplate("e_dragon", "Smok Cienia", 750, 40.0, 180.0, 8.0, 50, 4.0, "e_dragon", 85),
+    EnemyTemplate("e_golem", "Golem Ziemi", 900, 35.0, 160.0, 7.0, 55, 4.0, "e_golem", 70),
+    EnemyTemplate("e_dragon", "Smok Cienia", 1300, 48.0, 210.0, 8.8, 65, 4.5, "e_dragon", 85),
 ]
 
 def get_expedition_choices(player_level, count=3):
@@ -102,78 +167,78 @@ def get_hardcoded_boss(boss_id, player_level):
     
     if boss_id == "boss_ptys":
         # Loch 1: Złowrogi Las (Lvl 5 - 15)
-        hp = 650 + (lvl * 15)
-        atk = 32 + int(lvl * 1.5)
-        defence = 12
+        hp = 1850 + (lvl * 45)
+        atk = 42 + int(lvl * 2.0)
+        defence = 18
         exp = 2500
         gold = 1000
         return Enemy(boss_id, "[BOSS] Giga Ork 'Ptyś'", lvl, hp, atk, defence, exp, gold, "boss_ptys")
         
     elif boss_id == "boss_kollman":
         # Loch 2: Górska Przełęcz (Lvl 15 - 30)
-        hp = 1800 + (lvl * 25)
-        atk = 65 + int(lvl * 2.2)
-        defence = 25
+        hp = 5200 + (lvl * 90)
+        atk = 95 + int(lvl * 3.0)
+        defence = 40
         exp = 7500
         gold = 3000
         return Enemy(boss_id, "[BOSS] Kollman 'Wojowniczy Mag'", lvl, hp, atk, defence, exp, gold, "boss_kollman")
         
     elif boss_id == "boss_wraith_lord":
         # Loch 3: Twierdza Cieni (Lvl 30 - 45)
-        hp = 4500 + (lvl * 40)
-        atk = 140 + int(lvl * 3.5)
-        defence = 55
+        hp = 14000 + (lvl * 180)
+        atk = 180 + int(lvl * 4.5)
+        defence = 80
         exp = 20000
         gold = 8000
         return Enemy(boss_id, "[BOSS] Władca Cieni 'Morgar'", lvl, hp, atk, defence, exp, gold, "e_wraith")
         
     elif boss_id == "boss_magma_lord":
         # Loch 4: Wulkaniczne Czeluście (Lvl 45 - 60)
-        hp = 9500 + (lvl * 60)
-        atk = 260 + int(lvl * 4.5)
-        defence = 110
+        hp = 32000 + (lvl * 300)
+        atk = 340 + int(lvl * 6.0)
+        defence = 150
         exp = 55000
         gold = 22000
         return Enemy(boss_id, "[BOSS] Władca Magmy 'Ignis'", lvl, hp, atk, defence, exp, gold, "e_fiend")
         
     elif boss_id == "boss_crystal_golem":
         # Loch 5: Kryształowe Jaskinie (Lvl 60 - 75)
-        hp = 22000 + (lvl * 100)
-        atk = 480 + int(lvl * 6.0)
-        defence = 220
+        hp = 75000 + (lvl * 500)
+        atk = 600 + int(lvl * 7.5)
+        defence = 280
         exp = 180000
         gold = 60000
         return Enemy(boss_id, "[BOSS] Kryształowy Kolos", lvl, hp, atk, defence, exp, gold, "e_golem")
         
     elif boss_id == "boss_frost_lich":
         # Loch 6: Zamarznięta Pustka (Lvl 75 - 90)
-        hp = 50000 + (lvl * 150)
-        atk = 850 + int(lvl * 8.0)
-        defence = 380
+        hp = 175000 + (lvl * 800)
+        atk = 1050 + int(lvl * 10.0)
+        defence = 450
         exp = 500000
         gold = 150000
         return Enemy(boss_id, "[BOSS] Mroźny Licz 'Kel-Thuzar'", lvl, hp, atk, defence, exp, gold, "e_cultist")
         
     elif boss_id == "boss_fallen_avatar":
         # Loch 7: Świątynia Upadłych Bogów (Lvl 90 - 100)
-        hp = 110000 + (lvl * 250)
-        atk = 1500 + int(lvl * 12.0)
-        defence = 650
+        hp = 400000 + (lvl * 1500)
+        atk = 1950 + int(lvl * 15.0)
+        defence = 800
         exp = 1500000
         gold = 400000
         return Enemy(boss_id, "[BOSS] Awatar Upadłego Bóstwa", lvl, hp, atk, defence, exp, gold, "e_knight")
         
     elif boss_id == "boss_void_emperor":
         # Loch 8: Wymiar Czasoprzestrzeni (Lvl 100+)
-        hp = 250000 + (lvl * 400)
-        atk = 2800 + int(lvl * 18.0)
-        defence = 1100
+        hp = 950000 + (lvl * 3000)
+        atk = 3800 + int(lvl * 22.0)
+        defence = 1350
         exp = 4000000
         gold = 1200000
         return Enemy(boss_id, "[BOSS] Cesarz Czasoprzestrzeni", lvl, hp, atk, defence, exp, gold, "e_dragon")
     
     # Fallback
-    return Enemy("unknown_boss", "[BOSS] Nieznany Byt", lvl, 500 + lvl * 20, 30 + lvl * 2, 10 + lvl, 500, 250, "e_golem")
+    return Enemy("unknown_boss", "[BOSS] Nieznany Byt", lvl, 1500 + lvl * 50, 40 + lvl * 3, 18 + lvl, 500, 250, "e_golem")
 
 def calculate_player_dmg(player, enemy=None, is_first_turn=False):
     p_atk = player.get_total_atk()
@@ -194,19 +259,26 @@ def calculate_player_dmg(player, enemy=None, is_first_turn=False):
     if is_first_turn and getattr(player, 'active_companion', None) == "eczme":
         dmg = int(dmg * 1.25)
         
+    # Bonus z talentu Berserkera: "Krwawy Szał" (gdy HP gracza < 50%)
+    if hasattr(player, 'get_talent_bonus') and getattr(player, 'hp', 1) < (player.get_max_hp() * 0.5):
+        low_hp_bonus = player.get_talent_bonus("low_hp_atk")
+        if low_hp_bonus > 0:
+            dmg = int(dmg * (1.0 + low_hp_bonus))
+        
     is_crit = False
     
-    # Szansa na uderzenie krytyczne (Mnożnik x1.75)
+    # Szansa na uderzenie krytyczne (Mnożnik x1.75 + bonus z talentu Berserkera)
     crit_chance = player.get_total_crit()
     if random.randint(1, 100) <= crit_chance:
-        dmg = int(dmg * 1.75)
+        crit_mult = 1.75 + (player.get_talent_bonus("crit_dmg_mult") if hasattr(player, 'get_talent_bonus') else 0.0)
+        dmg = int(dmg * crit_mult)
         is_crit = True
         
     return max(1, dmg), is_crit
 
 def calculate_enemy_dmg(enemy, player):
     e_atk = enemy.atk
-    p_def = player.get_total_def()
+    p_def = max(0, player.get_total_def())
     
     # Formuła procentowej redukcji pancerza (Armory Mitigation Formula)
     # Pancerz gracza zmniejsza obrażenia procentowo: REDUKCJA = DEF / (DEF + 80 + level * 4)

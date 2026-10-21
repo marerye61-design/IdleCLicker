@@ -1,0 +1,105 @@
+[gd_scene load_steps=2 format=3 uid="uid://b123456789007"]
+
+[ext_resource type="Script" path="res://scenes/views/AlchemyView.gd" id="1_alch"]
+
+[node name="AlchemyView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_alch")
+
+[node name="MobileTabBar" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 58.0
+grow_horizontal = 2
+theme_override_constants/separation = 10
+
+[node name="BtnTabGarden" type="Button" parent="MobileTabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ogród Ziół"
+
+[node name="BtnTabBrewing" type="Button" parent="MobileTabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Kociołek (Warzenie)"
+
+[node name="MainLayout" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="GardenPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/GardenPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="MainLayout/GardenPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+text = "OGRÓD ZIÓŁ DOMCI"
+horizontal_alignment = 1
+
+[node name="GardenScroll" type="ScrollContainer" parent="MainLayout/GardenPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GardenPlotsBox" type="VBoxContainer" parent="MainLayout/GardenPanel/VBox/GardenScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BrewingPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/BrewingPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="MainLayout/BrewingPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+text = "KOCIOŁEK ALCHEMICZNY (WARZENIE)"
+horizontal_alignment = 1
+
+[node name="RecipesScroll" type="ScrollContainer" parent="MainLayout/BrewingPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipesBox" type="VBoxContainer" parent="MainLayout/BrewingPanel/VBox/RecipesScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10

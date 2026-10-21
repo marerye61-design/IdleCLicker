@@ -1,0 +1,27 @@
+==================================================================
+   IDLECLICKER - RAPORT Z AUTOMATYCZNEGO TESTU NA ŻYWO
+   Czas startu: 2026-10-16T21:43:14
+==================================================================
+
+[21:43:14] [PASS] [SYSTEM] Uruchomiono automatyczny test E2E na żywo (Always-On-Top)
+[21:43:17] [PASS] [HUD] Kliknięcie bohatera powiodło się (+25 złota)
+[21:43:20] [PASS] [COMBAT] Atak wręcz zadaje obrażenia wrogowi (45 -> 19 HP)
+[21:43:21] [PASS] [DEFEAT] Śmiertelny cios poprawnie zeruje zdrowie (0 HP) i blokuje sterowanie
+[21:43:23] [PASS] [DEFEAT] Bohater automatycznie przeniósł się do Karczmy Barnaby po porażce
+[21:43:24] [PASS] [TAVERN] Barnaba udzielił pierwszej pomocy rannemu bohaterowi (49 HP)
+[21:43:27] [PASS] [TAVERN] Pasywna regeneracja przy kominku działa (+8% Max HP/s, z 49 do 94 HP)
+[21:43:27] [PASS] [TAVERN] Płatny odpoczynek u Barnaby odnowił 100% HP i Many
+[21:43:32] [PASS] [TAVERN] Wszystkie zakładki Tawerny (Drużyna, Ekspedycje, Zlecenia) działają płynnie
+[21:43:37] [PASS] [STATS] Punkty rozwoju (ATK, HP) oraz punkty talentów (Obrońca) rozdane pomyślnie
+[21:43:41] [PASS] [INVENTORY] Dodawanie przedmiotów, plecak 80-slotowy i sortowanie działają poprawnie
+[21:43:44] [PASS] [ALCHEMY] Pomyślny zbiór dojrzałego zioła (herb_amanita x1)
+[21:43:47] [PASS] [MARKET] Zakup Cukierni powiódł się - pasywny dochód wynosi +0 złota/s
+[21:43:51] [PASS] [SHOP] Sklep Fantasy: przełączanie tierów asortymentu działa sprawnie
+[21:43:55] [PASS] [BLACKSMITH] Kuźnia kowala: przełączanie zakładek ulepszeń i klejnotów aktywne
+[21:44:00] [PASS] [DUNGEONS] Lochy: rozpoczęcie wyprawy, odmierzanie czasu i taktyczny odwrót działają
+[21:44:03] [PASS] [SYSTEM] Zapis stanu gry do pliku wykonany pomyślnie
+[21:44:15] [PASS] [MAIN_MENU] Menu Główne: Poprawnie działają dialogi Nowa Gra, Wczytaj Grę (z wykrytym profilem) oraz Usuń Zapis
+[21:44:16] [PASS] [SUMMARY] ==================================================================
+[21:44:16] [PASS] [SUMMARY] WYNIK KOŃCOWY: ZALICZONO WSZYSTKIE TESTY (18/18 ZDAŁO)!
+Gra i wszystkie moduły działają w 100% sprawnie.
+[21:44:16] [PASS] [SUMMARY] ==================================================================

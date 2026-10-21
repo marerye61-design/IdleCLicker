@@ -1,0 +1,496 @@
+[gd_scene load_steps=9 format=3 uid="uid://e123456789004"]
+
+[ext_resource type="Script" path="res://scenes/views/InventoryView.gd" id="1_inv"]
+[ext_resource type="Texture2D" path="res://assets/menu_bg.jpg" id="2_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_forge_panel"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(0.08, 0.06, 0.07, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.44, 0.28, 0.18, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_frame"]
+bg_color = Color(0.06, 0.04, 0.05, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.45, 0.18, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.85, 0.45, 0.1, 0.25)
+shadow_size = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.18, 0.11, 0.09, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.68, 0.42, 0.2, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.28, 0.16, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.75, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+shadow_color = Color(1, 0.5, 0.1, 0.45)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.1, 0.06, 0.05, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.9, 0.4, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
+bg_color = Color(0.08, 0.07, 0.08, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.2, 0.2, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="InventoryView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_inv")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.05, 0.03, 0.85)
+
+[node name="MainLayout" type="BoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="EquipmentPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_forge_panel")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/EquipmentPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="MainLayout/EquipmentPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "ZAŁOŻONY RYNSZTUNEK"
+horizontal_alignment = 1
+
+[node name="SlotsBox" type="BoxContainer" parent="MainLayout/EquipmentPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+vertical = true
+
+[node name="SlotWeaponBox" type="BoxContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotWeaponBox"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Broń:"
+
+[node name="SlotWeapon" type="PanelContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotWeaponBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot_frame")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotWeaponBox/SlotWeapon"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="IconRect" type="TextureRect" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotWeaponBox/SlotWeapon/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LvlLabel" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotWeaponBox/SlotWeapon"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="SlotArmorBox" type="BoxContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotArmorBox"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Pancerz:"
+
+[node name="SlotArmor" type="PanelContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotArmorBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot_frame")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotArmorBox/SlotArmor"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="IconRect" type="TextureRect" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotArmorBox/SlotArmor/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LvlLabel" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotArmorBox/SlotArmor"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="SlotHelmetBox" type="BoxContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotHelmetBox"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Hełm:"
+
+[node name="SlotHelmet" type="PanelContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotHelmetBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot_frame")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotHelmetBox/SlotHelmet"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="IconRect" type="TextureRect" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotHelmetBox/SlotHelmet/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LvlLabel" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotHelmetBox/SlotHelmet"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="SlotAccessoryBox" type="BoxContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotAccessoryBox"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Amulet:"
+
+[node name="SlotAccessory" type="PanelContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotAccessoryBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot_frame")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotAccessoryBox/SlotAccessory"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="IconRect" type="TextureRect" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotAccessoryBox/SlotAccessory/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LvlLabel" type="Label" parent="MainLayout/EquipmentPanel/VBox/SlotsBox/SlotAccessoryBox/SlotAccessory"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="GridPanel" type="PanelContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_forge_panel")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/GridPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopRow" type="HBoxContainer" parent="MainLayout/GridPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CapacityLabel" type="Label" parent="MainLayout/GridPanel/VBox/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Pojemność plecaka: 5 / 80"
+
+[node name="BtnSelectAllTrash" type="Button" parent="MainLayout/GridPanel/VBox/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Zaznacz zwykłe"
+
+[node name="BtnDeselectAll" type="Button" parent="MainLayout/GridPanel/VBox/TopRow"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(85, 32)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Odznacz"
+
+[node name="BtnSort" type="Button" parent="MainLayout/GridPanel/VBox/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 32)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Sortuj"
+
+[node name="MultiSelectHint" type="Label" parent="MainLayout/GridPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.68, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "💡 Przytrzymaj CTRL i klikaj przedmioty, aby zaznaczyć wiele do wspólnej sprzedaży."
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainLayout/GridPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InventoryGrid" type="GridContainer" parent="MainLayout/GridPanel/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 10
+
+[node name="DetailsPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_forge_panel")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/DetailsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="DetailIcon" type="TextureRect" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DetailNameLabel" type="Label" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "Nazwa Przedmiotu"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DetailTypeLabel" type="Label" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "[BROŃ] Rzadkość: Zwykły"
+horizontal_alignment = 1
+
+[node name="DetailStatsLabel" type="Label" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "ATK: +12, DEF: +4"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DetailDescLabel" type="Label" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "Opis przedmiotu..."
+autowrap_mode = 2
+
+[node name="DetailValueLabel" type="Label" parent="MainLayout/DetailsPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 13
+text = "Wartość: 100 złota"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MainLayout/DetailsPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionsBox" type="VBoxContainer" parent="MainLayout/DetailsPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnEquip" type="Button" parent="MainLayout/DetailsPanel/VBox/ActionsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Załóż Przedmiot"
+
+[node name="BtnUse" type="Button" parent="MainLayout/DetailsPanel/VBox/ActionsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Użyj"
+
+[node name="BtnUnequip" type="Button" parent="MainLayout/DetailsPanel/VBox/ActionsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Zdejmij do Plecaka"
+
+[node name="BtnSell" type="Button" parent="MainLayout/DetailsPanel/VBox/ActionsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Sprzedaj"
+
+[node name="BtnCancelSelection" type="Button" parent="MainLayout/DetailsPanel/VBox/ActionsBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+text = "Odznacz wszystkie"

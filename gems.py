@@ -50,7 +50,7 @@ GEMS_DB = {
     "gem_ruby": Gem(
         "gem_ruby", 
         "Rubin Siły", 
-        "🔴", 
+        "", 
         "#e74c3c", 
         "Płonący klejnot pulsujący czystą siłą bojową. Zwiększa obrażenia zależnie od potęgi przedmiotu.",
         {"atk": 4},
@@ -59,7 +59,7 @@ GEMS_DB = {
     "gem_emerald": Gem(
         "gem_emerald", 
         "Szmaragd Żywotności", 
-        "🟢", 
+        "", 
         "#2ecc71", 
         "Głęboko zielony kamień natury, wzmacniający odporność i maksymalne punkty życia.",
         {"hp_max": 25, "def": 3},
@@ -68,7 +68,7 @@ GEMS_DB = {
     "gem_sapphire": Gem(
         "gem_sapphire", 
         "Szafir Prędkości", 
-        "🔵", 
+        "", 
         "#3498db", 
         "Lśniący błękitem kryształ niebios. Zapewnia szansę na błyskawiczne wyprowadzenie drugiego ciosu z rzędu.",
         {"double_strike_pct": 3},
@@ -77,7 +77,7 @@ GEMS_DB = {
     "gem_topaz": Gem(
         "gem_topaz", 
         "Topaz Chciwości", 
-        "🟡", 
+        "", 
         "#f1c40f", 
         "Złocisty kamień przyciągający bogactwa i cenniejsze łupy z pokonanych potworów.",
         {"bonus_gold_pct": 10, "bonus_loot_pct": 3},
@@ -86,7 +86,7 @@ GEMS_DB = {
     "gem_amethyst": Gem(
         "gem_amethyst", 
         "Ametyst Zguby", 
-        "🟣", 
+        "", 
         "#9b59b6", 
         "Mroczny fioletowy klejnot nasycony magią cienia. Znacząco podnosi szansę na trafienia krytyczne.",
         {"crit_chance": 2},
@@ -121,7 +121,7 @@ def ensure_item_sockets(item_dict, default_socket_count=1):
     return item_dict["sockets"]
 
 def get_sockets_summary(item_dict, item_level_req=1):
-    """Zwraca czytelny ciąg tekstowy gniazd np. [🔴 Rubin (+10 ATK)] [○ Puste]."""
+    """Zwraca czytelny ciąg tekstowy gniazd np. [Rubin (+10 ATK)] [Puste Gniazdo]."""
     if "sockets" not in item_dict or not item_dict["sockets"]:
         return "Brak gniazd"
     
@@ -130,7 +130,8 @@ def get_sockets_summary(item_dict, item_level_req=1):
         if g_id and g_id in GEMS_DB:
             gem = GEMS_DB[g_id]
             stat_txt = gem.get_stat_summary(item_level_req)
-            parts.append(f"[{gem.icon} {gem.name} ({stat_txt})]")
+            prefix = f"{gem.icon} " if gem.icon else ""
+            parts.append(f"[{prefix}{gem.name} ({stat_txt})]")
         else:
-            parts.append("[○ Puste Gniazdo]")
+            parts.append("[Puste Gniazdo]")
     return " ".join(parts)

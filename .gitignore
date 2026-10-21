@@ -8,3 +8,7 @@ dist/
 .vscode/
 *.zip
 IdleClicker_Build/
+.godot/
+*.apk
+pyinstxtractor.py
+*_extracted/

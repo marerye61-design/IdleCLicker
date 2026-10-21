@@ -1,0 +1,242 @@
+[gd_scene load_steps=3 format=3 uid="uid://a123456789006"]
+
+[ext_resource type="Script" path="res://scenes/views/TavernView.gd" id="1_tav"]
+[ext_resource type="Texture2D" path="res://assets/tavern_bg.jpg" id="2_bg"]
+
+[node name="TavernView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tav")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.05, 0.03, 0.85)
+
+[node name="MainLayout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="TabBar" type="HBoxContainer" parent="MainLayout"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TabBtnRoster" type="Button" parent="MainLayout/TabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Rozmowa i Towarzysze"
+
+[node name="TabBtnExpeditions" type="Button" parent="MainLayout/TabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ekspedycje Towarzyszy"
+
+[node name="TabBtnBounties" type="Button" parent="MainLayout/TabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tablica Ogłoszeń (Zlecenia)"
+
+[node name="RosterContainer" type="VBoxContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="CardsScroll" type="ScrollContainer" parent="MainLayout/RosterContainer"]
+custom_minimum_size = Vector2(0, 115)
+layout_mode = 2
+vertical_scroll_mode = 0
+
+[node name="CompCardsBox" type="HBoxContainer" parent="MainLayout/RosterContainer/CardsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+alignment = 0
+
+[node name="DetailPanel" type="PanelContainer" parent="MainLayout/RosterContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/RosterContainer/DetailPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderHBox" type="HBoxContainer" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="CompDetailPortrait" type="TextureRect" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxInfo" type="VBoxContainer" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="CompDetailName" type="Label" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "Imię Postaci"
+
+[node name="CompDetailRole" type="Label" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Rola i Lore"
+
+[node name="CompDetailPassive" type="Label" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "Zdolność pasywna"
+
+[node name="CompDetailStatus" type="Label" parent="MainLayout/RosterContainer/DetailPanel/VBox/HeaderHBox/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "Status: Gotowy do akcji"
+
+[node name="HSeparator" type="HSeparator" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+layout_mode = 2
+
+[node name="CompDetailDialog" type="RichTextLabel" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+scroll_following = true
+text = "Treść rozmowy..."
+
+[node name="DialogueHeader" type="Label" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "TEMATY ROZMOWY:"
+
+[node name="CompQuestionsBox" type="HFlowContainer" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+
+[node name="ActionButtonsBox" type="HBoxContainer" parent="MainLayout/RosterContainer/DetailPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BtnCompAction" type="Button" parent="MainLayout/RosterContainer/DetailPanel/VBox/ActionButtonsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 42)
+layout_mode = 2
+text = "Wybierz jako aktywnego w walce"
+
+[node name="BtnInnRest" type="Button" parent="MainLayout/RosterContainer/DetailPanel/VBox/ActionButtonsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 42)
+layout_mode = 2
+text = "Odpocznij w gospodzie (20 złota)"
+
+[node name="BtnInnStash" type="Button" parent="MainLayout/RosterContainer/DetailPanel/VBox/ActionButtonsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 42)
+layout_mode = 2
+text = "Odbierz zdeponowane nagrody"
+
+[node name="BtnInnLease" type="Button" parent="MainLayout/RosterContainer/DetailPanel/VBox/ActionButtonsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 42)
+layout_mode = 2
+text = "Wydzierżaw grządkę na zioła (150 złota)"
+
+[node name="ExpeditionsContainer" type="VBoxContainer" parent="MainLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ExpTitle" type="Label" parent="MainLayout/ExpeditionsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "WYŚLIJ NIEAKTYWNYCH TOWARZYSZY NA MISJE POSZUKIWAWCZE"
+
+[node name="Scroll" type="ScrollContainer" parent="MainLayout/ExpeditionsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ExpListBox" type="VBoxContainer" parent="MainLayout/ExpeditionsContainer/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BountiesContainer" type="VBoxContainer" parent="MainLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="BountyTitle" type="Label" parent="MainLayout/BountiesContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "TABLICA OGŁOSZEŃ (CODZIENNE ZLECENIA NA POTWORY)"
+
+[node name="Scroll" type="ScrollContainer" parent="MainLayout/BountiesContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BountyListBox" type="VBoxContainer" parent="MainLayout/BountiesContainer/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10

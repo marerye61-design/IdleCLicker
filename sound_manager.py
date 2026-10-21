@@ -70,6 +70,8 @@ class SoundManager:
     def play(self, sound_key):
         if not self.enabled or not self.initialized:
             return
+        if sound_key not in ("sword", "hit", "crit", "enemy_hit"):
+            return
         if sound_key in self.sounds:
             try:
                 snd, _ = self.sounds[sound_key]
@@ -86,20 +88,22 @@ class SoundManager:
         for key, (snd, base_vol) in self.sounds.items():
             snd.set_volume(base_vol * self.volume)
 
-    # Wygodne skróty dla kodu gry
-    def play_coin(self): self.play("coin")
+    # Dźwięki ataku (jedyne aktywne w grze)
     def play_sword(self): self.play("sword")
     def play_hit(self): self.play("hit")
     def play_crit(self): self.play("crit")
     def play_enemy_hit(self): self.play("enemy_hit")
-    def play_level_up(self): self.play("level_up")
-    def play_potion(self): self.play("potion")
-    def play_heal(self): self.play("potion")
-    def play_ui_click(self): self.play("ui_click")
-    def play_boss_intro(self): self.play("boss_intro")
-    def play_quest_accept(self): self.play("quest_accept")
-    def play_quest_complete(self): self.play("quest_complete")
-    def play_dungeon_enter(self): self.play("dungeon_enter")
+
+    # Pozostałe dźwięki wyłączone zgodnie z prośbą gracza
+    def play_coin(self): pass
+    def play_level_up(self): pass
+    def play_potion(self): pass
+    def play_heal(self): pass
+    def play_ui_click(self): pass
+    def play_boss_intro(self): pass
+    def play_quest_accept(self): pass
+    def play_quest_complete(self): pass
+    def play_dungeon_enter(self): pass
 
 # Globalny singleton
 sounds = SoundManager.get_instance()

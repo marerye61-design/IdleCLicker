@@ -34,13 +34,10 @@ class Bounty:
     def claim_reward(self, player):
         if self.status == "COMPLETED":
             self.status = "CLAIMED"
-            player.gold += self.gold_reward
             player.add_exp(self.exp_reward)
+            player.add_gold(self.gold_reward, "Zlecenie", exp=self.exp_reward, item=self.item_reward)
             if self.item_reward:
-                from items import get_item
-                item = get_item(self.item_reward)
-                if item:
-                    player.add_to_inventory(item.to_dict(), is_reward=True)
+                player.add_to_inventory(self.item_reward, is_reward=True)
             return True
         return False
 

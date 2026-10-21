@@ -1,0 +1,590 @@
+[gd_scene load_steps=14 format=3 uid="uid://f123456789005"]
+
+[ext_resource type="Script" path="res://scenes/views/StatsView.gd" id="1_stats"]
+[ext_resource type="Texture2D" path="res://assets/portraits/hero.jpg" id="2_hero"]
+[ext_resource type="Shader" path="res://shaders/forge_flame.gdshader" id="3_flame"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_forge_flame"]
+shader = ExtResource("3_flame")
+shader_parameter/base_dark_color = Color(0.12, 0.08, 0.09, 0.95)
+shader_parameter/ember_color_core = Color(1, 0.58, 0.08, 1)
+shader_parameter/ember_color_edge = Color(0.55, 0.12, 0.04, 0.85)
+shader_parameter/border_molten_color = Color(1, 0.45, 0.05, 1)
+shader_parameter/flame_intensity = 0.4
+shader_parameter/flame_speed = 1.3
+shader_parameter/border_glow = 0.35
+shader_parameter/pixel_density = 64.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_forge_panel"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.08, 0.06, 0.07, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.44, 0.28, 0.18, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait_frame"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.06, 0.04, 0.05, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.6, 0.2, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.85, 0.45, 0.1, 0.35)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_bg"]
+bg_color = Color(0.08, 0.07, 0.05, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.32, 0.15, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_fill"]
+bg_color = Color(0.92, 0.75, 0.2, 1)
+border_width_top = 1
+border_color = Color(1, 0.9, 0.5, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_normal"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+bg_color = Color(0.12, 0.08, 0.09, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.28, 0.18, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_runic_normal"]
+bg_color = Color(0.18, 0.11, 0.09, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.68, 0.42, 0.2, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_runic_hover"]
+bg_color = Color(0.28, 0.16, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.75, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+shadow_color = Color(1, 0.5, 0.1, 0.45)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_runic_pressed"]
+bg_color = Color(0.1, 0.06, 0.05, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.9, 0.4, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_runic_disabled"]
+bg_color = Color(0.08, 0.07, 0.08, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.2, 0.2, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="StatsView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_stats")
+
+[node name="MobileTabBar" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 58.0
+grow_horizontal = 2
+theme_override_constants/separation = 10
+
+[node name="BtnTabStats" type="Button" parent="MobileTabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+text = "Bohater & Parametry"
+
+[node name="BtnTabTalents" type="Button" parent="MobileTabBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+text = "Drzewo Talentów"
+
+[node name="MainLayout" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="LeftPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_forge_panel")
+
+[node name="ScrollLeft" type="ScrollContainer" parent="MainLayout/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="PortraitFrame" type="PanelContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait_frame")
+
+[node name="HeroPortrait" type="TextureRect" parent="MainLayout/LeftPanel/ScrollLeft/VBox/PortraitFrame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("2_hero")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LevelLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "Bohater (Poziom 1)"
+horizontal_alignment = 1
+
+[node name="ExpBar" type="ProgressBar" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="ExpLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "0 / 70 EXP"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="StatsTitle" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "PARAMETRY BOJOWE"
+
+[node name="StatAtkLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Atak (ATK): 12"
+
+[node name="StatDefLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pancerz (DEF): 10"
+
+[node name="StatCritLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Szansa na Kryt: 0%"
+
+[node name="StatDoubleLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Podwójny Cios: 0%"
+
+[node name="StatHpLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Maksymalne Zdrowie (HP): 120"
+
+[node name="StatClickLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Obrażenia Kliknięcia: 2"
+
+[node name="StatGpsLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pasywny Przychód Złota: +0/s"
+
+[node name="StatBestiaryLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 0.9, 1)
+text = "Pokonani wrogowie: 0 (+0% do obrażeń)"
+
+[node name="HSeparator2" type="HSeparator" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="StatPointsTitle" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "ROZDZIAŁ PUNKTÓW ROZWOJU"
+
+[node name="StatPointsLabel" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "Dostępne Punkty Rozwoju: 0"
+
+[node name="RowAtk" type="HBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="LblAtkInvest" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowAtk"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Atak (+1 ATK / pkt):"
+
+[node name="BtnAtkPlus1" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowAtk"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+1"
+
+[node name="BtnAtkPlus5" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowAtk"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+5"
+
+[node name="RowDef" type="HBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="LblDefInvest" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowDef"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pancerz (+1 DEF / pkt):"
+
+[node name="BtnDefPlus1" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowDef"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+1"
+
+[node name="BtnDefPlus5" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowDef"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+5"
+
+[node name="RowHp" type="HBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="LblHpInvest" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowHp"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Zdrowie (+10 HP / pkt):"
+
+[node name="BtnHpPlus1" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowHp"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+1"
+
+[node name="BtnHpPlus5" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowHp"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+5"
+
+[node name="RowCrit" type="HBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="LblCritInvest" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowCrit"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Krytyk (+1% / pkt, max 30%):"
+
+[node name="BtnCritPlus1" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowCrit"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+1"
+
+[node name="BtnCritPlus5" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowCrit"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+5"
+
+[node name="RowLoot" type="HBoxContainer" parent="MainLayout/LeftPanel/ScrollLeft/VBox"]
+layout_mode = 2
+
+[node name="LblLootInvest" type="Label" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowLoot"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Łup (+1% / pkt, max 50%):"
+
+[node name="BtnLootPlus1" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowLoot"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+1"
+
+[node name="BtnLootPlus5" type="Button" parent="MainLayout/LeftPanel/ScrollLeft/VBox/RowLoot"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+5"
+
+[node name="RightPanel" type="PanelContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_forge_panel")
+
+[node name="ScrollRight" type="ScrollContainer" parent="MainLayout/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/RightPanel/ScrollRight"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="TalentsHeader" type="Label" parent="MainLayout/RightPanel/ScrollRight/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "DRZEWKO SPECJALIZACJI I TALENTÓW"
+horizontal_alignment = 1
+
+[node name="TalentPointsLabel" type="Label" parent="MainLayout/RightPanel/ScrollRight/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "Dostępne Punkty Talentu: 0"
+horizontal_alignment = 1
+
+[node name="BerserkerCard" type="PanelContainer" parent="MainLayout/RightPanel/ScrollRight/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_normal")
+
+[node name="FlameBg" type="ColorRect" parent="MainLayout/RightPanel/ScrollRight/VBox/BerserkerCard"]
+material = SubResource("ShaderMaterial_forge_flame")
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBox" type="HBoxContainer" parent="MainLayout/RightPanel/ScrollRight/VBox/BerserkerCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TalentBerserkerLabel" type="Label" parent="MainLayout/RightPanel/ScrollRight/VBox/BerserkerCard/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Ścieżka Berserkera (0/10)
+Agresja i krytyki: +0% ATK (HP < 50%), +0% dmg krytyka."
+autowrap_mode = 2
+
+[node name="BtnTalentBerserker" type="Button" parent="MainLayout/RightPanel/ScrollRight/VBox/BerserkerCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+"
+
+[node name="DefenderCard" type="PanelContainer" parent="MainLayout/RightPanel/ScrollRight/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_normal")
+
+[node name="FlameBg" type="ColorRect" parent="MainLayout/RightPanel/ScrollRight/VBox/DefenderCard"]
+material = SubResource("ShaderMaterial_forge_flame")
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBox" type="HBoxContainer" parent="MainLayout/RightPanel/ScrollRight/VBox/DefenderCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TalentDefenderLabel" type="Label" parent="MainLayout/RightPanel/ScrollRight/VBox/DefenderCard/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Ścieżka Obrońcy (0/10)
+Niezłomność: odbija 0% dmg wroga, regeneruje 0% HP/turę."
+autowrap_mode = 2
+
+[node name="BtnTalentDefender" type="Button" parent="MainLayout/RightPanel/ScrollRight/VBox/DefenderCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+"
+
+[node name="RogueCard" type="PanelContainer" parent="MainLayout/RightPanel/ScrollRight/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_normal")
+
+[node name="FlameBg" type="ColorRect" parent="MainLayout/RightPanel/ScrollRight/VBox/RogueCard"]
+material = SubResource("ShaderMaterial_forge_flame")
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBox" type="HBoxContainer" parent="MainLayout/RightPanel/ScrollRight/VBox/RogueCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TalentRogueLabel" type="Label" parent="MainLayout/RightPanel/ScrollRight/VBox/RogueCard/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Ścieżka Awanturnika (0/10)
+Zwinność: +0% click dmg, +0% złota, +0% lifesteal."
+autowrap_mode = 2
+
+[node name="BtnTalentRogue" type="Button" parent="MainLayout/RightPanel/ScrollRight/VBox/RogueCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_runic_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_runic_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_runic_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_runic_disabled")
+text = "+"

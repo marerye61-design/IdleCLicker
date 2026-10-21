@@ -1,0 +1,264 @@
+[gd_scene load_steps=5 format=3 uid="uid://c123456789002"]
+
+[ext_resource type="Script" path="res://scenes/views/CombatView.gd" id="1_cv"]
+[ext_resource type="Texture2D" path="res://assets/combat_bg.jpg" id="2_bg"]
+[ext_resource type="PackedScene" path="res://scenes/components/BossCinematic.tscn" id="3_cinematic"]
+[ext_resource type="Texture2D" path="res://assets/portraits/hero.jpg" id="4_hero"]
+
+[node name="CombatView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cv")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.05, 0.03, 0.75)
+
+[node name="MainLayout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="TopSelectionBar" type="HBoxContainer" parent="MainLayout"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SelectionLabel" type="Label" parent="MainLayout/TopSelectionBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Wybór wroga:"
+
+[node name="ChoiceContainer" type="HBoxContainer" parent="MainLayout/TopSelectionBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BtnRefresh" type="Button" parent="MainLayout/TopSelectionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "Odśwież Przeciwników"
+
+[node name="ArenaContainer" type="BoxContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="CombatantsRow" type="HBoxContainer" parent="MainLayout/ArenaContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PlayerPanel" type="PanelContainer" parent="MainLayout/ArenaContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/ArenaContainer/PlayerPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerPortrait" type="TextureRect" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("4_hero")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PlayerNameLabel" type="Label" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "Bohater (Poz. 1)"
+horizontal_alignment = 1
+
+[node name="PlayerHpBar" type="ProgressBar" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+step = 1.0
+value = 100.0
+show_percentage = false
+
+[node name="PlayerHpLabel" type="Label" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "120 / 120 HP"
+horizontal_alignment = 1
+
+[node name="PlayerShieldLabel" type="Label" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Tarcza: +50"
+horizontal_alignment = 1
+
+[node name="PlayerBuffsLabel" type="Label" parent="MainLayout/ArenaContainer/PlayerPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+autowrap_mode = 2
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="MainLayout/ArenaContainer/PlayerPanel"]
+unique_name_in_owner = true
+position = Vector2(120, 80)
+
+[node name="CenterPanel" type="VBoxContainer" parent="MainLayout/ArenaContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="CombatStatusLabel" type="Label" parent="MainLayout/ArenaContainer/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "Runda 1 - Przygotuj się do starcia!"
+horizontal_alignment = 1
+
+[node name="CombatLog" type="RichTextLabel" parent="MainLayout/ArenaContainer/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+scroll_following = true
+
+[node name="ControlsBox" type="GridContainer" parent="MainLayout/ArenaContainer/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="BtnAttack" type="Button" parent="MainLayout/ArenaContainer/CenterPanel/ControlsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "ATAKUJ"
+
+[node name="BtnUltimate" type="Button" parent="MainLayout/ArenaContainer/CenterPanel/ControlsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Zdolność Towarzysza"
+
+[node name="BtnPotion" type="Button" parent="MainLayout/ArenaContainer/CenterPanel/ControlsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Użyj Mikstury (5)"
+
+[node name="CheckAutoBattle" type="CheckButton" parent="MainLayout/ArenaContainer/CenterPanel/ControlsBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Auto-Walka"
+
+[node name="EnemyPanel" type="PanelContainer" parent="MainLayout/ArenaContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/ArenaContainer/EnemyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EnemyPortrait" type="TextureRect" parent="MainLayout/ArenaContainer/EnemyPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 6
+
+[node name="EnemyNameLabel" type="Label" parent="MainLayout/ArenaContainer/EnemyPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "Wróg (Poz. 1)"
+horizontal_alignment = 1
+
+[node name="EnemyAffixLabel" type="Label" parent="MainLayout/ArenaContainer/EnemyPanel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.7, 0.2, 1)
+theme_override_font_sizes/font_size = 12
+text = "+35% ATK, 2x nagrody"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="EnemyHpBar" type="ProgressBar" parent="MainLayout/ArenaContainer/EnemyPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+step = 1.0
+value = 100.0
+show_percentage = false
+
+[node name="EnemyHpLabel" type="Label" parent="MainLayout/ArenaContainer/EnemyPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "100 / 100 HP"
+horizontal_alignment = 1
+
+[node name="EnemySpawnPoint" type="Marker2D" parent="MainLayout/ArenaContainer/EnemyPanel"]
+unique_name_in_owner = true
+position = Vector2(120, 80)
+
+[node name="BossCinematic" parent="." instance=ExtResource("3_cinematic")]
+unique_name_in_owner = true
+visible = false
+

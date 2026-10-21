@@ -19,6 +19,35 @@ BUILDINGS_DB = {
     "b6": Building("b6", "Warsztat 'BeeMWe' Yomena", "Yomen łata pęknięte uszczelki wywarem z czaszek. Zyski z napraw są ogromne!", 250000, 3500)
 }
 
+BUILDING_COMPANIONS = {
+    "b1": "maslak",
+    "b2": "damian",
+    "b3": "domcia",
+    "b4": "eczme",
+    "b5": "pianek",
+    "b6": "yomen"
+}
+
+def get_building_synergy_multiplier(player, b_id):
+    """
+    Zwraca mnożnik produkcji budynku na podstawie towarzyszy:
+    - +25% (1.25) jeśli towarzysz jest zwerbowany do drużyny (player.party)
+    - Dodatkowe +15% (1.40 łącznie) jeśli towarzysz jest aktywnym kompanem (player.active_companion)
+    - W przeciwnym razie 1.0
+    """
+    comp_id = BUILDING_COMPANIONS.get(b_id)
+    if not comp_id or not player:
+        return 1.0
+    
+    party = getattr(player, 'party', [])
+    active = getattr(player, 'active_companion', None)
+    
+    if comp_id == active:
+        return 1.40
+    elif comp_id in party:
+        return 1.25
+    return 1.0
+
 class Market:
     def __init__(self):
         self.buildings = BUILDINGS_DB
@@ -47,7 +76,10 @@ class Market:
             if player.gold >= cost:
                 player.gold -= cost
                 player.buildings[b_id] = count + 1
-                player.stats["gold_per_sec"] += building.gold_per_sec
+                if hasattr(player, 'recalculate_gold_per_sec'):
+                    player.recalculate_gold_per_sec()
+                else:
+                    player.stats["gold_per_sec"] += building.gold_per_sec
                 print(f"Sukces! Kupiłeś '{building.name}'.")
                 return True
             else:

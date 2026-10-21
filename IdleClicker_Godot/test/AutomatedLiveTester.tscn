@@ -1,0 +1,236 @@
+[gd_scene load_steps=2 format=3 uid="uid://e2e1234567890"]
+
+[ext_resource type="Script" path="res://test/AutomatedLiveTester.gd" id="1_tester"]
+
+[node name="AutomatedLiveTester" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tester")
+
+[node name="TestBanner" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(980, 85)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -490.0
+offset_top = 10.0
+offset_right = 490.0
+offset_bottom = 95.0
+grow_horizontal = 2
+
+[node name="Margin" type="MarginContainer" parent="TestBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="TestBanner/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeaderHBox" type="HBoxContainer" parent="TestBanner/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="TestBanner/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 15
+text = "TEST AUTOMATYCZNY NA ŻYWO (EKRAN 3)"
+
+[node name="ScreenLabel" type="Label" parent="TestBanner/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 11
+text = "Przełącz ekran:"
+
+[node name="BtnScreen1" type="Button" parent="TestBanner/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "[1] Lewy"
+
+[node name="BtnScreen2" type="Button" parent="TestBanner/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "[2] Środek"
+
+[node name="BtnScreen3" type="Button" parent="TestBanner/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "[3] Prawy"
+
+[node name="BtnPause" type="Button" parent="TestBanner/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "⏸ Pauza (Spacja)"
+
+[node name="BtnClose" type="Button" parent="TestBanner/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 11
+text = "✖ Zamknij (ESC)"
+
+[node name="DescLabel" type="Label" parent="TestBanner/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 12
+text = "Inicjalizacja testu na żywo..."
+
+[node name="ProgressBar" type="ProgressBar" parent="TestBanner/Margin/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+step = 1.0
+show_percentage = false
+
+[node name="VirtualCursor" type="Control" parent="."]
+unique_name_in_owner = true
+z_index = 100
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="CursorCircle" type="ColorRect" parent="VirtualCursor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0.85, 0.2, 0.6)
+
+[node name="InnerDot" type="ColorRect" parent="VirtualCursor"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="CursorLabel" type="Label" parent="VirtualCursor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = 6.0
+offset_right = 100.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+
+[node name="FinishOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 200
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FinishBackdrop" type="ColorRect" parent="FinishOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="Center" type="CenterContainer" parent="FinishOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="FinishOverlay/Center"]
+custom_minimum_size = Vector2(550, 320)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="FinishOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="FinishOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="FinishTitle" type="Label" parent="FinishOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "WSZYSTKIE TESTY ZALICZONE (100% PASS)!"
+horizontal_alignment = 1
+
+[node name="FinishSummary" type="Label" parent="FinishOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Podsumowanie testu..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="FinishOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="FinishInfo" type="Label" parent="FinishOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "Raport został zapisany w pliku: test_e2e_results.log
+Możesz teraz przejrzeć stan gry lub zamknąć okno."
+horizontal_alignment = 1
+
+[node name="BtnFinishClose" type="Button" parent="FinishOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Zamknij Okno Testu"

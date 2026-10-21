@@ -1,0 +1,108 @@
+[gd_scene load_steps=2 format=3 uid="uid://b123456789010"]
+
+[ext_resource type="Script" path="res://scenes/components/BossCinematic.gd" id="1_cinematic"]
+
+[node name="BossCinematic" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cinematic")
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.03, 0.02, 0.96)
+
+[node name="NarrativeContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -140.0
+offset_right = 380.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 28
+alignment = 1
+
+[node name="NarrativeLabel" type="Label" parent="NarrativeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(760, 160)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+theme_override_font_sizes/font_size = 18
+text = "Zanurzasz się w gęsty, mroczny las..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PromptTypeLabel" type="Label" parent="NarrativeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
+theme_override_font_sizes/font_size = 13
+text = "[ Kliknij w dowolnym miejscu, aby pominąć pisanie / przejść dalej ▶ ]"
+horizontal_alignment = 1
+
+[node name="RevealContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -260.0
+offset_right = 400.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BossBorderPanel" type="PanelContainer" parent="RevealContainer"]
+custom_minimum_size = Vector2(360, 360)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BossPortrait" type="TextureRect" parent="RevealContainer/BossBorderPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(350, 350)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BossQuoteLabel" type="Label" parent="RevealContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(760, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.25, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "\"Czekałem na Ciebie, słabeuszu. Podejdź no tu...\""
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PromptFightLabel" type="Label" parent="RevealContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.8, 0.44, 1)
+theme_override_font_sizes/font_size = 14
+text = "[ KLIKNIJ W DOWOLNYM MIEJSCU, ABY ROZPOCZĄĆ POJEDYNEK ]"
+horizontal_alignment = 1

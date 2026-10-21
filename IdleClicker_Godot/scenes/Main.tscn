@@ -1,0 +1,662 @@
+[gd_scene load_steps=19 format=3 uid="uid://a123456789012"]
+
+[ext_resource type="Script" path="res://scenes/Main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/components/DebugConsole.tscn" id="2_debug"]
+[ext_resource type="PackedScene" path="res://scenes/components/EmberSparks.tscn" id="3_embers"]
+[ext_resource type="Texture2D" path="res://assets/portraits/hero.jpg" id="4_hero"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_hud"]
+bg_color = Color(0.08, 0.06, 0.07, 0.96)
+border_width_bottom = 3
+border_color = Color(0.85, 0.45, 0.1, 0.9)
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_bg"]
+bg_color = Color(0.08, 0.07, 0.05, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.32, 0.15, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_fill"]
+bg_color = Color(0.92, 0.75, 0.2, 1)
+border_width_top = 1
+border_color = Color(1, 0.9, 0.5, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
+bg_color = Color(0.08, 0.04, 0.05, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.15, 0.15, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.85, 0.15, 0.15, 1)
+border_width_top = 1
+border_color = Color(1, 0.4, 0.4, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_bg"]
+bg_color = Color(0.05, 0.06, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.25, 0.5, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_fill"]
+bg_color = Color(0.2, 0.48, 0.95, 1)
+border_width_top = 1
+border_color = Color(0.5, 0.75, 1, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hero_click"]
+bg_color = Color(0.18, 0.12, 0.09, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.55, 0.15, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_sidebar"]
+bg_color = Color(0.07, 0.05, 0.06, 0.98)
+border_width_right = 3
+border_color = Color(0.38, 0.24, 0.16, 0.95)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_normal"]
+bg_color = Color(0.13, 0.09, 0.1, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.23, 0.16, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
+bg_color = Color(0.22, 0.14, 0.11, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.65, 0.15, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(1, 0.45, 0.05, 0.3)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_pressed"]
+bg_color = Color(0.09, 0.06, 0.07, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_avatar_frame"]
+bg_color = Color(0.12, 0.08, 0.06, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.65, 0.2, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toast"]
+bg_color = Color(0.12, 0.08, 0.06, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.75, 0.25, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bottom_nav"]
+bg_color = Color(0.07, 0.05, 0.06, 0.98)
+border_width_top = 2
+border_color = Color(0.38, 0.24, 0.16, 0.95)
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="RootVBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TopHUD" type="PanelContainer" parent="RootVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_top_hud")
+
+[node name="HUDMargin" type="MarginContainer" parent="RootVBox/TopHUD"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="HUDVBox" type="VBoxContainer" parent="RootVBox/TopHUD/HUDMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HUDHBox" type="HBoxContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeroAvatarFrame" type="PanelContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_avatar_frame")
+
+[node name="HeroAvatar" type="TextureRect" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/HeroAvatarFrame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("4_hero")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="HeroLevelLabel" type="Label" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_font_sizes/font_size = 16
+text = "Bohater (Poz. 1)"
+
+[node name="ExpBox" type="HBoxContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ExpBar" type="ProgressBar" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/ExpBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 18)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
+step = 1.0
+value = 50.0
+show_percentage = false
+
+[node name="HpBox" type="HBoxContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HpBar" type="ProgressBar" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/HpBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 18)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+step = 1.0
+value = 100.0
+show_percentage = false
+
+[node name="HpLabel" type="Label" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/HpBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "120 / 120 HP"
+
+[node name="ManaBox" type="HBoxContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ManaBar" type="ProgressBar" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/ManaBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 18)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_mana_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mana_fill")
+step = 1.0
+value = 100.0
+show_percentage = false
+
+[node name="ManaLabel" type="Label" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox/ManaBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "100 / 100 Many"
+
+[node name="GoldLabel" type="Label" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 15
+text = "0 złota (+0/s)"
+
+[node name="CompanionLabel" type="Label" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+text = "Towarzysz: Brak"
+
+[node name="BtnHeroClick" type="Button" parent="RootVBox/TopHUD/HUDMargin/HUDVBox/HUDHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_hero_click")
+text = "Kliknij po Złoto"
+
+[node name="HUDRow2" type="HBoxContainer" parent="RootVBox/TopHUD/HUDMargin/HUDVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MainBody" type="HBoxContainer" parent="RootVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="NavSidebar" type="PanelContainer" parent="RootVBox/MainBody"]
+custom_minimum_size = Vector2(215, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nav_sidebar")
+
+[node name="NavMargin" type="MarginContainer" parent="RootVBox/MainBody/NavSidebar"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="NavVBox" type="VBoxContainer" parent="RootVBox/MainBody/NavSidebar/NavMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NavTitle" type="Label" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_font_sizes/font_size = 15
+text = "MENU GŁÓWNE"
+horizontal_alignment = 1
+
+[node name="NavCombat" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Ekspedycja / Walka"
+
+[node name="NavDungeons" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Lochy & Bossowie"
+
+[node name="NavStats" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Postać & Talenty"
+
+[node name="NavInventory" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Ekwipunek & Plecak"
+
+[node name="NavTavern" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Tawerna & Towarzysze"
+
+[node name="NavAlchemy" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Ogród & Alchemia"
+
+[node name="NavMarket" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Rynek Budynków"
+
+[node name="NavShop" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Sklep Fantasy"
+
+[node name="NavBlacksmith" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Kuźnia Kowala"
+
+[node name="NavAchievements" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Księga Osiągnięć"
+
+[node name="Spacer" type="Control" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NavDebug" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+text = "DEBUG KONSOLA (F12)"
+
+[node name="NavSave" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Zapisz Grę"
+
+[node name="NavExitToMenu" type="Button" parent="RootVBox/MainBody/NavSidebar/NavMargin/NavVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Menu Główne"
+
+[node name="ViewContainer" type="PanelContainer" parent="RootVBox/MainBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BottomNav" type="PanelContainer" parent="RootVBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bottom_nav")
+
+[node name="BNavMargin" type="MarginContainer" parent="RootVBox/BottomNav"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="BNavScroll" type="ScrollContainer" parent="RootVBox/BottomNav/BNavMargin"]
+layout_mode = 2
+vertical_scroll_mode = 0
+
+[node name="BNavHBox" type="HBoxContainer" parent="RootVBox/BottomNav/BNavMargin/BNavScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="BNavCombat" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Walka"
+
+[node name="BNavDungeons" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Lochy"
+
+[node name="BNavStats" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Postać"
+
+[node name="BNavInventory" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Plecak"
+
+[node name="BNavTavern" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Tawerna"
+
+[node name="BNavAlchemy" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Alchemia"
+
+[node name="BNavMarket" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Rynek"
+
+[node name="BNavShop" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Sklep"
+
+[node name="BNavBlacksmith" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Kuźnia"
+
+[node name="BNavAchievements" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Księga"
+
+[node name="BNavSave" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Zapisz"
+
+[node name="BNavExitToMenu" type="Button" parent="RootVBox/BottomNav/BNavMargin/BNavScroll/BNavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_pressed")
+text = "Menu"
+
+[node name="EmberSparks" parent="." instance=ExtResource("3_embers")]
+layout_mode = 1
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_debug")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="NotificationToast" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(460, 42)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -230.0
+offset_top = 64.0
+offset_right = 230.0
+offset_bottom = 106.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_toast")
+
+[node name="ToastMargin" type="MarginContainer" parent="NotificationToast"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="NotificationLabel" type="Label" parent="NotificationToast/ToastMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.35, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 13
+text = "Powiadomienie"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3

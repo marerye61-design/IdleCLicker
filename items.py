@@ -40,8 +40,13 @@ class Equipment(Item):
             new_stats["atk"] = int((2 + L ** 1.4) * mult)
             new_stats["def"] = int((3 + L ** 1.35) * mult)
             new_stats["hp_max"] = int((10 + L ** 1.55) * mult)
-            
-        self.stats = new_stats  # Nadpisujemy ręczne statystyki tymi ze wzorów
+        # Zachowanie unikalnych cech przekazanych w konstruktorze (np. crit_chance, hp_max na broni, atk na zbroi)
+        if isinstance(stats, dict):
+            for k, v in stats.items():
+                if k not in new_stats:
+                    new_stats[k] = v
+                    
+        self.stats = new_stats
 
     def __str__(self):
         stat_str = ", ".join([f"{k.upper()}: +{v}" for k, v in self.stats.items()])
@@ -191,23 +196,23 @@ ITEMS_DB = {
     ),
     
     # === MAGICZNE KLEJNOTY (GEMS) ===
-    "gem_ruby": Item("gem_ruby", "Rubin Siły", "🔴 Płonący klejnot bojowy (+15 ATK w gnieździe ekwipunku).", 600),
-    "gem_emerald": Item("gem_emerald", "Szmaragd Żywotności", "🟢 Kamień natury (+80 Max HP, +8 DEF w gnieździe ekwipunku).", 600),
-    "gem_sapphire": Item("gem_sapphire", "Szafir Prędkości", "🔵 Kryształ niebios (+5% Szansy na Podwójny Atak w gnieździe).", 750),
-    "gem_topaz": Item("gem_topaz", "Topaz Chciwości", "🟡 Złocisty klejnot fortuny (+15% Złota, +5% Szansy na Łup).", 700),
-    "gem_amethyst": Item("gem_amethyst", "Ametyst Zguby", "🟣 Klejnot magii cienia (+3% Szansy na Cios Krytyczny).", 800),
+    "gem_ruby": Item("gem_ruby", "Rubin Siły", "Płonący klejnot bojowy (+15 ATK w gnieździe ekwipunku).", 600),
+    "gem_emerald": Item("gem_emerald", "Szmaragd Żywotności", "Kamień natury (+80 Max HP, +8 DEF w gnieździe ekwipunku).", 600),
+    "gem_sapphire": Item("gem_sapphire", "Szafir Prędkości", "Kryształ niebios (+5% Szansy na Podwójny Atak w gnieździe).", 750),
+    "gem_topaz": Item("gem_topaz", "Topaz Chciwości", "Złocisty klejnot fortuny (+15% Złota, +5% Szansy na Łup).", 700),
+    "gem_amethyst": Item("gem_amethyst", "Ametyst Zguby", "Klejnot magii cienia (+3% Szansy na Cios Krytyczny).", 800),
 
     # === ZIOŁA I SKŁADNIKI ALCHEMICZNE (HERBS & INGREDIENTS) ===
-    "herb_amanita": Item("herb_amanita", "Amanita Lasu", "🍄 Czerwony grzyb leśny o właściwościach stymulujących siłę.", 40),
-    "herb_moss": Item("herb_moss", "Srebrzysty Mech", "🌿 Lśniący chłodny mech skalny, kluczowy do wywarów leczniczych.", 50),
-    "herb_flower": Item("herb_flower", "Krwawy Kwiat", "🌸 Szkarłatny kwiat z zarośli o zapachu siarki i witalności.", 60),
-    "herb_root": Item("herb_root", "Smoczy Korzeń", "🌾 Rzadki, twardy korzeń gromadzący energię ziemi i bogactwa.", 80),
-    "herb_mystery": Item("herb_mystery", "Ziółko", "🌀 Efekt nieznany. (Kliknij 'Zażyj Ziółko' w plecaku, aby doświadczyć 60s mistycznej fali deformacji świata i spowolnienia czasu)", 150),
+    "herb_amanita": Item("herb_amanita", "Amanita Lasu", "Czerwony grzyb leśny o właściwościach stymulujących siłę.", 40),
+    "herb_moss": Item("herb_moss", "Srebrzysty Mech", "Lśniący chłodny mech skalny, kluczowy do wywarów leczniczych.", 50),
+    "herb_flower": Item("herb_flower", "Krwawy Kwiat", "Szkarłatny kwiat z zarośli o zapachu siarki i witalności.", 60),
+    "herb_root": Item("herb_root", "Smoczy Korzeń", "Rzadki, twardy korzeń gromadzący energię ziemi i bogactwa.", 80),
+    "herb_mystery": Item("herb_mystery", "Ziółko", "Efekt nieznany. (Kliknij 'Zażyj Ziółko' w plecaku, aby doświadczyć 60s mistycznej fali deformacji świata i spowolnienia czasu)", 150),
     
-    "ing_fang": Item("ing_fang", "Kieł Bestii", "🦷 Ostry kieł drapieżnika. Upuszczany przez wilki i bestie.", 30),
-    "ing_venom": Item("ing_venom", "Gruczoł Jadowy", "🧪 Lepki jad pająków i pełzających potworów.", 45),
-    "ing_ectoplasm": Item("ing_ectoplasm", "Ektoplazma Upiora", "👻 Świetlista maź pozostająca po nieumarłych i zjawach.", 60),
-    "ing_core": Item("ing_core", "Rdzeń Skalny", "💎 Ciężki, twardy fragment ożywionego golema lub gargulca.", 75)
+    "ing_fang": Item("ing_fang", "Kieł Bestii", "Ostry kieł drapieżnika. Upuszczany przez wilki i bestie.", 30),
+    "ing_venom": Item("ing_venom", "Gruczoł Jadowy", "Lepki jad pająków i pełzających potworów.", 45),
+    "ing_ectoplasm": Item("ing_ectoplasm", "Ektoplazma Upiora", "Świetlista maź pozostająca po nieumarłych i zjawach.", 60),
+    "ing_core": Item("ing_core", "Rdzeń Skalny", "Ciężki, twardy fragment ożywionego golema lub gargulca.", 75)
 }
 
 from modifiers import MODIFIERS_DB

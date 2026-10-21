@@ -1,0 +1,421 @@
+[gd_scene load_steps=4 format=3 uid="uid://m123456789099"]
+
+[ext_resource type="Script" path="res://scenes/MainMenu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/menu_bg.jpg" id="2_bg"]
+[ext_resource type="PackedScene" path="res://scenes/components/EmberSparks.tscn" id="3_embers"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.04, 0.03, 0.8)
+
+[node name="EmberSparks" parent="." instance=ExtResource("3_embers")]
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(460, 500)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/MenuPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/MenuPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_font_sizes/font_size = 28
+text = "IDLE RPG
+Fantasy Edition"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/MenuPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.7, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "Edycja Godot Engine 4.3"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/MenuPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnNewGame" type="Button" parent="CenterContainer/MenuPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "Nowa Gra"
+
+[node name="BtnLoadGame" type="Button" parent="CenterContainer/MenuPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "Wczytaj Grę"
+
+[node name="BtnDeleteSave" type="Button" parent="CenterContainer/MenuPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "Usuń Zapis"
+
+[node name="BtnExit" type="Button" parent="CenterContainer/MenuPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "Wyjdź"
+
+[node name="Spacer" type="Control" parent="CenterContainer/MenuPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VersionLabel" type="Label" parent="CenterContainer/MenuPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "Wersja 1.1 - Multi-Profile Save System"
+horizontal_alignment = 1
+
+[node name="NewGameOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="NewGameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="NewGameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="NewGameOverlay/Center"]
+custom_minimum_size = Vector2(440, 260)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="NewGameOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="NewGameOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="NewGameOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_font_sizes/font_size = 20
+text = "NOWA GRA"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="NewGameOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+text = "PODAJ IMIĘ BOHATERA:"
+horizontal_alignment = 1
+
+[node name="NewGameNameEdit" type="LineEdit" parent="NewGameOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+placeholder_text = "np. Gerald, Roland..."
+max_length = 24
+
+[node name="NewGameErrorLbl" type="Label" parent="NewGameOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="NewGameOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnConfirmNewGame" type="Button" parent="NewGameOverlay/Center/Panel/Margin/VBox/HBox"]
+unique_name_in_owner = true
+modulate = Color(0.35, 1, 0.45, 1)
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Rozpocznij Przygodę"
+
+[node name="BtnCancelNewGame" type="Button" parent="NewGameOverlay/Center/Panel/Margin/VBox/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Anuluj"
+
+[node name="LoadGameOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="LoadGameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="LoadGameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="LoadGameOverlay/Center"]
+custom_minimum_size = Vector2(560, 520)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="LoadGameOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="LoadGameOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="LoadGameOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.25, 1)
+theme_override_font_sizes/font_size = 20
+text = "WYBIERZ ZAPIS GRY"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="LoadGameOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Wybierz profil postaci, aby kontynuować przygodę:"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LoadGameOverlay/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 320)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoadSaveCardsContainer" type="VBoxContainer" parent="LoadGameOverlay/Center/Panel/Margin/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BtnCancelLoad" type="Button" parent="LoadGameOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Wróć do Menu"
+
+[node name="DeleteSaveOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="DeleteSaveOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="DeleteSaveOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="DeleteSaveOverlay/Center"]
+custom_minimum_size = Vector2(560, 520)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="DeleteSaveOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="DeleteSaveOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="DeleteSaveOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_font_sizes/font_size = 20
+text = "USUŃ ZAPIS"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="DeleteSaveOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Wybierz zapis do trwałego usunięcia:"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="DeleteSaveOverlay/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 320)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DeleteSaveCardsContainer" type="VBoxContainer" parent="DeleteSaveOverlay/Center/Panel/Margin/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BtnCloseDelete" type="Button" parent="DeleteSaveOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Wróć do Menu"
+
+[node name="ConfirmDeleteOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="ConfirmDeleteOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="Center" type="CenterContainer" parent="ConfirmDeleteOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ConfirmDeleteOverlay/Center"]
+custom_minimum_size = Vector2(440, 220)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ConfirmDeleteOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="ConfirmDeleteOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ConfirmTitle" type="Label" parent="ConfirmDeleteOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "POTWIERDZENIE USUNIĘCIA"
+horizontal_alignment = 1
+
+[node name="ConfirmDeleteLabel" type="Label" parent="ConfirmDeleteOverlay/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Czy na pewno chcesz bezpowrotnie usunąć zapis?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="ConfirmDeleteOverlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnConfirmDeleteYes" type="Button" parent="ConfirmDeleteOverlay/Center/Panel/Margin/VBox/HBox"]
+unique_name_in_owner = true
+modulate = Color(1, 0.4, 0.4, 1)
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tak, usuń"
+
+[node name="BtnConfirmDeleteNo" type="Button" parent="ConfirmDeleteOverlay/Center/Panel/Margin/VBox/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Anuluj"
